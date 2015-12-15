@@ -23,9 +23,6 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.3.5",
-    "leaflet": "~0.7.3",
-    "rangeslider.js": "~1.2.2",
-    "c3": "~0.4.10"
+    "bootstrap": "~3.3.5"
   }
 }

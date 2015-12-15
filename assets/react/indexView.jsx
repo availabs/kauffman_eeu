@@ -13,7 +13,7 @@ var React = require("react"),
 	App = require("./pages/layout.react"),
 // Components
     //DemoOne =   require("./pages/DemoOne.react"),
-    MetroZBP =  require("./pages/MetroZBP.react");
+    Home =  require("./pages/Home.react");
 
 
 
@@ -21,8 +21,8 @@ var React = require("react"),
        
 var routes = (
 	<Route name="app" path="/" handler={App}>
-        <Route name="metrozbp" path="/metrozbp" handler={MetroZBP} />
-		<DefaultRoute handler={MetroZBP} />
+        <Route name="home" path="/Home" handler={Home} />
+		<DefaultRoute handler={Home} />
 	</Route>
 );
 
