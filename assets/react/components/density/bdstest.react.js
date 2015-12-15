@@ -62,8 +62,8 @@ var Bdstest = React.createClass({
                 if( yearAgeTable[row["year2"]] === undefined ){
                     yearAgeTable[row["year2"]] = {};                        
                 }
-
-                yearAgeTable[row["year2"]][item] = row["estabs"]; 
+                //Emp = jobs for (firms of this age) in this year
+                yearAgeTable[row["year2"]][item] = row["emp"]; 
             })      
 
         })
@@ -73,11 +73,20 @@ var Bdstest = React.createClass({
     },
     renderTable:function(){
         var scope = this,
-            ages = d3.range(12);
+            ages = d3.range(12),
+            totalEmploySum = 0,
+            newFirmSum = 0;
 
+        var format = d3.format(".3%");
 
         var ageHead = ages.map(function(age){
-            return(<th>{age}</th>)
+            if(age == 0){
+                return(<th>Firm age: {age} year(s)</th>)               
+            }
+            else{
+                return(<th>{age}</th>)
+            }
+
         })
 
         if(Object.keys(scope.state.data).length === 0){
@@ -85,12 +94,21 @@ var Bdstest = React.createClass({
         }
 
         var allRows = Object.keys(scope.state.data).map(function(year){
-
+            totalEmploySum = 0;
+            newFirmSum = 0;
+            //Row = 
+            //Year - Share of total - Total - Age breakdown
             var row = ages.map(function(age){
+                if(scope.state.data[year][age]){
+                    totalEmploySum = totalEmploySum + scope.state.data[year][age];                   
+                }
+                if(scope.state.data[year][age] && (age == 0 || age == 1 || age == 2)){
+                    newFirmSum = newFirmSum + scope.state.data[year][age];
+                }
+
                 return (<td>{scope.state.data[year][age] || ""}</td>);
             })
-
-            return(<tr><td>{year}</td>{row}</tr>)
+            return(<tr><td>{year}</td><td>{format(newFirmSum/totalEmploySum)}</td><td>{totalEmploySum}</td>{row}</tr>)
 
         })
 
@@ -98,9 +116,17 @@ var Bdstest = React.createClass({
                     <table className="table">
                         <thead>
                             <tr>
-                                <th>Year
-                                {ageHead}
+                                <th>
+                                Year
                                 </th>
+                                <th>
+                                Share of Employment in new Firms (two years of age or younger)
+                                </th>
+                                <th>
+                                Total Employment
+                                </th>
+                                {ageHead}
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -119,7 +145,6 @@ var Bdstest = React.createClass({
         var table = scope.renderTable();
         return (
                 <div>
-                    <h3>First Component</h3>
                     {table}
                 </div>
         );
