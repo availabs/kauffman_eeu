@@ -40,7 +40,7 @@ var Home = React.createClass({
         console.log("home.react", scope.state.msa);
         return (
             <div className="container main">
-                <h1>Simple Project</h1>
+                <h1>Employment by Age of Firm</h1>
 
                 <div className="row">
                     <p style={{fontWeight:'bold'}}>Current Selection: {scope.state.msa}, {msaIdToName[scope.state.msa]}</p> {msaDrop} 

@@ -13,6 +13,7 @@ var React = require("react"),
 
     //SECOND
     //population from ACS by MSA
+    //https://www.census.gov/popest/data/historical/
 
     //Eventually compare across all MSA
 
@@ -81,7 +82,7 @@ var Bdstest = React.createClass({
 
         var ageHead = ages.map(function(age){
             if(age == 0){
-                return(<th>Firm age: {age} year(s)</th>)               
+                return(<th>Firm age: <br/>{age} year(s)</th>)               
             }
             else{
                 return(<th>{age}</th>)
@@ -108,7 +109,7 @@ var Bdstest = React.createClass({
 
                 return (<td>{scope.state.data[year][age] || ""}</td>);
             })
-            return(<tr><td>{year}</td><td>{format(newFirmSum/totalEmploySum)}</td><td>{totalEmploySum}</td>{row}</tr>)
+            return(<tr><td>{year}</td><td className="col-md-1">{format(newFirmSum/totalEmploySum)}</td><td className="col-md-1">{totalEmploySum}</td>{row}</tr>)
 
         })
 
