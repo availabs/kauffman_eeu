@@ -101,11 +101,15 @@ var Bdstest = React.createClass({
             return (<span>Loading</span>);
         }
 
+        //Takes care of the data portion for the table
+        //Does it one year at a time
         var allRows = Object.keys(scope.state.data).map(function(year){
             totalEmploySum = 0;
             newFirmSum = 0;
-            //Row = 
-            //Year - Share of total - Total - Age breakdown
+
+
+            //Returns the raw employment data by age of firm, for that year
+            //Also keeps track of employment in "new" firms
             var row = ages.map(function(age){
                 if(scope.state.data[year][age]){
                     totalEmploySum = totalEmploySum + scope.state.data[year][age];                   
@@ -114,19 +118,30 @@ var Bdstest = React.createClass({
                     newFirmSum = newFirmSum + scope.state.data[year][age];
                 }
 
-                return (<td className="col-md-1">{commaFormat(scope.state.data[year][age]) || ""}</td>);
+                //Broke into proper if-else 
+                //In order to use number formatting and not display "NaN"
+                if(scope.state.data[year][age]){
+                    return (<td className="col-md-1">{commaFormat(scope.state.data[year][age])}</td>);                    
+                }
+                else{
+                    return (<td className="col-md-1"></td>);                     
+                }
+
             })
-            
-            
+
+            //Right now, only have population data by metro area
+            //For years 2000 thru 2009
             if(year >= 2000 && year <=2009){
                 totalPop = metroPop20002009[scope.props.msa][year];
             }
 
-
+            //Returns the row for that year
+            //Year - Share of employment in new firms - Total Metro Population - Raw Employment totaled in new firms - Raw employment by age of firm
             return(<tr><td>{year}</td><td className="col-md-1">{percFormat(newFirmSum/totalEmploySum)}</td><td>{totalPop}</td><td className="col-md-1">{commaFormat(totalEmploySum)}</td><td>{commaFormat(newFirmSum)}</td>{row}</tr>)
 
         })
 
+        //Full table
         var table = (
                     <table className="table table-hover">
                         <thead>
@@ -157,8 +172,6 @@ var Bdstest = React.createClass({
                     )
 
         return table;
-
-
     },
     render:function() {
         var scope = this;
