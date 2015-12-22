@@ -82,7 +82,7 @@ var Bdstest = React.createClass({
 
         var ageHead = ages.map(function(age){
             if(age == 0){
-                return(<th>Firm age: <br/>{age} year(s)</th>)               
+                return(<th>Employment in Firms age <br/>{age} year(s)</th>)               
             }
             else{
                 return(<th>{age}</th>)
@@ -107,9 +107,9 @@ var Bdstest = React.createClass({
                     newFirmSum = newFirmSum + scope.state.data[year][age];
                 }
 
-                return (<td>{scope.state.data[year][age] || ""}</td>);
+                return (<td className="col-md-1">{scope.state.data[year][age] || ""}</td>);
             })
-            return(<tr><td>{year}</td><td className="col-md-1">{format(newFirmSum/totalEmploySum)}</td><td className="col-md-1">{totalEmploySum}</td>{row}</tr>)
+            return(<tr><td>{year}</td><td>{newFirmSum}</td><td className="col-md-1">{format(newFirmSum/totalEmploySum)}</td><td className="col-md-1">{totalEmploySum}</td>{row}</tr>)
 
         })
 
@@ -121,7 +121,10 @@ var Bdstest = React.createClass({
                                 Year
                                 </th>
                                 <th>
-                                Share of Employment in new Firms (two years of age or younger)
+                                Employment in new firms (two years of age or younger)
+                                </th>
+                                <th>
+                                Share of Employment in new Firms 
                                 </th>
                                 <th>
                                 Total Employment
