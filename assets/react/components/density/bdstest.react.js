@@ -78,10 +78,14 @@ var Bdstest = React.createClass({
             ages = d3.range(12),
             totalEmploySum = 0,
             newFirmSum = 0,
-            totalPop = "n/a";
+            totalPop = "n/a",
+            maxShare = 0;
 
         var percFormat = d3.format(".3%"),
-            commaFormat = d3.format(",")
+            commaFormat = d3.format(",");
+
+        var defStyle = {},
+            bestStyle = {};
 
         var ageHead = ages.map(function(age){
             if(age == 0){
@@ -112,7 +116,8 @@ var Bdstest = React.createClass({
 
                 return (<td className="col-md-1">{commaFormat(scope.state.data[year][age]) || ""}</td>);
             })
-
+            
+            
             if(year >= 2000 && year <=2009){
                 totalPop = metroPop20002009[scope.props.msa][year];
             }
@@ -123,7 +128,7 @@ var Bdstest = React.createClass({
         })
 
         var table = (
-                    <table className="table">
+                    <table className="table table-hover">
                         <thead>
                             <tr>
                                 <th>
