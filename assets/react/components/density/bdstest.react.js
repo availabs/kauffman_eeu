@@ -46,18 +46,19 @@ var Bdstest = React.createClass({
             url = "http://bds.availabs.org",
             path = "/firm/age/msa";
 
-        d3.json(url+path+msaId,function(err,data){
-            //console.log(url+path+scope.props.msa);
+        d3.json("/getMsa/"+msaId,function(err,data){
+            console.log("newroute");
             console.log(data);
-            return cb(data);            
+            return cb(data);  
         })
+
     },
     processData:function(data){
         var scope = this,
             tableRow = "",
             yearAgeTable = {};
 
-
+        
         Object.keys(data).forEach(function(item){
             data[item][scope.props.msa].map(function(row){
 
