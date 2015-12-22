@@ -1,8 +1,7 @@
 "use strict"
 var React = require("react"),
     Bdstest = require("../components/density/bdstest.react"),
-    msaIdToName = require("../components/utils/msaIdToName.json"),
-    metroPop20002009 = require("../components/utils/metroAreaPop2000_2009.json");
+    msaIdToName = require("../components/utils/msaIdToName.json");
 
 var Home = React.createClass({
 
@@ -39,7 +38,6 @@ var Home = React.createClass({
         var msaDrop = scope.getMsa();
 
         console.log("home.react", scope.state.msa);
-        console.log("home.react",metroPop20002009);
         return (
             <div className="container main">
                 <h1>Employment by Age of Firm</h1>

@@ -1,6 +1,7 @@
 "use strict"
 var React = require("react"),
-    d3 = require("d3");
+    d3 = require("d3"),
+    metroPop20002009 = require("../utils/metroAreaPop2000_2009.json");
 
     //Share of employement in new and young firms
     //new firms = firms of age 0, 1, 2, 3
@@ -76,9 +77,11 @@ var Bdstest = React.createClass({
         var scope = this,
             ages = d3.range(12),
             totalEmploySum = 0,
-            newFirmSum = 0;
+            newFirmSum = 0,
+            totalPop = "n/a";
 
-        var format = d3.format(".3%");
+        var percFormat = d3.format(".3%"),
+            commaFormat = d3.format(",")
 
         var ageHead = ages.map(function(age){
             if(age == 0){
@@ -107,9 +110,15 @@ var Bdstest = React.createClass({
                     newFirmSum = newFirmSum + scope.state.data[year][age];
                 }
 
-                return (<td className="col-md-1">{scope.state.data[year][age] || ""}</td>);
+                return (<td className="col-md-1">{commaFormat(scope.state.data[year][age]) || ""}</td>);
             })
-            return(<tr><td>{year}</td><td>{newFirmSum}</td><td className="col-md-1">{format(newFirmSum/totalEmploySum)}</td><td className="col-md-1">{totalEmploySum}</td>{row}</tr>)
+
+            if(year >= 2000 && year <=2009){
+                totalPop = metroPop20002009[scope.props.msa][year];
+            }
+
+
+            return(<tr><td>{year}</td><td className="col-md-1">{percFormat(newFirmSum/totalEmploySum)}</td><td>{totalPop}</td><td className="col-md-1">{commaFormat(totalEmploySum)}</td><td>{commaFormat(newFirmSum)}</td>{row}</tr>)
 
         })
 
@@ -121,13 +130,16 @@ var Bdstest = React.createClass({
                                 Year
                                 </th>
                                 <th>
-                                Employment in new firms (two years of age or younger)
+                                Share of Employment in new Firms (two years of age or younger)
                                 </th>
                                 <th>
-                                Share of Employment in new Firms 
+                                Total Metro Population 
                                 </th>
                                 <th>
                                 Total Employment
+                                </th>
+                                <th>
+                                Employment in new firms 
                                 </th>
                                 {ageHead}
                                 
