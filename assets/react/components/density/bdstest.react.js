@@ -79,13 +79,13 @@ var Bdstest = React.createClass({
             totalEmploySum = 0,
             newFirmSum = 0,
             totalPop = "n/a",
-            maxShare = 0;
+            maxShare = 0,
+            maxShareYear = 1977;
 
         var percFormat = d3.format(".3%"),
             commaFormat = d3.format(",");
 
-        var defStyle = {},
-            bestStyle = {};
+        var curClass;
 
         var ageHead = ages.map(function(age){
             if(age == 0){
@@ -135,11 +135,28 @@ var Bdstest = React.createClass({
                 totalPop = metroPop20002009[scope.props.msa][year];
             }
 
+            if(newFirmSum/totalEmploySum > maxShare){
+                maxShare = newFirmSum/totalEmploySum;
+                maxShareYear = year;
+            }
             //Returns the row for that year
             //Year - Share of employment in new firms - Total Metro Population - Raw Employment totaled in new firms - Raw employment by age of firm
-            return(<tr><td>{year}</td><td className="col-md-1">{percFormat(newFirmSum/totalEmploySum)}</td><td>{totalPop}</td><td className="col-md-1">{commaFormat(totalEmploySum)}</td><td>{commaFormat(newFirmSum)}</td>{row}</tr>)
+            return(<tr className="" id={year}><td>{year}</td><td className="col-md-1">{percFormat(newFirmSum/totalEmploySum)}</td><td>{totalPop}</td><td className="col-md-1">{commaFormat(totalEmploySum)}</td><td>{commaFormat(newFirmSum)}</td>{row}</tr>)
 
         })
+
+    //Iterate through all of the rows to find the one that has the best new employment share
+    Object.keys(allRows).forEach(function(row){
+
+        //There is proably a better way to do this
+        //But if the id (which is the year) is the max year, we found it, set it to info
+        if(allRows[row]["props"]["id"] == maxShareYear){
+            var newRow = React.cloneElement(allRows[row],{className:"info"});
+            console.log("newRow",newRow);
+            allRows[row] = newRow;           
+        }
+
+    })
 
         //Full table
         var table = (
