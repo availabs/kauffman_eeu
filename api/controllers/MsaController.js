@@ -28,7 +28,7 @@ module.exports = {
 
 		console.log(options.hostname+options.path);
 
- 		fileCache.checkCache({id:msaId},function(data){
+ 		fileCache.checkCache({type:"msa",id:msaId},function(data){
  			if(data){
  				console.log('cache sucess');
  				console.time('send cache');
@@ -52,7 +52,7 @@ module.exports = {
 					res.json(parsedData);
 					console.timeEnd('send Data');
 					console.log('caching');
-					fileCache.addData({id:msaId},fullData);
+					fileCache.addData({type:"msa",id:msaId},fullData);
 				  });
 
  				});
@@ -71,8 +71,8 @@ var fileCache = {
 	cache : {},
 
 	checkCache : function(request,callback){
-		console.log('------------checkCache----'+request.id+'----------------')
-		var file = __dirname.substring(0,__dirname.length-15) + 'assets/cache/'+request.id+'.json';
+		console.log('------------checkCache----'+request.type+'---'+request.id+'----------------')
+		var file = __dirname.substring(0,__dirname.length-15) + 'assets/cache/'+request.type+'/'+request.id+'.json';
 		
 		//console.log(file,callback);
 		console.time('file Read')
@@ -91,7 +91,7 @@ var fileCache = {
 	},
 
 	addData : function(request,data){
-		var dir = __dirname.substring(0,__dirname.length-15) + 'assets/cache/';
+		var dir = __dirname.substring(0,__dirname.length-15) + 'assets/cache/'+request.type+'/';
 
 		ensureExists(dir, 0744, function(err) {
 		    if (err){
