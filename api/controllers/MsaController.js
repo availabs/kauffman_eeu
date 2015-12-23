@@ -52,7 +52,7 @@ module.exports = {
 					res.json(parsedData);
 					console.timeEnd('send Data');
 					console.log('caching');
-					fileCache.addData({type:"msa",id:msaId},fullData);
+					fileCache.addData({type:"msa",id:msaId},parsedData);
 				  });
 
  				});
@@ -99,7 +99,7 @@ var fileCache = {
 		    } // handle folder creation error
 		    var file = dir+request.id+'.json';
 		    
-		    fs.writeFile(file,data, function(err) {
+		    fs.writeFile(file,JSON.stringify(data), function(err) {
 			    if(err) {
 			        console.log('file write error',err);
 			    } else {

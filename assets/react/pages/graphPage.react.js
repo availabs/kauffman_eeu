@@ -1,4 +1,5 @@
-var React = require("react");
+var React = require("react"),
+    d3 = require("d3");
 
 
 var GraphPage = React.createClass({
