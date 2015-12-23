@@ -28,7 +28,7 @@ module.exports = {
 
 		console.log(options.hostname+options.path);
 
- 		fileCache.checkCache({msa:msaId},function(data){
+ 		fileCache.checkCache({id:msaId},function(data){
  			if(data){
  				console.log('cache sucess');
  				console.time('send cache');
@@ -37,7 +37,7 @@ module.exports = {
  			}
  			else{ 	
 
- 				var callback = function(response){
+				var req = http.request(options, function(response){
 				  response.setEncoding('utf8');
 
  				  response.on('data', function (chunk) {
@@ -46,20 +46,17 @@ module.exports = {
 				  });				
 
 				  response.on('end', function () {
-				    console.log(fullData);
+				    //console.log(fullData);
 		  			var parsedData = JSON.parse(fullData);
 					console.time('send Data');
 					res.json(parsedData);
 					console.timeEnd('send Data');
 					console.log('caching');
-					fileCache.addData({msa:msaId},fullData);
+					fileCache.addData({id:msaId},fullData);
 				  });
 
- 				}
+ 				});
 
-
-
-				var req = http.request(options, callback);
 				req.end();
 			}
 		});
@@ -74,8 +71,8 @@ var fileCache = {
 	cache : {},
 
 	checkCache : function(request,callback){
-		console.log('------------checkCache----'+request.msa+'----------------')
-		var file = __dirname.substring(0,__dirname.length-15) + 'assets/cache/'+request.msa+'.json';
+		console.log('------------checkCache----'+request.id+'----------------')
+		var file = __dirname.substring(0,__dirname.length-15) + 'assets/cache/'+request.id+'.json';
 		
 		//console.log(file,callback);
 		console.time('file Read')
@@ -100,7 +97,7 @@ var fileCache = {
 		    if (err){
 		    	console.log('ensure exists error')
 		    } // handle folder creation error
-		    var file = dir+request.msa+'.json';
+		    var file = dir+request.id+'.json';
 		    
 		    fs.writeFile(file,data, function(err) {
 			    if(err) {
