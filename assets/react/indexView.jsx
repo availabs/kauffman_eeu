@@ -9,11 +9,12 @@ var React = require("react"),
     DefaultRoute = Router.DefaultRoute,
 
     //SailsWebApi = require("./utils/api/SailsWebApi.react"),
-// Layout
+    // Layout
 	App = require("./pages/layout.react"),
-// Components
+    // Components
     //DemoOne =   require("./pages/DemoOne.react"),
-    Home =  require("./pages/Home.react");
+    Home =  require("./pages/Home.react"),
+    GraphPage = require("./pages/graphPage.react");
 
 
 
@@ -21,7 +22,8 @@ var React = require("react"),
        
 var routes = (
 	<Route name="app" path="/" handler={App}>
-        <Route name="home" path="/Home" handler={Home} />
+        <Route name="home" path="/" handler={Home} />
+        <Route name="graph" path="/graphs" handler={GraphPage} />
 		<DefaultRoute handler={Home} />
 	</Route>
 );

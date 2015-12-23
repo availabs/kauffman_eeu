@@ -10,11 +10,25 @@ var React = require("react"),
     //Make a dropdown for MSA
     //Make it in HOME
     //This changes the PROPS
-
-
     //SECOND
     //population from ACS by MSA
     //https://www.census.gov/popest/data/historical/
+
+
+
+    //Share of new firms per 1,000 people
+    //SUM OF 0,1,2 number of firms
+    //Firms field of data object
+    //Add to the table
+
+
+    //NEW PAGE
+    //Two graphs that you can switch between
+    //1 - Share of employmment in new firms OVER TIME
+        //One line per metro area -- line graph
+
+    //New firms per 1,000 people
+
 
     //Eventually compare across all MSA
 
@@ -58,7 +72,7 @@ var Bdstest = React.createClass({
             tableRow = "",
             yearAgeTable = {};
 
-        
+
         Object.keys(data).forEach(function(item){
             data[item][scope.props.msa].map(function(row){
 
