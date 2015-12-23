@@ -27,7 +27,7 @@ var React = require("react"),
     //1 - Share of employmment in new firms OVER TIME
         //One line per metro area -- line graph
 
-    //New firms per 1,000 people
+    //2 - New firms per 1,000 people
 
 
     //Eventually compare across all MSA
@@ -43,7 +43,7 @@ var Bdstest = React.createClass({
     componentWillReceiveProps:function(nextProps){
         var scope = this;
 
-        console.log("bdstest",nextProps);
+        console.log("bdstest nextprops",nextProps);
         scope.getData(nextProps.msa,function(data){
             scope.setState({data:scope.processData(data)});
         })
@@ -61,8 +61,6 @@ var Bdstest = React.createClass({
             path = "/firm/age/msa";
 
         d3.json("/getMsa/"+msaId,function(err,data){
-            console.log("newroute");
-            console.log(data);
             return cb(data);  
         })
 
@@ -83,8 +81,7 @@ var Bdstest = React.createClass({
                 yearAgeTable[row["year2"]][item] = row["emp"]; 
             })      
 
-        })
-      
+        })   
       return yearAgeTable;
 
     },
@@ -167,7 +164,6 @@ var Bdstest = React.createClass({
         //But if the id (which is the year) is the max year, we found it, set it to info
         if(allRows[row]["props"]["id"] == maxShareYear){
             var newRow = React.cloneElement(allRows[row],{className:"info"});
-            console.log("newRow",newRow);
             allRows[row] = newRow;           
         }
 

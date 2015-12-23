@@ -1,12 +1,20 @@
 var React = require("react"),
-    d3 = require("d3");
+	ShareNewEmploymentByTimeGraph = require("../components/graphs/ShareNewEmploymentByTimeGraph.react");
+	
 
 
 var GraphPage = React.createClass({
-	render() {
+
+	//Temporary to get single line working
+    getInitialState:function(){
+        return {"msa":"10580"};
+    },
+
+	render:function() {
+		var scope = this;
 		return (
 			<div>
-				New Page
+				<ShareNewEmploymentByTimeGraph msa={scope.state.msa}/>
 			</div>
 		);
 	}

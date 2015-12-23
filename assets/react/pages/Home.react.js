@@ -37,7 +37,6 @@ var Home = React.createClass({
         var scope = this;
         var msaDrop = scope.getMsa();
 
-        console.log("home.react", scope.state.msa);
         return (
             <div className="container main">
                 <h1>Employment by Age of Firm</h1>
