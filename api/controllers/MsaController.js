@@ -23,19 +23,41 @@ module.exports = {
     },
     allMsa:function(req,res){
     	//Before responding, need all the data
+
+    	//full data will be array of objects
 		var msaList = Object.keys(msaIdToName).map(function(key){
-			return key;
+				return {"key":key};				
 		});
 
-		var allMsaData = [];
+		//If data is empty, we need to call msaData with that key to get it
+		console.time('fullMsa sent')
+		msaList.forEach(function(metroArea){
+			//console.log(metroArea);
+			if(metroArea.data == null){
+				//console.log(metroArea.key);
+				msaData(metroArea.key,function(data){
+					metroArea.data = data;
+					sendFullData(metroArea.key);
+				})
+			}
+		})
+
+
+		function sendFullData(msaId){
+			//We know this is the last msaId;
+			if(msaId == '49740'){
+				res.send(msaList);
+				console.timeEnd('fullMsa sent');
+			}
+		}
 
 
 		//Want to iterate through the msaList
 		//Get the data for it
 		//When done, send it.
 
-		console.log(msaList);
-		res.send("nothing");
+		//console.log(msaList);
+		//res.send(msaList);
 
     }
     
