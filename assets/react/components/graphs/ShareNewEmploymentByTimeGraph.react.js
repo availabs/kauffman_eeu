@@ -13,7 +13,7 @@ var React = require("react"),
     $gray = "#666",
     $white = "#fff",
     $textColor = $gray,
-    COLOR_VALUES = [$green, $teal, $redDark,  $blue, $red, $orange,  ];
+    COLOR_VALUES = [$green, $teal, $redDark,  $blue, $red, $orange,  ],
 	nv = require("nvd3");
 
 
@@ -44,11 +44,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         })
     },
     getData:function(msaId,cb){
-        var scope = this,
-            url = "http://bds.availabs.org",
-            path = "/firm/age/msa";
+    	//Get data should get the raw data from every MSA
+    	//Should make a new route and function
+        var scope = this;
 
-        d3.json("/getMsa/"+msaId,function(err,data){
+        d3.json("/allMsa",function(err,data){
             return cb(data);  
         })
 
@@ -128,7 +128,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         allLines.push(curLine);
 
 
-        console.log("lineseries",allLines);
+        //console.log("lineseries",allLines);
         return allLines;
     },
 	renderGraph:function(){
@@ -144,7 +144,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         
         }
         else{
-	        console.log("render graph in new employment line graph",scope.state.data);
+	        //console.log("render graph in new employment line graph",scope.state.data);
 	        
 
 	        nv.addGraph(function(){
@@ -155,7 +155,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 			                .showYAxis(true)        //Show the y-axis
 			                .showXAxis(true)		//Show the x-axis     
 			                .isArea(false);
-			                
+
 			    chart.tooltip.enabled(true);
 
 

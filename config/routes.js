@@ -24,6 +24,8 @@ module.exports.routes = {
 
   '/' : 'MsaController.index',
 
-  '/getMsa/:msaId' : 'MsaController.getMsa'
+  '/getMsa/:msaId' : 'MsaController.getMsa',
+
+  '/allMsa' : 'MsaController.allMsa'
 
   };

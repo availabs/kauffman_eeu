@@ -1,6 +1,7 @@
 var	fs = require('fs'),
 	d3 = require('d3'),
-	http = require('http');
+	http = require('http'),
+    msaIdToName = require("../../assets/react/components/utils/msaIdToName.json");
 
 module.exports = {
     index: function (req, res) {
@@ -13,8 +14,40 @@ module.exports = {
 
     },
     getMsa:function(req,res) {
- 		var msaId = req.param('msaId'),
-            url = "bds.availabs.org",
+ 		var msaId = req.param('msaId');
+
+
+		msaData(msaId,function(data){
+			res.json(data);
+		})
+    },
+    allMsa:function(req,res){
+    	//Before responding, need all the data
+		var msaList = Object.keys(msaIdToName).map(function(key){
+			return key;
+		});
+
+		var allMsaData = [];
+
+
+		//Want to iterate through the msaList
+		//Get the data for it
+		//When done, send it.
+
+		console.log(msaList);
+		res.send("nothing");
+
+    }
+    
+};
+
+function msaData(msaId,cb){
+	if(!msaId){
+		return {status:"error",message:"msaId required"};
+	}
+
+	//Get the data for the one msaId
+        var url = "bds.availabs.org",
             path = "/firm/age/msa" + msaId,
             fullData = "";
 
@@ -32,7 +65,7 @@ module.exports = {
  			if(data){
  				console.log('cache sucess');
  				console.time('send cache');
- 				res.json(data)
+				cb(data);
  				console.timeEnd('send cache');
  			}
  			else{ 	
@@ -48,11 +81,8 @@ module.exports = {
 				  response.on('end', function () {
 				    //console.log(fullData);
 		  			var parsedData = JSON.parse(fullData);
-					console.time('send Data');
-					res.json(parsedData);
-					console.timeEnd('send Data');
-					console.log('caching');
 					fileCache.addData({type:"msa",id:msaId},parsedData);
+					cb(parsedData);
 				  });
 
  				});
@@ -61,10 +91,7 @@ module.exports = {
 			}
 		});
 
-
-
-    }
-};
+}
 
 var fileCache = {
 	
