@@ -31,7 +31,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
     componentWillReceiveProps:function(nextProps){
         var scope = this;
 
-        console.log("ShareNewEmploymentByTimeGraph",nextProps);
+        //console.log("ShareNewEmploymentByTimeGraph",nextProps);
         scope.getData(nextProps.msa,function(data){
             scope.setState({data:scope.processData(data),loading:false});
         })
@@ -56,9 +56,9 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
     processData:function(data){
         var scope = this,
             yearAgeTable = {},
-            ages = d3.range(12),
             totalEmploySum = 0,
-            newFirmSum = 0;
+            newFirmSum = 0,
+            graphData=[];
 
 
         Object.keys(data).forEach(function(item){
@@ -83,31 +83,53 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         //Want to return 1 object for each year, where x=year and y=percent employed in new firms
 
 
-        var graphData = Object.keys(yearAgeTable).map(function(year){
-            totalEmploySum = 0;
-            newFirmSum = 0;
+
+        console.log("Line Graph First Processing Data",yearAgeTable);
+
+
+
+        return yearAgeTable;
+    },
+    chartData:function(data){
+    	var scope = this,
+            ages = d3.range(12),
+            allLines = [],
+        	curLine = {"values":[],"key":scope.props.msa,"area":false},
+        	valueArray=[];
+
+        //Put all coordinates into this array
+        valueArray = Object.keys(data).map(function(year){
+        	var curCoord={"x":+year,"y":0},
+	            totalEmploySum = 0,
+	            newFirmSum = 0,
+	            share = 0;
 
 
             //Creates Total Employment number for that year
             //Creates Employment in new firms for that year
-            var row = ages.map(function(age){
-                if(yearAgeTable[year][age]){
-                    totalEmploySum = totalEmploySum + yearAgeTable[year][age];                   
+            ages.forEach(function(age){
+                if(data[year][age]){
+                    totalEmploySum = totalEmploySum + data[year][age];                   
                 }
-                if(yearAgeTable[year][age] && (age == 0 || age == 1 || age == 2)){
-                    newFirmSum = newFirmSum + yearAgeTable[year][age];
+                if(data[year][age] && (age == 0 || age == 1 || age == 2)){
+                    newFirmSum = newFirmSum + data[year][age];
                 }
             })
+            share = newFirmSum/totalEmploySum;
 
+            curCoord["y"] = share;
             //Want to return: x:year y:percent
-            return{x:year,y:newFirmSum/totalEmploySum}
+            return curCoord;
         })
 
-        console.log("GRAPH DATA",graphData);
+        //Put coordinates into the current line we are computing
+        curLine["values"] = valueArray;
+        //Push current line into array
+        allLines.push(curLine);
 
-        var lineSeries = [{values:graphData,key:scope.props.msa}];
 
-        return lineSeries;
+        console.log("lineseries",allLines);
+        return allLines;
     },
 	renderGraph:function(){
     	//1 - Share of employmment in new firms OVER TIME
@@ -120,22 +142,23 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             setTimeout(function(){ scope.renderGraph() }, 2000);
             
         
-        }else{
+        }
+        else{
 	        console.log("render graph in new employment line graph",scope.state.data);
 	        
 
 	        nv.addGraph(function(){
-			  var chart = nv.models.lineChart()
-			                .x(function(d) { return d.x })    //Specify the data accessors.
-                			.y(function(d) { return d.y })
+				var chart = nv.models.lineChart()
 			                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-			                .color(COLOR_VALUES)
-			                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
+			                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guidelin	                
 			                .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
 			                .showYAxis(true)        //Show the y-axis
-			                .showXAxis(true);        //Show the x-axis
-			
-	            
+			                .showXAxis(true)		//Show the x-axis     
+			                .isArea(false);
+			                
+			    chart.tooltip.enabled(true);
+
+
 				chart.xAxis     //Chart x-axis settings
 				      .axisLabel('Year')
 				      .tickFormat(d3.format(''))
@@ -148,7 +171,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 				      .axisLabelDistance(40)
 				      .tickPadding(25);
 
-
 	            //Data is an array of series objects
 	            //[
 	            //	{values:[{x:VAL,y:VAL},{x:VAL,y:VAL},key:"msaId",OPTIONS...]},
@@ -160,9 +182,10 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 	            //x coord = year
 	            //y coord = share of employment in new firms
 
-
+	            var finalData = scope.chartData(scope.state.data)
+	            console.log("FINAL DATA",finalData);
 	            d3.select('#ShareNewEmploymentByTimeGraph svg')
-	                .datum(scope.state.data)
+	                .datum(finalData)
 	                .call(chart);  
 	        
 	            nv.utils.windowResize(chart.update);
@@ -189,13 +212,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
           height: '100%',
           width: '100%'
         }		
-     //    var svg = <svg style={svgStyle}/>
 
-        
 
 		return (
 			<div>
-                <div id="ShareNewEmploymentByTimeGraph" className="body chart">
+                <div style={svgStyle} id="ShareNewEmploymentByTimeGraph">
                 	<svg style={svgStyle}/>
                 </div>
 			</div>
