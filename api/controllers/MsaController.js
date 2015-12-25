@@ -45,7 +45,7 @@ module.exports = {
  			if(data){
  				console.log('cache sucess');
  				console.time('send cache');
-				res.send(data);
+				res.json(data);
  				console.timeEnd('send cache');
  			}
  			else{
@@ -53,7 +53,7 @@ module.exports = {
 	 			console.log('cache miss');
  				aggregateMsa(function(data){
 	 				console.time('send data');
-					res.send(data);
+					res.json(data);
 	 				console.timeEnd('send data');	 					
  				})
  			}
