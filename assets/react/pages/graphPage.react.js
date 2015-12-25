@@ -5,16 +5,11 @@ var React = require("react"),
 
 var GraphPage = React.createClass({
 
-	//Temporary to get single line working
-    getInitialState:function(){
-        return {"msa":"10580"};
-    },
-
 	render:function() {
 		var scope = this;
 		return (
 			<div>
-				<ShareNewEmploymentByTimeGraph msa={scope.state.msa}/>
+				<ShareNewEmploymentByTimeGraph />
 			</div>
 		);
 	}

@@ -16,7 +16,6 @@ module.exports = {
     getMsa:function(req,res) {
  		var msaId = req.param('msaId');
 
-
  		//data will be a json object
  		//with firm and employment data for each firm age/year combintion
 	   	fileCache.checkCache({type:"msa",id:msaId},function(data){
@@ -37,9 +36,6 @@ module.exports = {
  			}
 
 	   	})
-
-
-
     },
     allMsa:function(req,res){
 
@@ -53,7 +49,7 @@ module.exports = {
  				console.timeEnd('send cache');
  			}
  			else{
- 				//If not there, call function to make it
+ 				//If not there, call function to get it 
 	 			console.log('cache miss');
  				aggregateMsa(function(data){
 	 				console.time('send data');
@@ -72,85 +68,78 @@ function msaData(msaId,cb){
 	}
 
 	//Get the data for the one msaId
-        var url = "bds.availabs.org",
-            path = "/firm/age/msa" + msaId,
-            fullData = "";
+    var url = "bds.availabs.org",
+        path = "/firm/age/msa" + msaId,
+        fullData = "";
 
 
-		var options = {
-		  hostname: url,
-		  path: path,
-		  port:80,
-		  method:"GET"
-		};
+	var options = {
+	  hostname: url,
+	  path: path,
+	  port:80,
+	  method:"GET"
+	};
 
-		console.log(options.hostname+options.path);
+	console.log(options.hostname+options.path);
 
- 		fileCache.checkCache({type:"msa",id:msaId},function(data){
- 			if(data){
- 				console.log('cache sucess');
- 				console.time('send cache');
-				cb(data);
- 				console.timeEnd('send cache');
- 			}
- 			else{ 	
- 				console.log('cache miss');
-				var req = http.request(options, function(response){
-				  response.setEncoding('utf8');
+	
+	var req = http.request(options, function(response){
+		response.setEncoding('utf8');
 
- 				  response.on('data', function (chunk) {
-				    fullData = fullData + chunk;
-				  });				
+		response.on('data', function (chunk) {
+	    	fullData = fullData + chunk;
+		});				
 
-				  response.on('end', function () {
-		  			var parsedData = JSON.parse(fullData);
-		  			console.log('caching');
-					fileCache.addData({type:"msa",id:msaId},parsedData);
-					cb(parsedData);
-				  });
-
- 				});
-
-				req.end();
-			}
+		response.on('end', function () {
+			var parsedData = JSON.parse(fullData);
+			console.log('caching');
+			fileCache.addData({type:"msa",id:msaId},parsedData);
+			cb(parsedData);
 		});
+	});
 
+	req.end();
 }
 
 function aggregateMsa(cb){
-	//We know Aggregate doesnt exist
-	//Make it, cache it, send to caller
 
-	//Get the list of MSA Ids
-	//Also constructs an array of objects, where key = msaId, and data = data from http request
-	var msaList = Object.keys(msaIdToName).map(function(key){
-		return {"key":key};				
+
+
+	//Get the data for all msa
+    var url = "bds.availabs.org",
+        path = "/firm/age/msa",
+        fullData = "";
+
+
+	var options = {
+	  hostname: url,
+	  path: path,
+	  port:80,
+	  method:"GET"
+	};
+
+	console.log(options.hostname+options.path);
+
+
+	var req = http.request(options, function(response){
+		response.setEncoding('utf8');
+
+		response.on('data', function (chunk) {
+	    	fullData = fullData + chunk;
+		});				
+
+		response.on('end', function () {
+  			var parsedData = JSON.parse(fullData);
+  			console.log('caching');
+			fileCache.addData({type:"aggregate",id:"all"},parsedData);
+			cb(parsedData);
+		});
+
 	});
 
-
-	//Iterate through the list of MSA Ids
-	//Call msaData to read from cache, if there. If not, it will make request
-	msaList.forEach(function(metroArea){
-		//If data is empty, we need to call msaData with that key to get it
-		if(metroArea.data == null){
-			msaData(metroArea.key,function(data){
-
-				//Assign new data to data field with the same key
-				metroArea.data = data;
-
-				//We know this is the last MSA ID, if we're here, we have all the data			
-				if(metroArea.key == '49740'){
-
-					//Give back to original function
-					cb(msaList);		
-
-					//Cache the aggregate file
-					console.log('caching aggregate');
-					fileCache.addData({type:"aggregate",id:"all"},msaList);
-				}
-			})
-		}
-	})		
+	req.end();
+			
+		
 }
 
 var fileCache = {

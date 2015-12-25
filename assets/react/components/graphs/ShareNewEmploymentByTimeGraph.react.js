@@ -25,25 +25,14 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             loading:true
         }
     },
-    getDefaultProps:function(){
-        return {"msa":"10580"};
-    },
-    componentWillReceiveProps:function(nextProps){
-        var scope = this;
-
-        //console.log("ShareNewEmploymentByTimeGraph",nextProps);
-        scope.getData(nextProps.msa,function(data){
-            scope.setState({data:scope.processData(data),loading:false});
-        })
-    },
     componentDidMount:function(){
         var scope = this;
 
-        scope.getData(scope.props.msa,function(data){
+        scope.getData(function(data){
             scope.setState({data:scope.processData(data),loading:false});
         })
     },
-    getData:function(msaId,cb){
+    getData:function(cb){
     	//Get data should get the raw data from every MSA
     	//Should make a new route and function
         var scope = this;
@@ -54,24 +43,44 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
     },
     processData:function(data){
-        var scope = this,
-            yearAgeTable = {},
-            totalEmploySum = 0,
-            newFirmSum = 0,
-            graphData=[];
+        var scope = this;
+        console.log("unproccessed",data);
 
 
-        Object.keys(data).forEach(function(item){
-            data[item][scope.props.msa].map(function(row){
+        var metroAreaData = [];
 
-                if( yearAgeTable[row["year2"]] === undefined ){
-                    yearAgeTable[row["year2"]] = {};                        
-                }
-                //Emp = jobs for (firms of this age) in this year
-                yearAgeTable[row["year2"]][item] = row["emp"]; 
-            })      
+        //For 1 msa
+        //Want 1 object per year, 
 
-        });
+        //This iterates through every metro area
+        //each metro area is an object, with key = msaId, and data = original data format
+        //Want to return the same as before, but 
+        metroAreaData = data.map(function(metroArea){
+        	var singleMetroArea = {};
+        	singleMetroArea["key"] = metroArea["key"];
+
+	        //This handles what to do once we are iterating through each metro area
+	        //This gets assigned to the "data" field of singleMetroArea
+
+	        //This iterates through each age
+	        //Each age has an entry for each year, if there exists firms of that age for that year
+	        Object.keys(metroArea["data"]).forEach(function(age){
+	            data[age][metroArea["key"]].map(function(row){
+
+	                if( yearAgeTable[row["year2"]] === undefined ){
+	                    yearAgeTable[row["year2"]] = {};                        
+	                }
+	                //Emp = jobs for (firms of this age) in this year
+	                yearAgeTable[row["year2"]][age] = row["emp"]; 
+	            })      
+
+	        });
+
+
+        })
+
+
+
 
         //yearAgeTable is data before it is processed even further for bdsTest
 
@@ -84,11 +93,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
 
 
-        console.log("Line Graph First Processing Data",yearAgeTable);
+        console.log("Line Graph First Processing Data",metroAreaData);
 
 
 
-        return yearAgeTable;
+        return metroAreaData;
     },
     chartData:function(data){
     	var scope = this,
