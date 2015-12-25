@@ -17,48 +17,51 @@ module.exports = {
  		var msaId = req.param('msaId');
 
 
-		msaData(msaId,function(data){
-			res.json(data);
-		})
+ 		//data will be a json object
+ 		//with firm and employment data for each firm age/year combintion
+	   	fileCache.checkCache({type:"msa",id:msaId},function(data){
+ 			if(data){
+ 				console.log('cache sucess');
+ 				console.time('send cache');
+				res.json(data);
+ 				console.timeEnd('send cache');
+ 			}
+ 			else{
+ 				//If its not there, call function that will get it for you
+	 			console.log('cache miss');
+				msaData(msaId,function(data){
+	 				console.time('send data');
+					res.json(data);
+	 				console.timeEnd('send data');
+				})
+ 			}
+
+	   	})
+
+
+
     },
     allMsa:function(req,res){
-    	//Before responding, need all the data
 
-    	//full data will be array of objects
-		var msaList = Object.keys(msaIdToName).map(function(key){
-				return {"key":key};				
-		});
-
-		//If data is empty, we need to call msaData with that key to get it
-		console.time('fullMsa sent')
-		msaList.forEach(function(metroArea){
-			//console.log(metroArea);
-			if(metroArea.data == null){
-				//console.log(metroArea.key);
-				msaData(metroArea.key,function(data){
-					metroArea.data = data;
-					sendFullData(metroArea.key);
-				})
-			}
-		})
-
-
-		function sendFullData(msaId){
-			//We know this is the last msaId;
-			if(msaId == '49740'){
-				res.send(msaList);
-				console.timeEnd('fullMsa sent');
-			}
-		}
-
-
-		//Want to iterate through the msaList
-		//Get the data for it
-		//When done, send it.
-
-		//console.log(msaList);
-		//res.send(msaList);
-
+    	//full data will be array of objects, where key = msaId, and data = data from http request
+	    //Check for aggregate file
+	   	fileCache.checkCache({type:"aggregate",id:"all"},function(data){
+ 			if(data){
+ 				console.log('cache sucess');
+ 				console.time('send cache');
+				res.send(data);
+ 				console.timeEnd('send cache');
+ 			}
+ 			else{
+ 				//If not there, call function to make it
+	 			console.log('cache miss');
+ 				aggregateMsa(function(data){
+	 				console.time('send data');
+					res.send(data);
+	 				console.timeEnd('send data');	 					
+ 				})
+ 			}
+	   	})
     }
     
 };
@@ -91,18 +94,17 @@ function msaData(msaId,cb){
  				console.timeEnd('send cache');
  			}
  			else{ 	
-
+ 				console.log('cache miss');
 				var req = http.request(options, function(response){
 				  response.setEncoding('utf8');
 
  				  response.on('data', function (chunk) {
-				    //console.log('body:\n' + chunk);
 				    fullData = fullData + chunk;
 				  });				
 
 				  response.on('end', function () {
-				    //console.log(fullData);
 		  			var parsedData = JSON.parse(fullData);
+		  			console.log('caching');
 					fileCache.addData({type:"msa",id:msaId},parsedData);
 					cb(parsedData);
 				  });
@@ -113,6 +115,42 @@ function msaData(msaId,cb){
 			}
 		});
 
+}
+
+function aggregateMsa(cb){
+	//We know Aggregate doesnt exist
+	//Make it, cache it, send to caller
+
+	//Get the list of MSA Ids
+	//Also constructs an array of objects, where key = msaId, and data = data from http request
+	var msaList = Object.keys(msaIdToName).map(function(key){
+		return {"key":key};				
+	});
+
+
+	//Iterate through the list of MSA Ids
+	//Call msaData to read from cache, if there. If not, it will make request
+	msaList.forEach(function(metroArea){
+		//If data is empty, we need to call msaData with that key to get it
+		if(metroArea.data == null){
+			msaData(metroArea.key,function(data){
+
+				//Assign new data to data field with the same key
+				metroArea.data = data;
+
+				//We know this is the last MSA ID, if we're here, we have all the data			
+				if(metroArea.key == '49740'){
+
+					//Give back to original function
+					cb(msaList);		
+
+					//Cache the aggregate file
+					console.log('caching aggregate');
+					fileCache.addData({type:"aggregate",id:"all"},msaList);
+				}
+			})
+		}
+	})		
 }
 
 var fileCache = {
