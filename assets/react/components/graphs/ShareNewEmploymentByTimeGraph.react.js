@@ -217,7 +217,9 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         }		
 
         var divStyle = {
-        	position:'relative'
+        	position:'relative',
+        	height:'600px',
+        	width:'1300px'
         }
 
 
