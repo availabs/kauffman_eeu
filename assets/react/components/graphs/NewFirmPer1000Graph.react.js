@@ -1,19 +1,6 @@
 var React = require("react"),
 	d3 = require("d3"),
-    $lime = "#8CBF26",
-    $red = "#e5603b",
-    $redDark = "#d04f4f",
-    $blue = "#6a8da7",
-    $green = "#56bc76",
-    $orange = "#eac85e",
-    $pink = "#E671B8",
-    $purple = "#A700AE",
-    $brown = "#A05000",
-    $teal = "#4ab0ce",
-    $gray = "#666",
-    $white = "#fff",
-    $textColor = $gray,
-    COLOR_VALUES = [$green, $teal, $redDark,  $blue, $red, $orange,  ],
+    metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
 	nv = require("nvd3");
 
 
@@ -55,6 +42,7 @@ var NewFirmPer1000Graph = React.createClass({
         //Each object contains one object per year. They contain data
 
         //End goal of processing is to create the following object FOR EVERY METRO AREA:
+        //firms/(pop/1000)
         //msaId:{1977:{age0:numEmployed,age1:numEmployed...},1978:{age0:numEmployed,age1:numEmployed...}}
 
         //big object would look like:
@@ -70,44 +58,67 @@ var NewFirmPer1000Graph = React.createClass({
 
    				//Iterating through every year for a given firm age in a metro area
    				data[firmAge][metroAreaId].forEach(function(rowData){
-   					if(!fullMetroAreaData[metroAreaId][rowData["year2"]]){
-   						fullMetroAreaData[metroAreaId][rowData["year2"]] = {};
-   					}
-					fullMetroAreaData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
+                    //Only want years 2000 thru 2009, since thats all we have pop data for right now
+                    if(rowData["year2"]>= 2000 && rowData["year2"]<= 2009){
+                        if(!fullMetroAreaData[metroAreaId][rowData["year2"]]){
+                            fullMetroAreaData[metroAreaId][rowData["year2"]] = {};
+                        }
+                        fullMetroAreaData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"];                       
+                    }
+
    				})
         	})
 
         })
-        //console.log("after 1st process",fullMetroAreaData);
+        //console.log("new firms, 1st process",fullMetroAreaData);
 
         //Now arranged by MSAID -> Year -> Firm Age
 
         //Want an array with one object PER metro area
-        //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
+        //Object will look like: {values:[{x:2000,y:val}, {x:2001,y:val}....],key=msa,}
 
         var chartData = Object.keys(fullMetroAreaData).map(function(msaId){
 
         	//Iterating through every year within a metro area
         	var valueArray = Object.keys(fullMetroAreaData[msaId]).map(function(year){
 	        	var curCoord={"x":+year,"y":0},
-		            totalEmploySum = 0,
 		            newFirmSum = 0,
-		            share = 0;
+                    newPer1000 = 0,
+                    pop = 0,
+		            pop1000 = 0;
 
 
-	            //Creates Total Employment number for that year
-	            //Creates Employment in new firms for that year
+	            //Creates number of new firms for that year
 	            ages.forEach(function(age){
-	                if(fullMetroAreaData[msaId][year][age]){
-	                    totalEmploySum = totalEmploySum + fullMetroAreaData[msaId][year][age];                   
-	                }
+
 	                if(fullMetroAreaData[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
 	                    newFirmSum = newFirmSum + fullMetroAreaData[msaId][year][age];
 	                }
 	            })
-	            share = newFirmSum/totalEmploySum;
+                //Instead of share, want newFirmSum/(pop/1000)
 
-	            curCoord["y"] = share;
+                if(metroPop20002009[msaId] && metroPop20002009[msaId][year]){
+                    pop = metroPop20002009[msaId][year].replace(/,/g , "");
+                    console.log(pop);
+                    pop = +pop;
+                    pop1000 = (pop/1000);                   
+                }
+                else{
+                    pop1000=0;
+                }
+
+                if(pop1000 == 0){
+                    newPer1000 = 0;
+                }
+                else{
+                    newPer1000 = newFirmSum/pop1000;
+                }
+
+                if(newPer1000 > 10000){
+                    newPer1000 = 0;
+                }
+                //console.log(newPer1000);
+	            curCoord["y"] = newPer1000;
 	            //Want to return: x:year y:percent
 	            return curCoord;
         	})
@@ -130,7 +141,7 @@ var NewFirmPer1000Graph = React.createClass({
 
 
 
-        //console.log("Done Processing",chartData);
+        console.log("Done Processing new firms",chartData);
 
 
 
@@ -171,8 +182,7 @@ var NewFirmPer1000Graph = React.createClass({
 				      .tickPadding(25);
 
 				chart.yAxis     //Chart y-axis settings
-				      .axisLabel('Share (percent) of employment in new firms')
-				      .tickFormat(d3.format('.3%'))
+				      .axisLabel('New Firms per 1000 people')
 				      .axisLabelDistance(40)
 				      .tickPadding(25);
 

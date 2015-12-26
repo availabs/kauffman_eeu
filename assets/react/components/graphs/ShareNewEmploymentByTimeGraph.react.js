@@ -1,19 +1,5 @@
 var React = require("react"),
 	d3 = require("d3"),
-    $lime = "#8CBF26",
-    $red = "#e5603b",
-    $redDark = "#d04f4f",
-    $blue = "#6a8da7",
-    $green = "#56bc76",
-    $orange = "#eac85e",
-    $pink = "#E671B8",
-    $purple = "#A700AE",
-    $brown = "#A05000",
-    $teal = "#4ab0ce",
-    $gray = "#666",
-    $white = "#fff",
-    $textColor = $gray,
-    COLOR_VALUES = [$green, $teal, $redDark,  $blue, $red, $orange,  ],
 	nv = require("nvd3");
 
 

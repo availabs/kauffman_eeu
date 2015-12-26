@@ -6,7 +6,7 @@ var React = require("react"),
 
 var GraphPage = React.createClass({
 	getInitialState:function(){
-		return({graph:"share"});
+		return({graph:"new"});
 	},
 	toggleGraph:function(){
 		var scope = this;
@@ -31,7 +31,10 @@ var GraphPage = React.createClass({
 	    	graph=(<ShareNewEmploymentByTimeGraph />);
 	    }
 	    else{
-	    	graph=(<h3>New Firms per 1000 people</h3>);
+	    	graph=(<div>
+	    		<h3>New Firms per 1000 people</h3>
+	    		<NewFirmPer1000Graph />
+	    		</div>);
 	    }
 		
 		return (
