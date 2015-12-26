@@ -17,7 +17,7 @@ var React = require("react"),
 	nv = require("nvd3");
 
 
-var ShareNewEmploymentByTimeGraph = React.createClass({
+var NewFirmPer1000Graph = React.createClass({
     getInitialState:function(){
         return {
             curChart:"line",
@@ -187,7 +187,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 	            //x coord = year
 	            //y coord = share of employment in new firms
 
-	            d3.select('#ShareNewEmploymentByTimeGraph svg')
+	            d3.select('#NewFirmPer1000Graph svg')
 	                .datum(scope.state.data)
 	                .call(chart);  
 	        
@@ -203,41 +203,35 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 	},
     componentDidUpdate:function(){
     	var scope = this;
-            //console.log('RYAN RYAN',scope.state.data, d3.select('#ShareNewEmploymentByTimeGraph svg'))
+        if(!scope.state.loading){
+            //console.log('RYAN RYAN',scope.state.data, d3.select('#NewFirmPer1000Graph svg'))
             scope.renderGraph();
-        
-    },
-    test:function(){
-    	console.log("TESTING");
-    	this.renderGraph();
+        }
     },
 	render:function() {
 		var scope = this;
 
     	var svgStyle = {
           height: '100%',
-          width: '100%',
-          display:'block'
+          width: '100%'
         }		
 
         var divStyle = {
         	position:'relative',
-        	height:'600px',
+        	height:'600px',NewFirmPer1000Graph
         	width:'1300px'
         }
 
 
 		return (
 			<div>
-			    <button onClick={scope.test()}>RELOAD</button>
-                <div style={divStyle} id="ShareNewEmploymentByTimeGraph">
+                <div style={divStyle} id="NewFirmPer1000Graph">
                 	<svg style={svgStyle}/>
                 </div>
-
 			</div>
 		);
 	}
 	
 });
 
-module.exports = ShareNewEmploymentByTimeGraph;
+module.exports = NewFirmPer1000Graph;
