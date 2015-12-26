@@ -218,7 +218,7 @@ var NewFirmPer1000Graph = React.createClass({
 
         var divStyle = {
         	position:'relative',
-        	height:'600px',NewFirmPer1000Graph
+        	height:'600px',
         	width:'1300px'
         }
 

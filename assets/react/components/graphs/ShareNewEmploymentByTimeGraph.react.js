@@ -155,7 +155,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 	        nv.addGraph(function(){
 				var chart = nv.models.lineChart()
 			                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-			                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guidelin	                
+			                .useInteractiveGuideline(false)  //We want nice looking tooltips and a guidelin	                
 			                .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
 			                .showYAxis(true)        //Show the y-axis
 			                .showXAxis(true)		//Show the x-axis     
@@ -216,8 +216,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
     	var svgStyle = {
           height: '100%',
-          width: '100%',
-          display:'block'
+          width: '100%'
         }		
 
         var divStyle = {
@@ -229,7 +228,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
 		return (
 			<div>
-			    <button onClick={scope.test()}>RELOAD</button>
                 <div style={divStyle} id="ShareNewEmploymentByTimeGraph">
                 	<svg style={svgStyle}/>
                 </div>
