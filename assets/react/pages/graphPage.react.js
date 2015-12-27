@@ -6,7 +6,7 @@ var React = require("react"),
 
 var GraphPage = React.createClass({
 	getInitialState:function(){
-		return({graph:"new"});
+		return({graph:"share"});
 	},
 	toggleGraph:function(){
 		var scope = this;
