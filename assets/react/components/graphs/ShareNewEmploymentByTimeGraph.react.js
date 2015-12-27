@@ -136,7 +136,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         else{
 
             var data = scope.state.data;
-            console.log(data);
             var margin = {top: 20, right: 80, bottom: 30, left: 50},
                 width = 960 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
@@ -161,6 +160,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 .interpolate("basis")
                 .x(function(d) { return x(d.x); })
                 .y(function(d) { return y(d.y); });
+  
 
             var svg = d3.select("body").append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -173,18 +173,18 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             var cities = Object.keys(data).map(function(metroArea){
 
                 return {
-                    name:data[metroArea].key,
+                    msaId:data[metroArea].key,
                     values:data[metroArea].values
                 }
             });
 
 
-            console.log("cities",cities);
+
             x.domain([
                 d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
                 d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.x }); })
             ]);
-            console.log(x.domain());
+
             y.domain([
                 d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.y; }); }),
                 d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.y; }); })
@@ -193,7 +193,12 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             svg.append("g")
               .attr("class", "x axis")
               .attr("transform", "translate(0," + height + ")")
-              .call(xAxis);
+              .call(xAxis)
+            .append("text")
+              .style("text-anchor", "end")
+              .attr("dx","60em")
+              .attr("dy","2em")
+              .text("Year");
 
             svg.append("g")
               .attr("class", "y axis")
@@ -203,7 +208,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
               .attr("y", 6)
               .attr("dy", ".71em")
               .style("text-anchor", "end")
-              .text("Temperature (ºF)");
+              .text("Share of Employment in New Firms");
 
             var city = svg.selectAll(".city")
               .data(cities)
@@ -213,21 +218,16 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             city.append("path")
               .attr("class", "line")
               .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) { return color(d.name); })
+              .style("stroke", function(d) { return color(d.msaId); })
               .style("fill","none");
 
             city.append("text")
-              .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+              .datum(function(d) { return {msaId: d.msaId, value: d.values[d.values.length - 1]}; })
               .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.y) + ")"; })
               .attr("x", 3)
               .attr("dy", ".35em")
               .text(function(d) { return d.x; });
             
-
-
-
-
-
     	}
 
 	},
@@ -249,16 +249,10 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
           width: '100%'
         }		
 
-        var divStyle = {
-        	position:'relative',
-        	height:'600px',
-        	width:'1300px'
-        }
-
 
 		return (
 			<div>
-                <div style={divStyle} id="ShareNewEmploymentByTimeGraph">
+                <div id="ShareNewEmploymentByTimeGraph">
                 	<svg style={svgStyle}/>
                 </div>
 
