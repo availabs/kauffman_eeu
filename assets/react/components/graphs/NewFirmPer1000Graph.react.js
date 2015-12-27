@@ -99,7 +99,6 @@ var NewFirmPer1000Graph = React.createClass({
 
                 if(metroPop20002009[msaId] && metroPop20002009[msaId][year]){
                     pop = metroPop20002009[msaId][year].replace(/,/g , "");
-                    console.log(pop);
                     pop = +pop;
                     pop1000 = (pop/1000);                   
                 }
@@ -163,47 +162,101 @@ var NewFirmPer1000Graph = React.createClass({
 	        //console.log("render graph in new employment line graph",scope.state.data);
 	        
 
-	        nv.addGraph(function(){
-				var chart = nv.models.lineChart()
-			                .margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-			                .useInteractiveGuideline(true)  //We want nice looking tooltips and a guidelin	                
-			                .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
-			                .showYAxis(true)        //Show the y-axis
-			                .showXAxis(true)		//Show the x-axis     
-			                .isArea(false);
+            var data = scope.state.data;
+            console.log("newfirmdata",data);
+;
+            var margin = {top: 20, right: 80, bottom: 30, left: 50},
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
 
-			    chart.tooltip.enabled(true);
+            var x = d3.scale.linear()
+                .range([0, width]);
+
+            var y = d3.scale.linear()
+                .range([height, 0]);
+
+            var color = d3.scale.category10();
+
+            var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left");
+
+            var line = d3.svg.line()
+                .interpolate("basis")
+                .x(function(d) { return x(d.x); })
+                .y(function(d) { return y(d.y); });
+
+            var svg = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            color.domain(d3.keys(data).map(function(metroArea) { return data[metroArea].key; }));
+
+            var cities = Object.keys(data).map(function(metroArea){
+
+                return {
+                    name:data[metroArea].key,
+                    values:data[metroArea].values
+                }
+            });
 
 
-				chart.xAxis     //Chart x-axis settings
-				      .axisLabel('Year')
-				      .tickFormat(d3.format(''))
-				      .axisLabelDistance(40)
-				      .tickPadding(25);
+            console.log("cities",cities);
+            x.domain([
+                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
+                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.x }); })
+            ]);
+            console.log(x.domain());
+            y.domain([
+                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.y; }); }),
+                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.y; }); })
+            ]);
 
-				chart.yAxis     //Chart y-axis settings
-				      .axisLabel('New Firms per 1000 people')
-				      .axisLabelDistance(40)
-				      .tickPadding(25);
+            svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + height + ")")
+              .call(xAxis);
 
-	            //Data is an array of series objects
-	            //[
-	            //	{values:[{x:VAL,y:VAL},{x:VAL,y:VAL},key:"msaId",OPTIONS...]},
-	            //	{values:[{x:VAL,y:VAL},{x:VAL,y:VAL},key:"msaId",OPTIONS...]},
-	            //	{values:[{x:VAL,y:VAL},{x:VAL,y:VAL},key:"msaId",OPTIONS...]},
-	            //	...]
+            svg.append("g")
+              .attr("class", "y axis")
+              .call(yAxis)
+            .append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("y", 6)
+              .attr("dy", ".71em")
+              .style("text-anchor", "end")
+              .text("Temperature (ºF)");
 
-	            //key = msaID
-	            //x coord = year
-	            //y coord = share of employment in new firms
+            var city = svg.selectAll(".city")
+              .data(cities)
+            .enter().append("g")
+              .attr("class", "city");
 
-	            d3.select('#NewFirmPer1000Graph svg')
-	                .datum(scope.state.data)
-	                .call(chart);  
-	        
-	            nv.utils.windowResize(chart.update);
-	            return chart;
-	        })
+            city.append("path")
+              .attr("class", "line")
+              .attr("d", function(d) { return line(d.values); })
+              .style("stroke", function(d) { return color(d.name); })
+              .style("fill","none");
+
+            city.append("text")
+              .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+              .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.y) + ")"; })
+              .attr("x", 3)
+              .attr("dy", ".35em")
+              .text(function(d) { return d.x; });
+            
+
+
+
+
+
+
 
 	}
 

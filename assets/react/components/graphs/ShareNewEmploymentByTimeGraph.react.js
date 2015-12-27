@@ -230,9 +230,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
     	}
 
-
-
-
 	},
     componentDidUpdate:function(){
     	var scope = this;
