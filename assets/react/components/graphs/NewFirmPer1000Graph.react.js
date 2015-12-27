@@ -114,7 +114,7 @@ var NewFirmPer1000Graph = React.createClass({
                 }
 
                 if(newPer1000 > 10000){
-                    newPer1000 = 0;
+                    newPer1000 = 15000;
                 }
                 //console.log(newPer1000);
 	            curCoord["y"] = newPer1000;
