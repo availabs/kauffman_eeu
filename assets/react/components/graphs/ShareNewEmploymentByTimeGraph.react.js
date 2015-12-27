@@ -134,7 +134,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         
         }
         else{
-
+            //Get rid of everything already in the svg
+            d3.select("svg").remove();
             var data = scope.state.data;
             var margin = {top: 20, right: 80, bottom: 30, left: 50},
                 width = 960 - margin.left - margin.right,
@@ -244,16 +245,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 	render:function() {
 		var scope = this;
 
-    	var svgStyle = {
-          height: '100%',
-          width: '100%'
-        }		
 
 
 		return (
 			<div>
                 <div id="ShareNewEmploymentByTimeGraph">
-                	<svg style={svgStyle}/>
                 </div>
 
 			</div>

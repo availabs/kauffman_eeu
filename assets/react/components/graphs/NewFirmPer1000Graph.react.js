@@ -160,11 +160,12 @@ var NewFirmPer1000Graph = React.createClass({
         }
         else{
 	        //console.log("render graph in new employment line graph",scope.state.data);
-	        
+            //Get rid of everything already in the svg
+            d3.select("svg").remove();	        
 
             var data = scope.state.data;
             console.log("newfirmdata",data);
-;
+
             var margin = {top: 20, right: 80, bottom: 30, left: 50},
                 width = 960 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
@@ -201,18 +202,17 @@ var NewFirmPer1000Graph = React.createClass({
             var cities = Object.keys(data).map(function(metroArea){
 
                 return {
-                    name:data[metroArea].key,
+                    msaId:data[metroArea].key,
                     values:data[metroArea].values
                 }
             });
 
 
-            console.log("cities",cities);
             x.domain([
                 d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
                 d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.x }); })
             ]);
-            console.log(x.domain());
+
             y.domain([
                 d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.y; }); }),
                 d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.y; }); })
@@ -221,7 +221,12 @@ var NewFirmPer1000Graph = React.createClass({
             svg.append("g")
               .attr("class", "x axis")
               .attr("transform", "translate(0," + height + ")")
-              .call(xAxis);
+              .call(xAxis)
+            .append("text")
+              .style("text-anchor", "end")
+              .attr("dx","60em")
+              .attr("dy","2em")
+              .text("Year");
 
             svg.append("g")
               .attr("class", "y axis")
@@ -231,7 +236,7 @@ var NewFirmPer1000Graph = React.createClass({
               .attr("y", 6)
               .attr("dy", ".71em")
               .style("text-anchor", "end")
-              .text("Temperature (ºF)");
+              .text("New Firms per 1000 people");
 
             var city = svg.selectAll(".city")
               .data(cities)
@@ -241,22 +246,16 @@ var NewFirmPer1000Graph = React.createClass({
             city.append("path")
               .attr("class", "line")
               .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) { return color(d.name); })
+              .style("stroke", function(d) { return color(d.msaId); })
               .style("fill","none");
 
             city.append("text")
-              .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+              .datum(function(d) { return {msaId: d.msaId, value: d.values[d.values.length - 1]}; })
               .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.y) + ")"; })
               .attr("x", 3)
               .attr("dy", ".35em")
               .text(function(d) { return d.x; });
             
-
-
-
-
-
-
 
 	}
 
@@ -273,23 +272,12 @@ var NewFirmPer1000Graph = React.createClass({
     },
 	render:function() {
 		var scope = this;
-
-    	var svgStyle = {
-          height: '100%',
-          width: '100%'
-        }		
-
-        var divStyle = {
-        	position:'relative',
-        	height:'600px',
-        	width:'1300px'
-        }
+	
 
 
 		return (
 			<div>
-                <div style={divStyle} id="NewFirmPer1000Graph">
-                	<svg style={svgStyle}/>
+                <div id="NewFirmPer1000Graph">
                 </div>
 			</div>
 		);
