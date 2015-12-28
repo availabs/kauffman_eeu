@@ -24,6 +24,12 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         var scope = this,
             trimmedData = {};
 
+        //Final object will have the following for every msaId
+        //msaId:{1977:{age0:numEmployed,age1:numEmployed...},1978:{age0:numEmployed,age1:numEmployed...}}
+
+        //big object would look like:
+        // {10000:{{},{}...}, 11000:{{},{}...], ...}
+
         Object.keys(data).forEach(function(firmAge){
 
             Object.keys(data[firmAge]).forEach(function(metroAreaId){
@@ -44,76 +50,62 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         return trimmedData;
     },
+    chartData:function(data){
+        var scope = this,
+            ages = d3.range(12);
+
+        //Every msa represented as:
+        //{values:[{x:val,y:val}....],key=msa,}
+        //Want to return 1 (x,y) object for each year, where x=year and y=percent employed in new firms
+        var chartData = Object.keys(data).map(function(msaId){
+
+            //Iterating through every year within a metro area
+            var valueArray = Object.keys(data[msaId]).map(function(year){
+                var curCoord={"x":+year,"y":0},
+                    totalEmploySum = 0,
+                    newFirmSum = 0,
+                    share = 0;
+
+
+                //Creates Total Employment number for that year
+                //Creates Employment in new firms for that year
+                ages.forEach(function(age){
+                    if(data[msaId][year][age]){
+                        totalEmploySum = totalEmploySum + data[msaId][year][age];                   
+                    }
+                    if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                        newFirmSum = newFirmSum + data[msaId][year][age];
+                    }
+                })
+                share = newFirmSum/totalEmploySum;
+
+                curCoord["y"] = share;
+                //Want to return: x:year y:percent
+                return curCoord;
+            })
+
+
+            //Only return once per metroArea
+            return {key:msaId,values:valueArray,area:false};
+        })
+
+        return chartData;
+
+    },
     processData:function(data){
         var scope = this;
-        var ages = d3.range(12);
-
-        //End goal of processing is to create the following object FOR EVERY METRO AREA:
-        //msaId:{1977:{age0:numEmployed,age1:numEmployed...},1978:{age0:numEmployed,age1:numEmployed...}}
-
-        //big object would look like:
-        // {10000:{{},{}...}, 11000:{{},{}...], ...}
 
         //Extract only the fields we need from the dataset
-        var fullMetroAreaData = scope.trimData(data);
+        var metroAreaData = scope.trimData(data);
+        //Data Now arranged by MSAID -> Year -> Firm Age
 
-        //console.log("after 1st process",fullMetroAreaData);
-
-        //Now arranged by MSAID -> Year -> Firm Age
 
         //Want an array with one object PER metro area
         //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
+        //Convert the trimmed data into a set of (x,y) coordinates for the chart
+        var finalData = scope.chartData(metroAreaData);
 
-        var chartData = Object.keys(fullMetroAreaData).map(function(msaId){
-
-        	//Iterating through every year within a metro area
-        	var valueArray = Object.keys(fullMetroAreaData[msaId]).map(function(year){
-	        	var curCoord={"x":+year,"y":0},
-		            totalEmploySum = 0,
-		            newFirmSum = 0,
-		            share = 0;
-
-
-	            //Creates Total Employment number for that year
-	            //Creates Employment in new firms for that year
-	            ages.forEach(function(age){
-	                if(fullMetroAreaData[msaId][year][age]){
-	                    totalEmploySum = totalEmploySum + fullMetroAreaData[msaId][year][age];                   
-	                }
-	                if(fullMetroAreaData[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
-	                    newFirmSum = newFirmSum + fullMetroAreaData[msaId][year][age];
-	                }
-	            })
-	            share = newFirmSum/totalEmploySum;
-
-	            curCoord["y"] = share;
-	            //Want to return: x:year y:percent
-	            return curCoord;
-        	})
-
-
-        	//Only return once per metroArea
-        	return {key:msaId,values:valueArray,area:false};
-
-        })
-
-
-
-
-        //Goes through every element of yearAgeTable
-        //Each element represents a year of data
-        //Each element has sub elements, one for each age of firm for that year
-        //Want an array with 1 object
-        //[{values:[{x:val,y:val}....],key=msa,}]
-        //Want to return 1 object for each year, where x=year and y=percent employed in new firms
-
-
-
-        //console.log("Done Processing",chartData);
-
-
-
-        return chartData;
+        return finalData;
     },
 	renderGraph:function(){
 
