@@ -57,6 +57,15 @@ var NewFirmPer1000Graph = React.createClass({
         var scope = this,
             ages = d3.range(12);
 
+        var upperLimit = function(share){
+            if(share > 15000){
+                return 15000
+            }
+            else{
+                return share;
+            }
+        }
+
         //Every msa represented as:
         //{values:[{x:val,y:val}....],key=msa,}
         //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
@@ -95,10 +104,8 @@ var NewFirmPer1000Graph = React.createClass({
                     newPer1000 = newFirmSum/pop1000;
                 }
 
-                if(newPer1000 > 10000){
-                    newPer1000 = 15000;
-                }
-                //console.log(newPer1000);
+                newPer1000 = upperLimit(newPer1000);
+
                 curCoord["y"] = newPer1000;
                 //Want to return: x:year y:percent
                 return curCoord;
@@ -126,27 +133,11 @@ var NewFirmPer1000Graph = React.createClass({
         var finalData = scope.chartData(metroAreaData);
 
 
-
-
-
-        //Goes through every element of yearAgeTable
-        //Each element represents a year of data
-        //Each element has sub elements, one for each age of firm for that year
-        //Want an array with 1 object
-        //[{values:[{x:val,y:val}....],key=msa,}]
-        //Want to return 1 object for each year, where x=year and y=percent employed in new firms
-
-
-
-        console.log("Done Processing new firms",finalData);
-
-
-
         return finalData;
     },
 	renderGraph:function(){
 
-    	//1 - Share of employmment in new firms OVER TIME
+    	//1 - New firms per 1000 people OVER TIME
         //One line per metro area -- line graph
 
         var scope = this;
