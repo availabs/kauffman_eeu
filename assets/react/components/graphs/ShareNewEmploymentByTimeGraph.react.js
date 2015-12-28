@@ -10,26 +10,18 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             loading:true
         }
     },
-    componentDidMount:function(){
-        var scope = this;
-
-        scope.getData(function(data){
-            scope.setState({data:scope.processData(data),loading:false});
+    getDefaultProps:function(){
+        return({
+            data:[]
         })
     },
-    getData:function(cb){
-    	//Get data should get the raw data from every MSA
-    	//Should make a new route and function
+    componentWillMount:function(){
         var scope = this;
-
-        d3.json("/allMsa",function(err,data){
-            return cb(data);  
-        })
-
+        
+        scope.setState({data:scope.processData(scope.props.data),loading:false});
     },
     processData:function(data){
         var scope = this;
-        //console.log("unproccessed",data);
         var ages = d3.range(12);
 
         var fullMetroAreaData = {};
@@ -122,6 +114,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         return chartData;
     },
 	renderGraph:function(){
+
     	//1 - Share of employmment in new firms OVER TIME
         //One line per metro area -- line graph
 
@@ -232,26 +225,16 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
     	}
 
 	},
-    componentDidUpdate:function(){
-    	var scope = this;
-            //console.log('RYAN RYAN',scope.state.data, d3.select('#ShareNewEmploymentByTimeGraph svg'))
-            scope.renderGraph();
-        
-    },
-    test:function(){
-    	console.log("TESTING");
-    	this.renderGraph();
-    },
 	render:function() {
 		var scope = this;
 
-
+    if(scope.state.data != []){
+      scope.renderGraph();
+    }
 
 		return (
 			<div>
-                <div id="ShareNewEmploymentByTimeGraph">
-                </div>
-
+        <div id="ShareNewEmploymentByTimeGraph"></div>
 			</div>
 		);
 	}
