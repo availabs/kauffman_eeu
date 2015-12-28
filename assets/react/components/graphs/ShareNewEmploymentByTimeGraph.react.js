@@ -117,8 +117,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         if(scope.state.loading){
             console.log('reloading')
             setTimeout(function(){ scope.renderGraph() }, 2000);
-            
-        
         }
         else{
             //Get rid of everything already in the svg
@@ -222,13 +220,13 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 	render:function() {
 		var scope = this;
 
-    if(scope.state.data != []){
-      scope.renderGraph();
-    }
+        if(scope.state.data != []){
+          scope.renderGraph();
+        }
 
 		return (
 			<div>
-        <div id="ShareNewEmploymentByTimeGraph"></div>
+                <div id="ShareNewEmploymentByTimeGraph"></div>
 			</div>
 		);
 	}

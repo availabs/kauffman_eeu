@@ -23,72 +23,60 @@ var NewFirmPer1000Graph = React.createClass({
         scope.setState({data:scope.processData(scope.props.data),loading:false});
 
     },
-    processData:function(data){
-        var scope = this;
-
-        var ages = d3.range(12);
-
-        var fullMetroAreaData = {};
-
-        //Aggregate data is an object
-        //Inside it, is an object for each firm age (0 thru 11)
-        //Within those is an object for each metro area, with key = msaId and value = an array of objects
-        //Each object contains one object per year. They contain data
-
-        //End goal of processing is to create the following object FOR EVERY METRO AREA:
-        //firms/(pop/1000)
-        //msaId:{1977:{age0:numEmployed,age1:numEmployed...},1978:{age0:numEmployed,age1:numEmployed...}}
-
-        //big object would look like:
-        // {10000:{{},{}...}, 11000:{{},{}...], ...}
+    trimData:function(data){
+        var scope = this,
+            trimmedData = {};
 
         Object.keys(data).forEach(function(firmAge){
 
-        	Object.keys(data[firmAge]).forEach(function(metroAreaId){
-        		//If we havent gotten to this MSA yet
-   				if(!fullMetroAreaData[metroAreaId]){
-					fullMetroAreaData[metroAreaId] = {};
-   				}
+            Object.keys(data[firmAge]).forEach(function(metroAreaId){
+                //If we havent gotten to this MSA yet
+                if(!trimmedData[metroAreaId]){
+                    trimmedData[metroAreaId] = {};
+                }
 
-   				//Iterating through every year for a given firm age in a metro area
-   				data[firmAge][metroAreaId].forEach(function(rowData){
+                //Iterating through every year for a given firm age in a metro area
+                data[firmAge][metroAreaId].forEach(function(rowData){
                     //Only want years 2000 thru 2009, since thats all we have pop data for right now
                     if(rowData["year2"]>= 2000 && rowData["year2"]<= 2009){
-                        if(!fullMetroAreaData[metroAreaId][rowData["year2"]]){
-                            fullMetroAreaData[metroAreaId][rowData["year2"]] = {};
+                        if(!trimmedData[metroAreaId][rowData["year2"]]){
+                            trimmedData[metroAreaId][rowData["year2"]] = {};
                         }
-                        fullMetroAreaData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"];                       
+                        trimmedData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"];                       
                     }
 
-   				})
-        	})
+                })
+            })
 
         })
-        //console.log("new firms, 1st process",fullMetroAreaData);
 
-        //Now arranged by MSAID -> Year -> Firm Age
+        return trimmedData;
 
-        //Want an array with one object PER metro area
-        //Object will look like: {values:[{x:2000,y:val}, {x:2001,y:val}....],key=msa,}
+    },
+    chartData:function(data){
+        var scope = this,
+            ages = d3.range(12);
 
-        var chartData = Object.keys(fullMetroAreaData).map(function(msaId){
-
-        	//Iterating through every year within a metro area
-        	var valueArray = Object.keys(fullMetroAreaData[msaId]).map(function(year){
-	        	var curCoord={"x":+year,"y":0},
-		            newFirmSum = 0,
+        //Every msa represented as:
+        //{values:[{x:val,y:val}....],key=msa,}
+        //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
+        var chartData = Object.keys(data).map(function(msaId){
+            //Iterating through every year within a metro area
+            var valueArray = Object.keys(data[msaId]).map(function(year){
+                var curCoord={"x":+year,"y":0},
+                    newFirmSum = 0,
                     newPer1000 = 0,
                     pop = 0,
-		            pop1000 = 0;
+                    pop1000 = 0;
 
 
-	            //Creates number of new firms for that year
-	            ages.forEach(function(age){
+                //Creates number of new firms for that year
+                ages.forEach(function(age){
 
-	                if(fullMetroAreaData[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
-	                    newFirmSum = newFirmSum + fullMetroAreaData[msaId][year][age];
-	                }
-	            })
+                    if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                        newFirmSum = newFirmSum + data[msaId][year][age];
+                    }
+                })
                 //Instead of share, want newFirmSum/(pop/1000)
 
                 if(metroPop20002009[msaId] && metroPop20002009[msaId][year]){
@@ -111,16 +99,32 @@ var NewFirmPer1000Graph = React.createClass({
                     newPer1000 = 15000;
                 }
                 //console.log(newPer1000);
-	            curCoord["y"] = newPer1000;
-	            //Want to return: x:year y:percent
-	            return curCoord;
-        	})
+                curCoord["y"] = newPer1000;
+                //Want to return: x:year y:percent
+                return curCoord;
+            })
 
-
-        	//Only return once per metroArea
-        	return {key:msaId,values:valueArray,area:false};
-
+            //Only return once per metroArea
+            return {key:msaId,values:valueArray,area:false};
         })
+    
+        return chartData;
+
+    },
+    processData:function(data){
+        var scope = this;
+
+        //Get only the fields we need
+        var metroAreaData = scope.trimData(data);
+        //Now arranged by MSAID -> Year -> Firm Age
+
+
+
+        //Want an array with one object PER metro area
+        //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
+        //Convert the trimmed data into a set of (x,y) coordinates for the chart
+        var finalData = scope.chartData(metroAreaData);
+
 
 
 
@@ -134,11 +138,11 @@ var NewFirmPer1000Graph = React.createClass({
 
 
 
-        console.log("Done Processing new firms",chartData);
+        console.log("Done Processing new firms",finalData);
 
 
 
-        return chartData;
+        return finalData;
     },
 	renderGraph:function(){
 
