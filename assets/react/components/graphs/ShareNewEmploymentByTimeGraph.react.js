@@ -20,16 +20,33 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         
         scope.setState({data:scope.processData(scope.props.data),loading:false});
     },
+    trimData:function(data){
+        var scope = this,
+            trimmedData = {};
+
+        Object.keys(data).forEach(function(firmAge){
+
+            Object.keys(data[firmAge]).forEach(function(metroAreaId){
+                //If we havent gotten to this MSA yet
+                if(!trimmedData[metroAreaId]){
+                    trimmedData[metroAreaId] = {};
+                }
+
+                //Iterating through every year for a given firm age in a metro area
+                data[firmAge][metroAreaId].forEach(function(rowData){
+                    if(!trimmedData[metroAreaId][rowData["year2"]]){
+                        trimmedData[metroAreaId][rowData["year2"]] = {};
+                    }
+                    trimmedData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
+                })
+            })
+        })
+
+        return trimmedData;
+    },
     processData:function(data){
         var scope = this;
         var ages = d3.range(12);
-
-        var fullMetroAreaData = {};
-
-        //Aggregate data is an object
-        //Inside it, is an object for each firm age (0 thru 11)
-        //Within those is an object for each metro area, with key = msaId and value = an array of objects
-        //Each object contains one object per year. They contain data
 
         //End goal of processing is to create the following object FOR EVERY METRO AREA:
         //msaId:{1977:{age0:numEmployed,age1:numEmployed...},1978:{age0:numEmployed,age1:numEmployed...}}
@@ -37,24 +54,9 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         //big object would look like:
         // {10000:{{},{}...}, 11000:{{},{}...], ...}
 
-        Object.keys(data).forEach(function(firmAge){
+        //Extract only the fields we need from the dataset
+        var fullMetroAreaData = scope.trimData(data);
 
-        	Object.keys(data[firmAge]).forEach(function(metroAreaId){
-        		//If we havent gotten to this MSA yet
-   				if(!fullMetroAreaData[metroAreaId]){
-					fullMetroAreaData[metroAreaId] = {};
-   				}
-
-   				//Iterating through every year for a given firm age in a metro area
-   				data[firmAge][metroAreaId].forEach(function(rowData){
-   					if(!fullMetroAreaData[metroAreaId][rowData["year2"]]){
-   						fullMetroAreaData[metroAreaId][rowData["year2"]] = {};
-   					}
-					fullMetroAreaData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
-   				})
-        	})
-
-        })
         //console.log("after 1st process",fullMetroAreaData);
 
         //Now arranged by MSAID -> Year -> Firm Age
