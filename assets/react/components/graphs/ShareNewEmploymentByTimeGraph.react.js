@@ -139,7 +139,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.98 - margin.top - margin.bottom;
+                height = window.innerHeight*.6 - margin.top - margin.bottom;
 
 
             var x = d3.scale.linear()
