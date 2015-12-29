@@ -43,37 +43,59 @@ var GraphPage = React.createClass({
 	render:function() {
 		var scope = this;
 
-	    var divStyle = {
-	    	position:'relative'
-	    };
+		var legendStyle = {
+			height:'500px',
+			width:'100%',
+		}
 
-	    var graph;
+	    var graph,
+	    	divs;
 
 	    if(scope.state.graph == "share"){
 	    	graph=(
 	    		<div>
-	    			<h3>Share of Employment in new firms</h3>
 	    			<ShareNewEmploymentByTimeGraph data={scope.state.data}/>
+	    		</div>
+	    		);
+
+	    	divs=(
+	    		<div>
+	    			<h3>Share of Employment in new firms</h3>
+	                <div id="ShareNewEmploymentByTimeGraph"></div>
+	                <div style = {legendStyle} id="ShareNewEmploymentByTimeLegend"></div>
 	    		</div>
 	    		);
 	    }
 	    else{
 	    	graph=(
 	    		<div>
-	    			<h3>New Firms per 1000 people</h3>
 	    			<NewFirmPer1000Graph data={scope.state.data}/>
 	    		</div>);
+
+
+	    	divs=(
+	    		<div>
+	    		    <h3>New Firms per 1000 people</h3>
+	                <div id="NewFirmPer1000Graph"></div>
+	                <div id="NewFirmPer1000Legend"></div>
+	    		</div>
+	    		);
 	    }
 		
 		if(scope.state.loading == true){
 	        return (
-	            <Loading />
+	        	<div>
+	        		<Loading />
+					{divs}
+	        	</div>
+
 	        )
 		}
 		else{
 			return (
-				<div style={divStyle}>
+				<div>
 					<button onClick={scope.toggleGraph}>Toggle</button>
+					{divs}
 					{graph}
 				</div>
 			);			

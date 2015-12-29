@@ -180,7 +180,7 @@ var NewFirmPer1000Graph = React.createClass({
                 .x(function(d) { return x(d.x); })
                 .y(function(d) { return y(d.y); });
 
-            var svg = d3.select("body").append("svg")
+            var svg = d3.select("#NewFirmPer1000Graph").append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
               .append("g")
@@ -257,8 +257,6 @@ var NewFirmPer1000Graph = React.createClass({
 
 		return (
 			<div>
-                <div id="NewFirmPer1000Graph">
-                </div>
 			</div>
 		);
 	}

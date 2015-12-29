@@ -1,6 +1,7 @@
 var React = require("react"),
 	d3 = require("d3"),
-	nv = require("nvd3");
+	nv = require("nvd3"),
+    msaIdToName = require('../utils/msaIdToName.json');
 
 
 var ShareNewEmploymentByTimeGraph = React.createClass({
@@ -92,6 +93,15 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         return chartData;
 
     },
+    addIndex:function(data){
+        var scope = this;
+
+        var indexedData = Object.keys(data).map(function(index){
+            return {index:(+index),key:data[index].key,values:data[index].values}
+        })
+
+        return indexedData;
+    },
     processData:function(data){
         var scope = this;
 
@@ -103,7 +113,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         //Want an array with one object PER metro area
         //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
         //Convert the trimmed data into a set of (x,y) coordinates for the chart
-        var finalData = scope.chartData(metroAreaData);
+        var chartData = scope.chartData(metroAreaData);
+
+
+        //Add indexes to the objects themselves
+        var finalData = scope.addIndex(chartData);
 
         return finalData;
     },
@@ -122,9 +136,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             //Get rid of everything already in the svg
             d3.select("svg").remove();
             var data = scope.state.data;
-            var margin = {top: 20, right: 80, bottom: 30, left: 50},
-                width = 960 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom;
+
+            var margin = {top: 20, right: 40, bottom: 50, left: 75},
+                width = window.innerWidth*.98 - margin.left - margin.right,
+                height = window.innerHeight*.98 - margin.top - margin.bottom;
+
 
             var x = d3.scale.linear()
                 .range([0, width]);
@@ -132,7 +148,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             var y = d3.scale.linear()
                 .range([height, 0]);
 
-            var color = d3.scale.category10();
+            var color = d3.scale.category20();
 
             var xAxis = d3.svg.axis()
                 .scale(x)
@@ -148,7 +164,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 .y(function(d) { return y(d.y); });
   
 
-            var svg = d3.select("body").append("svg")
+            var svg = d3.select("#ShareNewEmploymentByTimeGraph").append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
               .append("g")
@@ -159,6 +175,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             var cities = Object.keys(data).map(function(metroArea){
 
                 return {
+                    index:data[metroArea].index,
+                    name:msaIdToName[data[metroArea].key],
                     msaId:data[metroArea].key,
                     values:data[metroArea].values
                 }
@@ -196,6 +214,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
               .style("text-anchor", "end")
               .text("Share of Employment in New Firms");
 
+
             var city = svg.selectAll(".city")
               .data(cities)
             .enter().append("g")
@@ -213,8 +232,50 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
               .attr("x", 3)
               .attr("dy", ".35em")
               .text(function(d) { return d.x; });
+
+            // city.append("text")                                    
+            //     .attr("x", function(d){return (d.index%5)*300})
+            //     .attr("y", function(d){return height + margin.top + 30 + Math.floor(d.index/5)*20})        
+            //     .attr("class", "legend")     
+            //     .style("fill", function(d) {   
+            //         return d.color = color(d.msaId); })             
+            //     .text(function(d){return d.name});
             
-    	}
+            d3.select('#ShareNewEmploymentByTimeLegend')
+                .style('overflow',"scroll")
+                .style('overflow-x',"hidden");
+
+
+            var legSvg = d3.select('#ShareNewEmploymentByTimeLegend')
+                .append("svg")
+                .attr("width",window.innerWidth*.98)
+                .attr("height",window.innerHeight*.98)
+                .attr("overflow","auto");
+
+            var legend = legSvg.append("g")
+                .attr("class", "legend1")    
+                .attr('transform', 'translate('+margin.left+',75)');
+
+            legend.selectAll('rect')
+              .data(cities)
+              .enter()
+              .append("rect")
+              .attr("x", function(d){return (d.index%4)*300})
+              .attr("y", function(d){return Math.floor(d.index/4)*20 - 12;})
+              .attr("width", 5)
+              .attr("height", 12)
+              .style("fill", function(d) { return color(d.msaId); })
+
+            legend.selectAll('text')
+              .data(cities)
+              .enter()
+              .append("text")
+              .attr("x", function(d){return 7 + (d.index%4)*300})
+              .attr("y", function(d){return Math.floor(d.index/4)*20;})
+              .attr("width", 5)
+              .attr("height", 5)
+              .text(function(d) {return d.name});
+        }
 
 	},
 	render:function() {
@@ -226,7 +287,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
 		return (
 			<div>
-                <div id="ShareNewEmploymentByTimeGraph"></div>
+
 			</div>
 		);
 	}
