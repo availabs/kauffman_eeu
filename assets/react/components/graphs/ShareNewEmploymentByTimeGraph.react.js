@@ -249,7 +249,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             var legSvg = d3.select('#ShareNewEmploymentByTimeLegend')
                 .append("svg")
                 .attr("width",window.innerWidth*.98)
-                .attr("height",window.innerHeight*.98)
+                .attr("height",scope.state.data.length*6)
                 .attr("overflow","auto");
 
             var legend = legSvg.append("g")
