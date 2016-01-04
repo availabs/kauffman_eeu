@@ -1,7 +1,8 @@
 var React = require("react"),
 	d3 = require("d3"),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
-	nv = require("nvd3");
+	nv = require("nvd3"),
+    msaIdToName = require('../utils/msaIdToName.json');
 
 
 var NewFirmPer1000Graph = React.createClass({
@@ -118,6 +119,15 @@ var NewFirmPer1000Graph = React.createClass({
         return chartData;
 
     },
+    addIndex:function(data){
+        var scope = this;
+
+        var indexedData = Object.keys(data).map(function(index){
+            return {index:(+index),key:data[index].key,values:data[index].values}
+        })
+
+        return indexedData;
+    },
     processData:function(data){
         var scope = this;
 
@@ -130,8 +140,11 @@ var NewFirmPer1000Graph = React.createClass({
         //Want an array with one object PER metro area
         //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
         //Convert the trimmed data into a set of (x,y) coordinates for the chart
-        var finalData = scope.chartData(metroAreaData);
+        var chartData = scope.chartData(metroAreaData);
 
+
+        //Add indexes to the objects themselves
+        var finalData = scope.addIndex(chartData);
 
         return finalData;
     },
@@ -150,7 +163,7 @@ var NewFirmPer1000Graph = React.createClass({
         else{
 	        //console.log("render graph in new employment line graph",scope.state.data);
             //Get rid of everything already in the svg
-            d3.select("svg").remove();	        
+            d3.selectAll("svg").remove();        
 
             var data = scope.state.data;
 
@@ -191,6 +204,8 @@ var NewFirmPer1000Graph = React.createClass({
             var cities = Object.keys(data).map(function(metroArea){
 
                 return {
+                    index:data[metroArea].index,
+                    name:msaIdToName[data[metroArea].key],
                     msaId:data[metroArea].key,
                     values:data[metroArea].values
                 }

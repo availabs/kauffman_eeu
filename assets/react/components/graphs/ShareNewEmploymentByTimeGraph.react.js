@@ -134,7 +134,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         }
         else{
             //Get rid of everything already in the svg
-            d3.select("svg").remove();
+            d3.selectAll("svg").remove();
             var data = scope.state.data;
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
