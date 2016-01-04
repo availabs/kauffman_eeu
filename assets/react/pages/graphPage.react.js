@@ -20,14 +20,24 @@ var GraphPage = React.createClass({
             scope.setState({data:data,loading:false});
         })
     },
-	toggleGraph:function(){
+	toggleGraph:function(e){
 		var scope = this;
-		console.log("toggle");
-		if(scope.state.graph == "share"){
+		console.log("toggle",e.target.id);
+		if(e.target.id == "new"){
 			scope.setState({graph:"new"});
+			d3.select('#newList')
+				.attr('class',"active");
+			d3.select('#shareList')
+				.attr('class',"");
+
 		}
 		else{
 			scope.setState({graph:"share"});
+			d3.select('#newList')
+				.attr('class',"");
+			d3.select('#shareList')
+				.attr('class',"active");
+
 		}
 	},
     getData:function(cb){
@@ -50,6 +60,17 @@ var GraphPage = React.createClass({
 
 	    var graph,
 	    	divs;
+
+
+
+	    var graphHeader = (
+	    	<ul className="nav nav-tabs">
+	    		<li id="shareList" className="active" onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
+	    		<li id="newList" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
+	    	</ul>
+	    	);
+
+
 
 	    if(scope.state.graph == "share"){
 	    	graph=(
@@ -94,7 +115,7 @@ var GraphPage = React.createClass({
 		else{
 			return (
 				<div>
-					<button onClick={scope.toggleGraph}>Toggle</button>
+					{graphHeader}
 					{divs}
 					{graph}
 				</div>

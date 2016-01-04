@@ -153,7 +153,7 @@ var NewFirmPer1000Graph = React.createClass({
             d3.select("svg").remove();	        
 
             var data = scope.state.data;
-            console.log("newfirmdata",data);
+
 
             var margin = {top: 20, right: 80, bottom: 30, left: 50},
                 width = 960 - margin.left - margin.right,
@@ -292,7 +292,7 @@ var NewFirmPer1000Graph = React.createClass({
 
 		return (
 			<div>
-            
+
 			</div>
 		);
 	}
