@@ -77,7 +77,7 @@ var GraphPage = React.createClass({
 	    		<div>
 	    		    <h3>New Firms per 1000 people</h3>
 	                <div id="NewFirmPer1000Graph"></div>
-	                <div id="NewFirmPer1000Legend"></div>
+	                <div style = {legendStyle} id="NewFirmPer1000Legend"></div>
 	    		</div>
 	    		);
 	    }

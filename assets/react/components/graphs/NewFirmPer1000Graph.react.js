@@ -238,12 +238,47 @@ var NewFirmPer1000Graph = React.createClass({
               .style("stroke", function(d) { return color(d.msaId); })
               .style("fill","none");
 
-            city.append("text")
-              .datum(function(d) { return {msaId: d.msaId, value: d.values[d.values.length - 1]}; })
-              .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.y) + ")"; })
-              .attr("x", 3)
-              .attr("dy", ".35em")
-              .text(function(d) { return d.x; });
+            // city.append("text")
+            //   .datum(function(d) { return {msaId: d.msaId, value: d.values[d.values.length - 1]}; })
+            //   .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.y) + ")"; })
+            //   .attr("x", 3)
+            //   .attr("dy", ".35em")
+            //   .text(function(d) { return d.x; });
+
+            d3.select('#NewFirmPer1000Legend')
+                .style('overflow',"scroll")
+                .style('overflow-x',"hidden");
+
+
+            var legSvg = d3.select('#NewFirmPer1000Legend')
+                .append("svg")
+                .attr("width",window.innerWidth*.98)
+                .attr("height",scope.state.data.length*6)
+                .attr("overflow","auto");
+
+            var legend = legSvg.append("g")
+                .attr("class", "legend1")    
+                .attr('transform', 'translate('+margin.left+',75)');
+
+            legend.selectAll('rect')
+              .data(cities)
+              .enter()
+              .append("rect")
+              .attr("x", function(d){return (d.index%4)*300})
+              .attr("y", function(d){return Math.floor(d.index/4)*20 - 12;})
+              .attr("width", 5)
+              .attr("height", 12)
+              .style("fill", function(d) { return color(d.msaId); })
+
+            legend.selectAll('text')
+              .data(cities)
+              .enter()
+              .append("text")
+              .attr("x", function(d){return 7 + (d.index%4)*300})
+              .attr("y", function(d){return Math.floor(d.index/4)*20;})
+              .attr("width", 5)
+              .attr("height", 5)
+              .text(function(d) {return d.name});
             
 
 	   }
@@ -257,6 +292,7 @@ var NewFirmPer1000Graph = React.createClass({
 
 		return (
 			<div>
+            
 			</div>
 		);
 	}
