@@ -106,10 +106,12 @@ var GraphPage = React.createClass({
 		if(scope.state.loading == true){
 	        return (
 	        	<div>
-	        		<Loading />
-					{divs}
+	        		{graphHeader}
+		        	<div>
+		        		<Loading />
+						{divs}
+		        	</div>
 	        	</div>
-
 	        )
 		}
 		else{

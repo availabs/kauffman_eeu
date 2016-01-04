@@ -168,9 +168,9 @@ var NewFirmPer1000Graph = React.createClass({
             var data = scope.state.data;
 
 
-            var margin = {top: 20, right: 80, bottom: 30, left: 50},
-                width = 960 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom;
+            var margin = {top: 20, right: 40, bottom: 50, left: 75},
+                width = window.innerWidth*.98 - margin.left - margin.right,
+                height = window.innerHeight*.6 - margin.top - margin.bottom;
 
             var x = d3.scale.linear()
                 .range([0, width]);
