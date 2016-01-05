@@ -228,8 +228,8 @@ var NewFirmPer1000Graph = React.createClass({
               .call(xAxis)
             .append("text")
               .style("text-anchor", "end")
-              .attr("dx","60em")
-              .attr("dy","2em")
+              .attr("dx","50em")
+              .attr("dy","3em")
               .text("Year");
 
             svg.append("g")
@@ -237,8 +237,9 @@ var NewFirmPer1000Graph = React.createClass({
               .call(yAxis)
             .append("text")
               .attr("transform", "rotate(-90)")
-              .attr("y", 6)
+              .attr("y", "-5em")
               .attr("dy", ".71em")
+              .attr("x","-8em")
               .style("text-anchor", "end")
               .text("New Firms per 1000 people");
 
