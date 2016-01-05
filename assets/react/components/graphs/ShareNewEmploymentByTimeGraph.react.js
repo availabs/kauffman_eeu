@@ -1,6 +1,7 @@
 var React = require("react"),
 	d3 = require("d3"),
-	nv = require("nvd3"),
+	colorbrewer = require('colorbrewer'),
+    metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
     msaIdToName = require('../utils/msaIdToName.json');
 
 
@@ -148,7 +149,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             var y = d3.scale.linear()
                 .range([height, 0]);
 
-            var color = d3.scale.category20();
+
 
             var xAxis = d3.svg.axis()
                 .scale(x)
@@ -170,7 +171,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            color.domain(d3.keys(data).map(function(metroArea) { return data[metroArea].key; }));
+
+
+            var color = d3.scale.quantize()
+                .domain([50000,1500000])
+                .range(colorbrewer.Reds[6]);
 
             var cities = Object.keys(data).map(function(metroArea){
 
@@ -224,7 +229,18 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             city.append("path")
               .attr("class", "line")
               .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) { return color(d.msaId); })
+              .style("stroke", function(d) { 
+                    var cityColor = '';
+
+                    if(metroPop20002009[d.msaId]){
+                        var pop = metroPop20002009[d.msaId][2000].replace(/,/g , "");
+                        cityColor = color(pop)
+                    }
+                    else{
+                        cityColor = '#000000'
+                    }
+                return cityColor; 
+                })
               .style("fill","none");
 
             city.append("text")
@@ -242,19 +258,32 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var scope = this,
             data = scope.state.data,
-            color = d3.scale.category20(),
             years = d3.range(1977,2013),
             commaFormat = d3.format(","),
             percFormat = d3.format(".3%");
 
+            var color = d3.scale.quantize()
+                .domain([50000,1500000])
+                .range(colorbrewer.Reds[6]);
+
         var cities = Object.keys(data).map(function(metroArea){
+
+            var cityColor = '';
+            if(metroPop20002009[data[metroArea].key]){
+                var pop = metroPop20002009[data[metroArea].key][2000].replace(/,/g , "");
+                cityColor = color(pop)
+            }
+            else{
+                cityColor = '#000000'
+            }
+
 
             return {
                 index:data[metroArea].index,
                 name:msaIdToName[data[metroArea].key],
                 msaId:data[metroArea].key,
                 values:data[metroArea].values,
-                color:color(data[metroArea].key)
+                color:cityColor
             }
         });
 
@@ -298,7 +327,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         //Full table
         var table = (
-                    <table className="table table-hover">
+                    <table className="table table-hover" fixed-header>
                         <thead>
                             <tr>
                                 <th>
