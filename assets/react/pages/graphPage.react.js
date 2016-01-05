@@ -5,6 +5,9 @@ var React = require("react"),
 	
 
 
+	//Share of emp graph == color by population group, state, whatever
+
+
 var GraphPage = React.createClass({
 	getInitialState:function(){
 		return({
@@ -53,15 +56,8 @@ var GraphPage = React.createClass({
 	render:function() {
 		var scope = this;
 
-		var legendStyle = {
-			height:'500px',
-			width:'100%',
-		}
-
 	    var graph,
 	    	divs;
-
-
 
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
@@ -69,7 +65,11 @@ var GraphPage = React.createClass({
 	    		<li id="newList" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
 	    	</ul>
 	    	);
-
+        var tableStyle = {
+            overflow:scroll,
+            height:'500px',
+            width:'100%'
+        }
 
 
 	    if(scope.state.graph == "share"){
@@ -83,7 +83,6 @@ var GraphPage = React.createClass({
 	    		<div>
 	    			<h3>Share of Employment in new firms</h3>
 	                <div id="ShareNewEmploymentByTimeGraph"></div>
-	                <div style = {legendStyle} id="ShareNewEmploymentByTimeLegend"></div>
 	    		</div>
 	    		);
 	    }
@@ -98,7 +97,6 @@ var GraphPage = React.createClass({
 	    		<div>
 	    		    <h3>New Firms per 1000 people</h3>
 	                <div id="NewFirmPer1000Graph"></div>
-	                <div style = {legendStyle} id="NewFirmPer1000Legend"></div>
 	    		</div>
 	    		);
 	    }

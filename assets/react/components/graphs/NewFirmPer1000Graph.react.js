@@ -59,13 +59,14 @@ var NewFirmPer1000Graph = React.createClass({
             ages = d3.range(12);
 
         var upperLimit = function(share){
-            if(share > 15000){
-                return 15000
+            if(share > 10000){
+                return share;
             }
             else{
                 return share;
             }
         }
+
 
         //Every msa represented as:
         //{values:[{x:val,y:val}....],key=msa,}
@@ -84,7 +85,8 @@ var NewFirmPer1000Graph = React.createClass({
                 ages.forEach(function(age){
 
                     if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
-                        newFirmSum = newFirmSum + data[msaId][year][age];
+                        
+                        newFirmSum = newFirmSum + +data[msaId][year][age];
                     }
                 })
                 //Instead of share, want newFirmSum/(pop/1000)
@@ -93,6 +95,7 @@ var NewFirmPer1000Graph = React.createClass({
                     pop = metroPop20002009[msaId][year].replace(/,/g , "");
                     pop = +pop;
                     pop1000 = (pop/1000);                   
+               
                 }
                 else{
                     pop1000=0;
@@ -104,7 +107,7 @@ var NewFirmPer1000Graph = React.createClass({
                 else{
                     newPer1000 = newFirmSum/pop1000;
                 }
-
+                
                 newPer1000 = upperLimit(newPer1000);
 
                 curCoord["y"] = newPer1000;
@@ -203,11 +206,26 @@ var NewFirmPer1000Graph = React.createClass({
 
             var cities = Object.keys(data).map(function(metroArea){
 
+
+                var curValues = data[metroArea].values.map(function(oldValues){
+                    if(oldValues.y > 15000){
+                        return ({x:oldValues.x,y:15000})
+                    }
+                    else{
+                        return ({x:oldValues.x,y:oldValues.y})
+                    }
+                })
+
+
+
+
+
+
                 return {
                     index:data[metroArea].index,
                     name:msaIdToName[data[metroArea].key],
                     msaId:data[metroArea].key,
-                    values:data[metroArea].values
+                    values:curValues
                 }
             });
 
@@ -254,62 +272,129 @@ var NewFirmPer1000Graph = React.createClass({
               .style("stroke", function(d) { return color(d.msaId); })
               .style("fill","none");
 
-            // city.append("text")
-            //   .datum(function(d) { return {msaId: d.msaId, value: d.values[d.values.length - 1]}; })
-            //   .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.y) + ")"; })
-            //   .attr("x", 3)
-            //   .attr("dy", ".35em")
-            //   .text(function(d) { return d.x; });
-
-            d3.select('#NewFirmPer1000Legend')
-                .style('overflow',"scroll")
-                .style('overflow-x',"hidden");
-
-
-            var legSvg = d3.select('#NewFirmPer1000Legend')
-                .append("svg")
-                .attr("width",window.innerWidth*.98)
-                .attr("height",scope.state.data.length*6)
-                .attr("overflow","auto");
-
-            var legend = legSvg.append("g")
-                .attr("class", "legend1")    
-                .attr('transform', 'translate('+margin.left+',75)');
-
-            legend.selectAll('rect')
-              .data(cities)
-              .enter()
-              .append("rect")
-              .attr("x", function(d){return (d.index%4)*300})
-              .attr("y", function(d){return Math.floor(d.index/4)*20 - 12;})
-              .attr("width", 5)
-              .attr("height", 12)
-              .style("fill", function(d) { return color(d.msaId); })
-
-            legend.selectAll('text')
-              .data(cities)
-              .enter()
-              .append("text")
-              .attr("x", function(d){return 7 + (d.index%4)*300})
-              .attr("y", function(d){return Math.floor(d.index/4)*20;})
-              .attr("width", 5)
-              .attr("height", 5)
-              .text(function(d) {return d.name});
-            
-
 	   }
 	},
+    renderTable:function(){
+
+        var scope = this,
+            data = scope.state.data,
+            color = d3.scale.category20(),
+            years = d3.range(2000,2010),
+            commaFormat = d3.format(",");
+
+        var cities = Object.keys(data).map(function(metroArea){
+
+            return {
+                index:data[metroArea].index,
+                name:msaIdToName[data[metroArea].key],
+                msaId:data[metroArea].key,
+                values:data[metroArea].values,
+                color:color(data[metroArea].key)
+            }
+        });
+
+
+
+        var allRows = cities.map(function(metroArea){
+
+
+            //Will return the y value for each year of a metro area
+            var yearValues = metroArea.values.map(function(firmValues){
+                var curValue = d3.round(firmValues.y);
+                return (<td className="col-md-1">{curValue}</td>)
+            })
+
+
+
+            var colorStyle = {
+                float:"left",
+                height:38,
+                width:10,
+                backgroundColor:metroArea.color
+            }
+
+
+
+            //Row has color - name - values
+
+            return(<tr><td className="col-md-1"><div style={colorStyle}></div></td><td className="col-md-1">{metroArea.name}</td>{yearValues}</tr>)
+
+        });
+
+        var yearHead = years.map(function(year){
+            if(year == 2000){
+                return(<th>Year: <br/>{year}</th>)               
+            }
+            else{
+                return(<th>{year}</th>)
+            }
+
+        })
+
+
+        var tableStyle={
+            tableLayout:'fixed'
+        }
+
+        //Full table
+
+        var tableHead = (
+            <table className="table table-hover" style={tableStyle}>
+                <thead>
+                    <tr>
+                        <th>
+                        Color
+                        </th>
+                        <th>
+                        Name
+                        </th>
+                        {yearHead}
+                    </tr>
+                </thead>
+            </table>
+            )
+        var tableBody = (
+            <table className="table table-hover" style={tableStyle}>                    
+                <tbody>
+                    {allRows}
+                </tbody>
+            </table>
+                    )
+
+        var contentStyle ={
+            overflow:'scroll',
+            overflowX:'hidden',
+            tableLayout:'fixed',
+            height:'400px',
+            width:'100%'          
+        }
+
+        return(
+            <div>
+                <div>
+                {tableHead}
+                </div>
+                <div style = {contentStyle}>
+                {tableBody}
+                </div>
+            </div>)
+
+
+        return table;
+    },
 	render:function() {
-		var scope = this;
+		var scope = this,
+            table;
 	
         if(scope.state.data != []){
-          scope.renderGraph();
+            scope.renderGraph();
+            table = scope.renderTable();
         }
 
 		return (
-			<div>
-
-			</div>
+            <div>
+                {table}
+            </div>
 		);
 	}
 	

@@ -233,62 +233,109 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
               .attr("x", 3)
               .attr("dy", ".35em")
               .text(function(d) { return d.x; });
+           
 
-            // city.append("text")                                    
-            //     .attr("x", function(d){return (d.index%5)*300})
-            //     .attr("y", function(d){return height + margin.top + 30 + Math.floor(d.index/5)*20})        
-            //     .attr("class", "legend")     
-            //     .style("fill", function(d) {   
-            //         return d.color = color(d.msaId); })             
-            //     .text(function(d){return d.name});
-            
-            d3.select('#ShareNewEmploymentByTimeLegend')
-                .style('overflow',"scroll")
-                .style('overflow-x',"hidden");
-
-
-            var legSvg = d3.select('#ShareNewEmploymentByTimeLegend')
-                .append("svg")
-                .attr("width",window.innerWidth*.98)
-                .attr("height",scope.state.data.length*6)
-                .attr("overflow","auto");
-
-            var legend = legSvg.append("g")
-                .attr("class", "legend1")    
-                .attr('transform', 'translate('+margin.left+',75)');
-
-            legend.selectAll('rect')
-              .data(cities)
-              .enter()
-              .append("rect")
-              .attr("x", function(d){return (d.index%4)*300})
-              .attr("y", function(d){return Math.floor(d.index/4)*20 - 12;})
-              .attr("width", 5)
-              .attr("height", 12)
-              .style("fill", function(d) { return color(d.msaId); })
-
-            legend.selectAll('text')
-              .data(cities)
-              .enter()
-              .append("text")
-              .attr("x", function(d){return 7 + (d.index%4)*300})
-              .attr("y", function(d){return Math.floor(d.index/4)*20;})
-              .attr("width", 5)
-              .attr("height", 5)
-              .text(function(d) {return d.name});
         }
 
 	},
+    renderTable:function(){
+
+        var scope = this,
+            data = scope.state.data,
+            color = d3.scale.category20(),
+            years = d3.range(1977,2013),
+            commaFormat = d3.format(","),
+            percFormat = d3.format(".3%");
+
+        var cities = Object.keys(data).map(function(metroArea){
+
+            return {
+                index:data[metroArea].index,
+                name:msaIdToName[data[metroArea].key],
+                msaId:data[metroArea].key,
+                values:data[metroArea].values,
+                color:color(data[metroArea].key)
+            }
+        });
+
+
+
+        var allRows = cities.map(function(metroArea){
+
+
+            //Will return the y value for each year of a metro area
+            var yearValues = metroArea.values.map(function(firmValues){
+                return (<td className="col-md-1">{percFormat(firmValues.y)}</td>)
+            })
+
+
+
+            var colorStyle = {
+                float:"left",
+                height:38,
+                width:10,
+                backgroundColor:metroArea.color
+            }
+
+
+
+            //Row has color - name - values
+
+            return(<tr><td className="col-md-1"><div style={colorStyle}></div></td><td className="col-md-1">{metroArea.name}</td>{yearValues}</tr>)
+
+        });
+
+        var yearHead = years.map(function(year){
+            if(year == 1977){
+                return(<th>Year: <br/>{year}</th>)               
+            }
+            else{
+                return(<th>{year}</th>)
+            }
+
+        })
+
+
+        //Full table
+        var table = (
+                    <table className="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                Color
+                                </th>
+                                <th>
+                                Name
+                                </th>
+                                {yearHead}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {allRows}
+                        </tbody>
+                    </table>
+                    )
+
+        return table;
+    },
 	render:function() {
-		var scope = this;
+		var scope = this,
+            table;
 
         if(scope.state.data != []){
           scope.renderGraph();
+          table = scope.renderTable();
+        }
+
+        var tableStyle = {
+            overflow:'scroll',
+            height:'400px',
+            width:'100%'
         }
 
 		return (
-			<div>
-
+			<div style = {tableStyle} >
+            {table}
 			</div>
 		);
 	}
