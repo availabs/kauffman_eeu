@@ -175,7 +175,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             var color = d3.scale.quantize()
                 .domain([50000,1500000])
-                .range(colorbrewer.Reds[6]);
+                .range(colorbrewer.YlOrRd[9]);
 
             var cities = Object.keys(data).map(function(metroArea){
 
@@ -237,7 +237,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                         cityColor = color(pop)
                     }
                     else{
-                        cityColor = '#000000'
+                        cityColor = '#FFFFFF'
                     }
                 return cityColor; 
                 })
@@ -264,7 +264,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             var color = d3.scale.quantize()
                 .domain([50000,1500000])
-                .range(colorbrewer.Reds[6]);
+                .range(colorbrewer.YlOrRd[9]);
 
         var cities = Object.keys(data).map(function(metroArea){
 
@@ -274,7 +274,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 cityColor = color(pop)
             }
             else{
-                cityColor = '#000000'
+                cityColor = '#FFFFFF'
             }
 
 
