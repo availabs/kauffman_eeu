@@ -59,14 +59,6 @@ var NewFirmPer1000Graph = React.createClass({
         var scope = this,
             ages = d3.range(12);
 
-        var upperLimit = function(share){
-            if(share > 8){
-                return 8;
-            }
-            else{
-                return share;
-            }
-        }
 
 
         //Every msa represented as:
@@ -109,8 +101,6 @@ var NewFirmPer1000Graph = React.createClass({
                     newPer1000 = newFirmSum/pop1000;
                 }
                 
-                newPer1000 = upperLimit(newPer1000);
-
                 curCoord["y"] = newPer1000;
                 //Want to return: x:year y:percent
                 return curCoord;
@@ -211,8 +201,8 @@ var NewFirmPer1000Graph = React.createClass({
 
 
                 var curValues = data[metroArea].values.map(function(oldValues){
-                    if(oldValues.y > 15000){
-                        return ({x:oldValues.x,y:15000})
+                    if(oldValues.y > 8){
+                        return ({x:oldValues.x,y:8})
                     }
                     else{
                         return ({x:oldValues.x,y:oldValues.y})
