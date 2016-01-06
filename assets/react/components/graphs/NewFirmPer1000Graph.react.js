@@ -2,6 +2,7 @@ var React = require("react"),
 	d3 = require("d3"),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
 	nv = require("nvd3"),
+    colorbrewer = require('colorbrewer'),
     msaIdToName = require('../utils/msaIdToName.json');
 
 
@@ -59,8 +60,8 @@ var NewFirmPer1000Graph = React.createClass({
             ages = d3.range(12);
 
         var upperLimit = function(share){
-            if(share > 10000){
-                return share;
+            if(share > 8){
+                return 8;
             }
             else{
                 return share;
@@ -202,7 +203,9 @@ var NewFirmPer1000Graph = React.createClass({
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            color.domain(d3.keys(data).map(function(metroArea) { return data[metroArea].key; }));
+            var color = d3.scale.quantize()
+                .domain([50000,1500000])
+                .range(colorbrewer.YlOrRd[9]);
 
             var cities = Object.keys(data).map(function(metroArea){
 
@@ -269,7 +272,18 @@ var NewFirmPer1000Graph = React.createClass({
             city.append("path")
               .attr("class", "line")
               .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) { return color(d.msaId); })
+              .style("stroke", function(d) { 
+                    var cityColor = '';
+
+                    if(metroPop20002009[d.msaId]){
+                        var pop = metroPop20002009[d.msaId][2000].replace(/,/g , "");
+                        cityColor = color(pop)
+                    }
+                    else{
+                        cityColor = '#FFFFFF'
+                    }
+                return cityColor; 
+                })
               .style("fill","none");
 
 	   }
@@ -282,14 +296,27 @@ var NewFirmPer1000Graph = React.createClass({
             years = d3.range(2000,2010),
             commaFormat = d3.format(",");
 
+        var color = d3.scale.quantize()
+            .domain([50000,1500000])
+            .range(colorbrewer.YlOrRd[9]);
+
         var cities = Object.keys(data).map(function(metroArea){
+
+            var cityColor = '';
+            if(metroPop20002009[data[metroArea].key]){
+                var pop = metroPop20002009[data[metroArea].key][2000].replace(/,/g , "");
+                cityColor = color(pop)
+            }
+            else{
+                cityColor = '#FFFFFF'
+            }
 
             return {
                 index:data[metroArea].index,
                 name:msaIdToName[data[metroArea].key],
                 msaId:data[metroArea].key,
                 values:data[metroArea].values,
-                color:color(data[metroArea].key)
+                color:cityColor
             }
         });
 
