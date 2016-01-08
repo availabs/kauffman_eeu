@@ -16,7 +16,8 @@ var NewFirmPer1000Graph = React.createClass({
     },
     getDefaultProps:function(){
         return({
-            data:[]
+            data:[],
+            color:"population"
         })
     },
     componentWillMount:function(){
@@ -142,6 +143,43 @@ var NewFirmPer1000Graph = React.createClass({
 
         return finalData;
     },
+    colorGroup:function(){
+        var scope = this;
+
+        if(scope.props.color == "population"){
+            var colorGroup = d3.scale.quantize()
+                .domain([50000,2500000])
+                .range(colorbrewer.YlOrRd[9]);
+        }
+        if(scope.props.color == "state"){
+
+        }
+
+        return colorGroup;
+
+    },
+    colorFunction:function(params){
+        var scope = this,
+            cityColor;
+
+        var color = scope.colorGroup();
+
+        if(scope.props.color == "population"){
+                    if(metroPop20002009[params]){
+                        var pop = metroPop20002009[params][2000].replace(/,/g , "");
+                        cityColor = color(pop)
+                    }
+                    else{
+                        cityColor = '#FFFFFF'
+                    }
+        }
+        if(scope.props.color == "state"){
+
+        }
+
+        return cityColor;
+
+    },
 	renderGraph:function(){
 
     	//1 - New firms per 1000 people OVER TIME
@@ -194,7 +232,7 @@ var NewFirmPer1000Graph = React.createClass({
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             var color = d3.scale.quantize()
-                .domain([50000,1500000])
+                .domain([50000,4500000])
                 .range(colorbrewer.YlOrRd[9]);
 
             var cities = Object.keys(data).map(function(metroArea){
@@ -287,7 +325,7 @@ var NewFirmPer1000Graph = React.createClass({
             commaFormat = d3.format(",");
 
         var color = d3.scale.quantize()
-            .domain([50000,1500000])
+            .domain([50000,4500000])
             .range(colorbrewer.YlOrRd[9]);
 
         var cities = Object.keys(data).map(function(metroArea){
