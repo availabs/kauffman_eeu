@@ -14,7 +14,8 @@ var GraphPage = React.createClass({
 			graph:"share",
 			data:[],
 			loading:true,
-			color:"population"
+			color:"population",
+			group:"msa"
 			});
 	},
     componentDidMount:function(){
@@ -66,9 +67,9 @@ var GraphPage = React.createClass({
 
 
 
-	    var colorGroupHeader = (                
+	    var colorHeader = (                
 	    		<div className="dropdown">
-                  <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Color Grouping
+                  <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Color
                   <span className="caret"></span></button>
                   <ul className="dropdown-menu">
                     <li><a id="population" onClick={scope.toggleColor}>Population</a></li>
@@ -76,11 +77,24 @@ var GraphPage = React.createClass({
                   </ul>
                 </div>
                 );
+
+	    var groupHeader = (                
+	    		<div className="dropdown">
+                  <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Grouping
+                  <span className="caret"></span></button>
+                  <ul className="dropdown-menu">
+                    <li><a id="msa" onClick={scope.toggleColor}>Metro Area</a></li>
+                    <li><a id="state" onClick={scope.toggleColor}>State</a></li>
+                  </ul>
+                </div>
+                );
+
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
 	    		<li id="shareList" className="active" onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
 	    		<li id="newList" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
-	    		<li id="colorGroup">{colorGroupHeader}</li>
+	    		<li id="color">{colorHeader}</li>
+	    		<li id="group">{groupHeader}</li>
 	    	</ul>
 	    	);
 
@@ -96,13 +110,13 @@ var GraphPage = React.createClass({
 	    if(scope.state.graph == "share"){
 	    	graph=(
 	    		<div>
-	    			<ShareNewEmploymentByTimeGraph data={scope.state.data} color={scope.state.color}/>
+	    			<ShareNewEmploymentByTimeGraph data={scope.state.data} color={scope.state.color} group={scope.state.group}/>
 	    		</div>
 	    		);
 
 	    	divs=(
 	    		<div>
-	    			<h3>Share of Employment in new firms grouped and colored by {scope.state.color}</h3>
+	    			<h3>Share of Employment in new firms colored by {scope.state.color} and grouped by {scope.state.group}</h3>
 	                <div id="ShareNewEmploymentByTimeGraph"></div>
 	    		</div>
 	    		);
@@ -110,13 +124,13 @@ var GraphPage = React.createClass({
 	    else{
 	    	graph=(
 	    		<div>
-	    			<NewFirmPer1000Graph data={scope.state.data} color={scope.state.color}/>
+	    			<NewFirmPer1000Graph data={scope.state.data} color={scope.state.color} group={scope.state.group}/>
 	    		</div>);
 
 
 	    	divs=(
 	    		<div>
-	    		    <h3>New Firms per 1000 people grouped and colored by {scope.state.color}</h3>
+	    		    <h3>New Firms per 1000 people colored by {scope.state.color} and grouped by {scope.state.group}</h3>
 	                <div id="NewFirmPer1000Graph"></div>
 	    		</div>
 	    		);

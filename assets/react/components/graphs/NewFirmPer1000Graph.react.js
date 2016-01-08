@@ -18,7 +18,8 @@ var NewFirmPer1000Graph = React.createClass({
     getDefaultProps:function(){
         return({
             data:[],
-            color:"population"
+            color:"population",
+            group:"msa"
         })
     },
     componentWillMount:function(){

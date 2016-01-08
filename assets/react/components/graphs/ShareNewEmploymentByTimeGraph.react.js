@@ -16,7 +16,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
     getDefaultProps:function(){
         return({
             data:[],
-            color:"population"
+            color:"population",
+            group:"msa"
         })
     },
     componentWillMount:function(){
