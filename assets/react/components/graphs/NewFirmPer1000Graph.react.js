@@ -3,7 +3,8 @@ var React = require("react"),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
 	nv = require("nvd3"),
     colorbrewer = require('colorbrewer'),
-    msaIdToName = require('../utils/msaIdToName.json');
+    msaIdToName = require('../utils/msaIdToName.json'),
+    abbrToFips = require('../utils/abbrToFips.json');
 
 
 var NewFirmPer1000Graph = React.createClass({
@@ -152,7 +153,9 @@ var NewFirmPer1000Graph = React.createClass({
                 .range(colorbrewer.YlOrRd[9]);
         }
         if(scope.props.color == "state"){
-
+            var colorGroup = d3.scale.linear()
+                .domain([0,350,700])
+                .range(['red','green','blue']);
         }
 
         return colorGroup;
@@ -174,6 +177,17 @@ var NewFirmPer1000Graph = React.createClass({
                     }
         }
         if(scope.props.color == "state"){
+
+            
+            if(msaIdToName[params]){
+                var state = msaIdToName[params].substr(msaIdToName[params].length - 2);
+                var fips = abbrToFips[state] * 10;
+                cityColor = color(fips);
+                console.log(cityColor);
+            }
+            else{
+                cityColor = '#FFFFFF'                
+            }
 
         }
 
@@ -210,7 +224,7 @@ var NewFirmPer1000Graph = React.createClass({
             var y = d3.scale.linear()
                 .range([height, 0]);
 
-            var color = d3.scale.category20();
+
 
             var xAxis = d3.svg.axis()
                 .scale(x)
@@ -231,9 +245,6 @@ var NewFirmPer1000Graph = React.createClass({
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            var color = d3.scale.quantize()
-                .domain([50000,4500000])
-                .range(colorbrewer.YlOrRd[9]);
 
             var cities = Object.keys(data).map(function(metroArea){
 
@@ -246,9 +257,6 @@ var NewFirmPer1000Graph = React.createClass({
                         return ({x:oldValues.x,y:oldValues.y})
                     }
                 })
-
-
-
 
 
 
@@ -300,18 +308,7 @@ var NewFirmPer1000Graph = React.createClass({
             city.append("path")
               .attr("class", "line")
               .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) { 
-                    var cityColor = '';
-
-                    if(metroPop20002009[d.msaId]){
-                        var pop = metroPop20002009[d.msaId][2000].replace(/,/g , "");
-                        cityColor = color(pop)
-                    }
-                    else{
-                        cityColor = '#FFFFFF'
-                    }
-                return cityColor; 
-                })
+              .style("stroke", function(d) {return scope.colorFunction(d.msaId);})
               .style("fill","none");
 
 	   }
@@ -330,21 +327,13 @@ var NewFirmPer1000Graph = React.createClass({
 
         var cities = Object.keys(data).map(function(metroArea){
 
-            var cityColor = '';
-            if(metroPop20002009[data[metroArea].key]){
-                var pop = metroPop20002009[data[metroArea].key][2000].replace(/,/g , "");
-                cityColor = color(pop)
-            }
-            else{
-                cityColor = '#FFFFFF'
-            }
 
             return {
                 index:data[metroArea].index,
                 name:msaIdToName[data[metroArea].key],
                 msaId:data[metroArea].key,
                 values:data[metroArea].values,
-                color:cityColor
+                color:scope.colorFunction(data[metroArea].key)
             }
         });
 

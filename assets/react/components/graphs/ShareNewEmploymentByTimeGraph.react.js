@@ -2,7 +2,8 @@ var React = require("react"),
 	d3 = require("d3"),
 	colorbrewer = require('colorbrewer'),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
-    msaIdToName = require('../utils/msaIdToName.json');
+    msaIdToName = require('../utils/msaIdToName.json'),
+    abbrToFips = require('../utils/abbrToFips.json');
 
 
 var ShareNewEmploymentByTimeGraph = React.createClass({
@@ -113,7 +114,9 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 .range(colorbrewer.YlOrRd[9]);
         }
         if(scope.props.color == "state"){
-
+            var colorGroup = d3.scale.linear()
+                .domain([0,350,700])
+                .range(['red','green','blue']);
         }
 
         return colorGroup;
@@ -135,6 +138,17 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     }
         }
         if(scope.props.color == "state"){
+
+            
+            if(msaIdToName[params]){
+                var state = msaIdToName[params].substr(msaIdToName[params].length - 2);
+                var fips = abbrToFips[state] * 10;
+                cityColor = color(fips);
+                console.log(cityColor);
+            }
+            else{
+                cityColor = '#FFFFFF'                
+            }
 
         }
 
