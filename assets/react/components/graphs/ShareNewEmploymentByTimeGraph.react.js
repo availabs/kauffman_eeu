@@ -10,20 +10,51 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
     getInitialState:function(){
         return {
             data:[],
-            loading:true
+            loading:true,
+            group:"msa"
         }
     },
     getDefaultProps:function(){
         return({
             data:[],
-            color:"population",
-            group:"msa"
+            color:"population"
         })
     },
     componentWillMount:function(){
         var scope = this;
-        
-        scope.setState({data:scope.processData(scope.props.data),loading:false});
+        console.log("mount",scope);
+        scope.setState({data:scope.processData(scope.props.data),loading:false,group:scope.props.group});
+    },
+    componentWillReceiveProps:function(nextProps){
+        var scope = this;
+        console.log("recieving props",nextProps);
+        scope.setState({data:scope.processData(scope.props.data),loading:false,group:nextProps.group});
+    },
+    processData:function(data){
+        var scope = this;
+
+        //Extract only the fields we need from the dataset
+        var metroAreaData = scope.trimData(data);
+        //Data Now arranged by MSAID -> Year -> Firm Age
+
+
+        //Want an array with one object PER metro area
+        //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
+        //Convert the trimmed data into a set of (x,y) coordinates for the chart
+
+        if(scope.state.group == "msa"){
+            var chartData = scope.chartMsaData(metroAreaData);           
+        }
+        if(scope.state.group == "state"){
+            var chartData = scope.chartStateData(metroAreaData);           
+        }        
+        //console.log("chartdata",chartData);
+
+
+        //Add indexes to the objects themselves
+        var finalData = scope.addIndex(chartData);
+
+        return finalData;
     },
     trimData:function(data){
         var scope = this,
@@ -55,7 +86,74 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         return trimmedData;
     },
-    chartData:function(data){
+    chartStateData:function(data){
+        var scope = this,
+            ages = d3.range(12),
+            stateData = {};
+
+        Object.keys(data).forEach(function(msaId){
+
+            if(msaIdToName[msaId]){
+                var state = msaIdToName[msaId].substr(msaIdToName[msaId].length - 2);    
+                if(!stateData[state]){
+                    stateData[state] = {msaArray:[]};
+                }                 
+                stateData[state]["msaArray"].push(msaId);
+                //Iterating through every year within a metro area
+                Object.keys(data[msaId]).forEach(function(year){
+                    var totalEmploySum = 0,
+                        newFirmSum = 0,
+                        share = 0;
+
+                    //Null check for state/year combo
+                    if(!stateData[state][year]){
+                        //If its new, default to 0
+                        stateData[state][year] = {"totalEmploySum":0,"newFirmSum":0};
+                    }
+
+                    //Creates Total Employment number for that year
+                    //Creates Employment in new firms for that year
+                    ages.forEach(function(age){
+                        if(data[msaId][year][age]){
+                            stateData[state][year]["totalEmploySum"] = stateData[state][year]["totalEmploySum"] + data[msaId][year][age];                   
+                        }
+                        if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                            stateData[state][year]["newFirmSum"] = stateData[state][year]["newFirmSum"] + data[msaId][year][age];
+                        }
+                    })
+
+                })               
+            }
+
+        })
+
+        var chartData = Object.keys(stateData).map(function(state){
+
+            var valueArray = [];
+
+            Object.keys(stateData[state]).map(function(year){
+
+                if(year != "msaArray"){
+                    var curCoord={"x":+year,"y":0},
+                        share = 0;
+
+                    share = stateData[state][year]["newFirmSum"]/stateData[state][year]["totalEmploySum"]       
+                    curCoord["y"] = share;
+                    //Want to return: x:year y:percent
+                    valueArray.push(curCoord);
+                }
+
+            })
+
+            return {key:state,values:valueArray,area:false,msaArray:stateData[state]["msaArray"]};                
+            
+        })
+
+
+        console.log(chartData);        
+        return chartData;
+    },
+    chartMsaData:function(data){
         var scope = this,
             ages = d3.range(12);
 
@@ -101,7 +199,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         var scope = this;
 
         var indexedData = Object.keys(data).map(function(index){
-            return {index:(+index),key:data[index].key,values:data[index].values}
+            return {index:(+index),key:data[index].key,values:data[index].values,msaArray:data[index]["msaArray"]}
         })
 
         return indexedData;
@@ -109,16 +207,33 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
     colorGroup:function(){
         var scope = this;
 
-        if(scope.props.color == "population"){
-            var colorGroup = d3.scale.quantize()
-                .domain([50000,2500000])
-                .range(colorbrewer.YlOrRd[9]);
+        if(scope.state.group == "msa"){
+            if(scope.props.color == "population"){
+                var colorGroup = d3.scale.quantize()
+                    .domain([50000,2500000])
+                    .range(colorbrewer.YlOrRd[9]);
+            }
+            if(scope.props.color == "state"){
+                var colorGroup = d3.scale.linear()
+                    .domain([0,350,700])
+                    .range(['red','green','blue']);
+            }            
         }
-        if(scope.props.color == "state"){
-            var colorGroup = d3.scale.linear()
-                .domain([0,350,700])
-                .range(['red','green','blue']);
+        if(scope.state.group == "state"){
+            if(scope.props.color == "population"){
+                var colorGroup = d3.scale.quantize()
+                    .domain([100000,10000000])
+                    .range(colorbrewer.YlOrRd[9]);            
+            }
+
+            if(scope.props.color == "state"){
+                var colorGroup = d3.scale.linear()
+                    .domain([0,350,700])
+                    .range(['red','green','blue']); 
+            }
+        
         }
+
 
         return colorGroup;
 
@@ -129,51 +244,60 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var color = scope.colorGroup();
 
-        if(scope.props.color == "population"){
-                    if(metroPop20002009[params]){
-                        var pop = metroPop20002009[params][2000].replace(/,/g , "");
-                        cityColor = color(pop)
-                    }
-                    else{
-                        cityColor = '#FFFFFF'
-                    }
-        }
-        if(scope.props.color == "state"){
-
-            
-            if(msaIdToName[params]){
-                var state = msaIdToName[params].substr(msaIdToName[params].length - 2);
-                var fips = abbrToFips[state] * 10;
-                cityColor = color(fips);
-                console.log(cityColor);
+        if(scope.state.group == "msa"){
+            if(scope.props.color == "population"){
+                        if(metroPop20002009[params.msaId]){
+                            var pop = metroPop20002009[params.msaId][2000].replace(/,/g , "");
+                            cityColor = color(pop)
+                        }
+                        else{
+                            cityColor = '#FFFFFF'
+                        }
             }
-            else{
-                cityColor = '#FFFFFF'                
+            if(scope.props.color == "state"){
+                if(msaIdToName[params.msaId]){
+                    var state = msaIdToName[params.msaId].substr(msaIdToName[params.msaId].length - 2);
+                    var fips = abbrToFips[state] * 10;
+                    cityColor = color(fips);
+                }
+                else{
+                    cityColor = '#FFFFFF'                
+                }
+            }            
+        }
+
+
+        if(scope.state.group == "state"){
+            if(scope.props.color == "state"){
+                var fips = abbrToFips[params.key] * 10;
+                cityColor = color(fips);               
+            }
+            if(scope.props.color == "population"){
+                var totalPop = 0;
+
+                if(params["msaArray"]){
+                    params["msaArray"].forEach(function(msaId){
+                        
+                        if(metroPop20002009[msaId]){
+                            totalPop = totalPop + +metroPop20002009[msaId][2000].replace(/,/g , "");        
+                        }
+                                            
+                    })                    
+                }
+
+                if(totalPop > 0){
+                    cityColor = color(totalPop)                    
+                }
+                else{
+                    cityColor = '#FFFFFF'
+                }
             }
 
         }
+
 
         return cityColor;
 
-    },
-    processData:function(data){
-        var scope = this;
-
-        //Extract only the fields we need from the dataset
-        var metroAreaData = scope.trimData(data);
-        //Data Now arranged by MSAID -> Year -> Firm Age
-
-
-        //Want an array with one object PER metro area
-        //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
-        //Convert the trimmed data into a set of (x,y) coordinates for the chart
-        var chartData = scope.chartData(metroAreaData);
-
-
-        //Add indexes to the objects themselves
-        var finalData = scope.addIndex(chartData);
-
-        return finalData;
     },
 	renderGraph:function(){
 
@@ -225,14 +349,23 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-
             var cities = Object.keys(data).map(function(metroArea){
 
-                return {
-                    index:data[metroArea].index,
-                    name:msaIdToName[data[metroArea].key],
-                    msaId:data[metroArea].key,
-                    values:data[metroArea].values
+                if(scope.state.group == "msa"){
+                    return {
+                        index:data[metroArea].index,
+                        name:msaIdToName[data[metroArea].key],
+                        msaId:data[metroArea].key,
+                        values:data[metroArea].values,
+                    }                
+                }
+                else{
+                    return {
+                        index:data[metroArea].index,
+                        key:data[metroArea].key,
+                        values:data[metroArea].values,
+                        msaArray:data[metroArea].msaArray
+                    }
                 }
             });
 
@@ -278,7 +411,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             city.append("path")
               .attr("class", "line")
               .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) {return scope.colorFunction(d.msaId);})
+              .style("stroke", function(d) {return scope.colorFunction(d);})
               .style("fill","none");
 
             city.append("text")
@@ -304,14 +437,24 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var cities = Object.keys(data).map(function(metroArea){
 
-
-            return {
-                index:data[metroArea].index,
-                name:msaIdToName[data[metroArea].key],
-                msaId:data[metroArea].key,
-                values:data[metroArea].values,
-                color:scope.colorFunction(data[metroArea].key)
+            if(scope.state.group == "msa"){
+                return {
+                    index:data[metroArea].index,
+                    name:msaIdToName[data[metroArea].key],
+                    msaId:data[metroArea].key,
+                    values:data[metroArea].values,
+                    color:scope.colorFunction(data[metroArea])
+                }                
             }
+            else{
+                return {
+                    index:data[metroArea].index,
+                    name:data[metroArea].key,
+                    values:data[metroArea].values,
+                    color:scope.colorFunction(data[metroArea])
+                }
+            }
+
         });
 
 
@@ -379,8 +522,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             table;
 
         if(scope.state.data != []){
-          scope.renderGraph();
-          table = scope.renderTable();
+            scope.renderGraph();
+            table = scope.renderTable();
         }
 
         var tableStyle = {
