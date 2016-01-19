@@ -243,7 +243,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             cityColor;
 
         var color = scope.colorGroup();
-        console.log(scope.state.group,params)
+
         if(scope.state.group == "msa"){
             if(scope.props.color == "population"){         
                 if(metroPop20002009[params.key]){
@@ -315,9 +315,18 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             d3.selectAll("svg").remove();
             var data = scope.state.data;
 
+
+
+
+
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
                 height = window.innerHeight*.6 - margin.top - margin.bottom;
+
+            var voronoi = d3.geom.voronoi()
+                .x(function(d) { return x(d.x); })
+                .y(function(d) { return y(d.y); })
+                .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
 
 
             var x = d3.scale.linear()
@@ -403,18 +412,62 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
               .text("Share of Employment in New Firms");
 
 
-            var city = svg.selectAll(".city")
-              .data(cities)
-            .enter().append("g")
-              .attr("class", "city");
-
-            city.append("path")
-              .attr("class", "line")
-              .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) {return scope.colorFunction(d);})
-              .style("fill","none");
 
 
+
+
+            svg.append("g")
+                  .attr("class", "cities")
+                .selectAll("path")
+                  .data(cities)
+                .enter().append("path")
+                  .attr("d", function(d) { d.line = this; return line(d.values); })
+                  .style("stroke", function(d) {return scope.colorFunction(d);})
+                  .style("fill","none");
+
+
+
+            var focus = svg.append("g")
+                  .attr("transform", "translate(-100,-100)")
+                  .attr("class", "focus");
+
+              focus.append("circle")
+                  .attr("r", 3.5);
+
+              focus.append("text")
+                  .attr("y", -10);
+
+            var voronoiGroup = svg.append("g")
+                  .attr("class", "voronoi")
+                  .style("fill","none")
+                  .style("stroke","#FFFFFF")
+                  .style("opacity","0")
+
+
+            voronoiGroup.selectAll("path")
+                  .data(voronoi(d3.nest()
+                      .key(function(d) { return x(d.x) + "," + y(d.y); })
+                      .rollup(function(v) { return v[0]; })
+                      .entries(d3.merge(cities.map(function(d) { return d.values; })))
+                      .map(function(d) { return d.values; })))
+                .enter().append("path")
+                  .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+                  .datum(function(d) { return d.point; })
+                  .on("mouseover", mouseover)
+                  .on("mouseout", mouseout);
+
+
+            function mouseover(d) {
+                d3.select(d.city.line).classed("city--hover", true);
+                d.city.line.parentNode.appendChild(d.city.line);
+                focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
+                focus.select("text").text(d.city.name);
+              }
+
+              function mouseout(d) {
+                d3.select(d.city.line).classed("city--hover", false);
+                focus.attr("transform", "translate(-100,-100)");
+              }
            
 
         }
