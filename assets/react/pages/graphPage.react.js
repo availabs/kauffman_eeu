@@ -59,6 +59,10 @@ var GraphPage = React.createClass({
     	var scope = this;
     	scope.setState({color:e.target.id});
     },
+    toggleGroup:function(e){
+    	var scope = this;
+    	scope.setState({group:e.target.id});
+    },
 	render:function() {
 		var scope = this;
 
@@ -83,8 +87,8 @@ var GraphPage = React.createClass({
                   <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Grouping
                   <span className="caret"></span></button>
                   <ul className="dropdown-menu">
-                    <li><a id="msa" onClick={scope.toggleColor}>Metro Area</a></li>
-                    <li><a id="state" onClick={scope.toggleColor}>State</a></li>
+                    <li><a id="msa" onClick={scope.toggleGroup}>Metro Area</a></li>
+                    <li><a id="state" onClick={scope.toggleGroup}>State</a></li>
                   </ul>
                 </div>
                 );
