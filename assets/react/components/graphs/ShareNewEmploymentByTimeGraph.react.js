@@ -150,7 +150,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         })
 
 
-        console.log(chartData);        
+       
         return chartData;
     },
     chartMsaData:function(data){
@@ -243,20 +243,20 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             cityColor;
 
         var color = scope.colorGroup();
-
+        console.log(scope.state.group,params)
         if(scope.state.group == "msa"){
-            if(scope.props.color == "population"){
-                        if(metroPop20002009[params.msaId]){
-                            var pop = metroPop20002009[params.msaId][2000].replace(/,/g , "");
-                            cityColor = color(pop)
-                        }
-                        else{
-                            cityColor = '#FFFFFF'
-                        }
+            if(scope.props.color == "population"){         
+                if(metroPop20002009[params.key]){
+                    var pop = metroPop20002009[params.key][2000].replace(/,/g , "");
+                    cityColor = color(pop)
+                }
+                else{
+                    cityColor = '#FFFFFF'
+                }
             }
             if(scope.props.color == "state"){
-                if(msaIdToName[params.msaId]){
-                    var state = msaIdToName[params.msaId].substr(msaIdToName[params.msaId].length - 2);
+                if(msaIdToName[params.key]){
+                    var state = msaIdToName[params.key].substr(msaIdToName[params.key].length - 2);
                     var fips = abbrToFips[state] * 10;
                     cityColor = color(fips);
                 }
@@ -355,7 +355,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     return {
                         index:data[metroArea].index,
                         name:msaIdToName[data[metroArea].key],
-                        msaId:data[metroArea].key,
+                        key:data[metroArea].key,
                         values:data[metroArea].values,
                     }                
                 }
@@ -414,12 +414,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
               .style("stroke", function(d) {return scope.colorFunction(d);})
               .style("fill","none");
 
-            city.append("text")
-              .datum(function(d) { return {msaId: d.msaId, value: d.values[d.values.length - 1]}; })
-              .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.y) + ")"; })
-              .attr("x", 3)
-              .attr("dy", ".35em")
-              .text(function(d) { return d.x; });
+
            
 
         }
@@ -441,7 +436,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 return {
                     index:data[metroArea].index,
                     name:msaIdToName[data[metroArea].key],
-                    msaId:data[metroArea].key,
                     values:data[metroArea].values,
                     color:scope.colorFunction(data[metroArea])
                 }                
