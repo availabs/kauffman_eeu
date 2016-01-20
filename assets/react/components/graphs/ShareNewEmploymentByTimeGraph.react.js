@@ -303,8 +303,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
     	//1 - Share of employmment in new firms OVER TIME
         //One line per metro area -- line graph
-
-        var scope = this;
+        var percFormat = d3.format(".3%"),
+            scope = this;
 
         if(scope.state.loading){
             console.log('reloading')
@@ -476,20 +476,24 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
 
             function mouseover(d) {
-                console.log(d3.select(d.city.line));
+
+                //console.log(d);
                 d3.select(d.city.line).style("stroke-width","2.5")
                 d3.select(d.city.line).style("stroke","#000000")
-                //d3.select(d.city.line).classed("city--hover", true);
+
+                var popText = "";
+                popText += d.city.name + ': ' + d.x +'  '+ percFormat(d.y);
+
                 d.city.line.parentNode.appendChild(d.city.line);
                 focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
-                focus.select("text").text(d.city.name);
+                focus.select("text").text(popText);
               }
 
-              function mouseout(d) {
-                var line = d3.select(this);                                
+              function mouseout(d) {                              
 
                 d3.select(d.city.line).style("stroke-width","1")
                 d3.select(d.city.line).style("stroke",function(d){return scope.colorFunction(d)})
+
                 focus.attr("transform", "translate(-100,-100)");
               }
            
