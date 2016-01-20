@@ -420,10 +420,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                   .attr("class", "cities")
                 .selectAll("path")
                   .data(cities)
-                .enter().append("path")
-                  .attr("d", function(d) { d.line = this; return line(d.values); })
-                  .style("stroke", function(d) {return scope.colorFunction(d);})
-                  .style("fill","none");
+                .enter()
+                  .append("path")
+                    .attr("d", function(d) { d.line = this; return line(d.values); })
+                    .style("stroke", function(d) {return scope.colorFunction(d);})
+                    .style("fill","none");
 
 
 
@@ -443,29 +444,61 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                   .style("stroke","#FFFFFF")
                   .style("opacity","0")
 
+            console.log("vanilla",d3.selectAll("path"));
+
 
             voronoiGroup.selectAll("path")
-                  .data(voronoi(d3.nest()
-                      .key(function(d) { return x(d.x) + "," + y(d.y); })
-                      .rollup(function(v) { return v[0]; })
-                      .entries(d3.merge(cities.map(function(d) { return d.values; })))
-                      .map(function(d) { return d.values; })))
+                  .data(cities)
                 .enter().append("path")
-                  .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
-                  .datum(function(d) { return d.point; })
+                  .attr("d", function(d) { return line(d.values); })
+                  .datum(function(d) {return d; })
                   .on("mouseover", mouseover)
                   .on("mouseout", mouseout);
 
+            // voronoiGroup.selectAll("path")
+            //       .data(voronoi(d3.nest()
+            //           .key(function(d) { return x(d.x) + "," + y(d.y); })
+            //           .rollup(function(v) { return v[0]; })
+            //           .entries(d3.merge(cities.map(function(d) { return d.values; })))
+            //           .map(function(d) { return d.values; })))
+            //     .enter().append("path")
+            //       .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+            //       .datum(function(d) { return d.point; })
+            //       .on("mouseover", mouseover)
+            //       .on("mouseout", mouseout);
+
+            // voronoiGroup.selectAll("path")
+            //       .data(voronoi(d3.nest()
+            //           .key(function(d) { return x(d.x) + "," + y(d.y); })
+            //           .rollup(function(v) { return v[0]; })
+            //           .entries(cities.map(function(d) { return {name:d.name,line:d.line,values:d.values}; }))
+            //           .map(function(d) { return d.values; })))
+            //     .enter().append("path")
+            //       .attr("d", function(d) {console.log(d); return "M" + d.join("L") + "Z"; })
+            //       .datum(function(d) { return d.point; })
+            //       .on("mouseover", mouseover)
+            //       .on("mouseout", mouseout);
+
+console.log("voronoi",voronoiGroup.selectAll("path"));
 
             function mouseover(d) {
-                d3.select(d.city.line).classed("city--hover", true);
-                d.city.line.parentNode.appendChild(d.city.line);
-                focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
-                focus.select("text").text(d.city.name);
+                var coordinates = d3.mouse(this);
+
+                var line = d3.select(this);  
+
+                // console.log(line[0][0]["__data__"]);
+                // console.log(coordinates);
+
+                line.classed("city--hover", true);
+                this.parentNode.appendChild(this);
+                focus.attr("transform", "translate(" + coordinates[0] + "," + coordinates[1] + ")");
+                focus.select("text").text(line[0][0]["__data__"].name);
               }
 
               function mouseout(d) {
-                d3.select(d.city.line).classed("city--hover", false);
+                var line = d3.select(this);                                
+
+                line.classed("city--hover", false);
                 focus.attr("transform", "translate(-100,-100)");
               }
            
