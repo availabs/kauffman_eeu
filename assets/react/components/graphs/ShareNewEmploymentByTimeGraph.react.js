@@ -346,7 +346,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 .orient("left");
 
             var line = d3.svg.line()
-                .interpolate("basis")
+                .interpolate("cardinal")
                 .x(function(d) { return x(d.x); })
                 .y(function(d) { return y(d.y); });
   
@@ -458,11 +458,9 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             var voronoiGroup = svg.append("g")
                   .attr("class", "voronoi")
-                  .style("fill","none")
-                  .style("stroke","#FFFFFF")
+                  .style("fill","#FFFFFF")
+                  .style("stroke","#000000")
                   .style("opacity","0")
-
-            console.log("vanilla",d3.selectAll("path"));
 
             voronoiGroup.selectAll("path")
                   .data(voronoi(d3.nest()
@@ -477,10 +475,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                   .on("mouseout", mouseout);
 
 
-console.log("voronoi",voronoiGroup.selectAll("path"));
-
             function mouseover(d) {
-                d3.select(d.city.line).classed("city--hover", true);
+                console.log(d3.select(d.city.line));
+                d3.select(d.city.line).style("stroke-width","2.5")
+                d3.select(d.city.line).style("stroke","#000000")
+                //d3.select(d.city.line).classed("city--hover", true);
                 d.city.line.parentNode.appendChild(d.city.line);
                 focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
                 focus.select("text").text(d.city.name);
@@ -489,7 +488,8 @@ console.log("voronoi",voronoiGroup.selectAll("path"));
               function mouseout(d) {
                 var line = d3.select(this);                                
 
-                d3.select(d.city.line).classed("city--hover", false);
+                d3.select(d.city.line).style("stroke-width","1")
+                d3.select(d.city.line).style("stroke",function(d){return scope.colorFunction(d)})
                 focus.attr("transform", "translate(-100,-100)");
               }
            
