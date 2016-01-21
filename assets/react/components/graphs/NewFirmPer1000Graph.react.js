@@ -25,9 +25,13 @@ var NewFirmPer1000Graph = React.createClass({
     },
     componentWillMount:function(){
         var scope = this;
-
-        scope.setState({data:scope.processData(scope.props.data),loading:false});
-
+        console.log("mount",scope);
+        scope.setState({data:scope.processData(scope.props.data),loading:false,group:scope.props.group});
+    },
+    componentWillReceiveProps:function(nextProps){
+        var scope = this;
+        console.log("recieving props",nextProps);
+        scope.setState({data:scope.processData(scope.props.data),loading:false,group:nextProps.group});
     },
     trimData:function(data){
         var scope = this,
@@ -96,7 +100,8 @@ var NewFirmPer1000Graph = React.createClass({
                     ages.forEach(function(age){
 
                         if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
-                            stateData[state][year]["newFirmSum"] = stateData[state][year]["totalEmploySum"] + +data[msaId][year][age];       
+                            var localNewFirm = +data[msaId][year][age];
+                            stateData[state][year]["newFirmSum"] = stateData[state][year]["newFirmSum"] + localNewFirm;        
                         }
                     })
                     //Instead of share, want newFirmSum/(pop/1000)
@@ -111,7 +116,7 @@ var NewFirmPer1000Graph = React.createClass({
                 })
             }
         })
-    
+        console.log(stateData);
         var chartData = Object.keys(stateData).map(function(state){
 
             var valueArray = [];
@@ -122,11 +127,15 @@ var NewFirmPer1000Graph = React.createClass({
                     var curCoord={"x":+year,"y":0},
                         share = 0;
 
-                    var pop1000 = stateData[state][year]["totalPopSum"]/1000;
-                    var newPer1000 =  stateData[state][year]["newFirmSum"]/pop1000;      
-                    curCoord["y"] = newPer1000;
-                    //Want to return: x:year y:percent
-                    valueArray.push(curCoord);
+                    if(stateData[state][year]["totalPopSum"] != 0 && stateData[state][year]["newFirmSum"] != 0){
+                        var pop1000 = stateData[state][year]["totalPopSum"]/1000;
+                        var newPer1000 =  stateData[state][year]["newFirmSum"]/pop1000;      
+                        curCoord["y"] = newPer1000;
+
+                        //Want to return: x:year y:percent
+                        valueArray.push(curCoord);                        
+                    }
+
                 }
 
             })
@@ -272,7 +281,6 @@ var NewFirmPer1000Graph = React.createClass({
 
         var color = scope.colorGroup();
 
-        console.log(params);
         if(scope.state.group == "msa"){
             if(scope.props.color == "population"){         
                 if(metroPop20002009[params.key]){
@@ -385,22 +393,49 @@ var NewFirmPer1000Graph = React.createClass({
 
                 var curValues = data[metroArea].values.map(function(oldValues){
                     if(oldValues.y > 8){
-                        return ({x:oldValues.x,y:8})
+                        return ({x:oldValues.x,y:oldValues.y})
                     }
                     else{
                         return ({x:oldValues.x,y:oldValues.y})
                     }
                 })
 
+                if(scope.state.group == "msa"){
+                    
+                    var city = {
+                        values:null,
+                        index:data[metroArea].index,
+                        name:msaIdToName[data[metroArea].key],
+                        key:data[metroArea].key
+                    }
 
-
-                return {
-                    index:data[metroArea].index,
-                    name:msaIdToName[data[metroArea].key],
-                    key:data[metroArea].key,
-                    msaId:data[metroArea].key,
-                    values:curValues
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+              
                 }
+                else{
+                    var city = {
+                        values:null,
+                        index:data[metroArea].index,
+                        msaArray:data[metroArea].msaArray,
+                        key:data[metroArea].key
+                    }
+
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+                }
+
+                return city;
             });
 
 
