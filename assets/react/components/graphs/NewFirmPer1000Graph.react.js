@@ -12,7 +12,8 @@ var NewFirmPer1000Graph = React.createClass({
         return {
             curChart:"line",
             data:[],
-            loading:true
+            loading:true,
+            group:"msa"
         }
     },
     getDefaultProps:function(){
@@ -58,10 +59,90 @@ var NewFirmPer1000Graph = React.createClass({
         return trimmedData;
 
     },
-    chartData:function(data){
+    chartStateData:function(data){
+        var scope = this,
+            ages = d3.range(12),
+            stateData = {};
+
+
+
+        //Every msa represented as:
+        //{values:[{x:val,y:val}....],key=msa,}
+        //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
+        Object.keys(data).forEach(function(msaId){
+
+            if(msaIdToName[msaId]){
+                var state = msaIdToName[msaId].substr(msaIdToName[msaId].length - 2);    
+                if(!stateData[state]){
+                    stateData[state] = {msaArray:[]};
+                }        
+                stateData[state]["msaArray"].push(msaId);            
+
+                //Iterating through every year within a metro area
+                var valueArray = Object.keys(data[msaId]).map(function(year){
+                    var curCoord={"x":+year,"y":0},
+                        newFirmSum = 0,
+                        newPer1000 = 0,
+                        pop = 0,
+                        pop1000 = 0;
+
+                    //Null check for state/year combo    
+                    if(!stateData[state][year]){
+                        //If its new, default to 0
+                        stateData[state][year] = {"totalPopSum":0,"newFirmSum":0};
+                    }
+
+                    //Creates number of new firms for that year
+                    ages.forEach(function(age){
+
+                        if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                            stateData[state][year]["newFirmSum"] = stateData[state][year]["totalEmploySum"] + +data[msaId][year][age];       
+                        }
+                    })
+                    //Instead of share, want newFirmSum/(pop/1000)
+
+                    if(metroPop20002009[msaId] && metroPop20002009[msaId][year]){
+                        pop = metroPop20002009[msaId][year].replace(/,/g , "");
+                        pop = +pop;
+
+
+                        stateData[state][year]["totalPopSum"] = stateData[state][year]["totalPopSum"] + pop;                   
+                    }
+                })
+            }
+        })
+    
+        var chartData = Object.keys(stateData).map(function(state){
+
+            var valueArray = [];
+
+            Object.keys(stateData[state]).forEach(function(year){
+
+                if(year != "msaArray"){
+                    var curCoord={"x":+year,"y":0},
+                        share = 0;
+
+                    var pop1000 = stateData[state][year]["totalPopSum"]/1000;
+                    var newPer1000 =  stateData[state][year]["newFirmSum"]/pop1000;      
+                    curCoord["y"] = newPer1000;
+                    //Want to return: x:year y:percent
+                    valueArray.push(curCoord);
+                }
+
+            })
+
+            //Only return once per state
+            return {key:state,values:valueArray,area:false,msaArray:stateData[state]["msaArray"]};
+
+        })
+
+
+        return chartData;
+
+    },
+    chartMsaData:function(data){
         var scope = this,
             ages = d3.range(12);
-
 
 
         //Every msa represented as:
@@ -137,7 +218,13 @@ var NewFirmPer1000Graph = React.createClass({
         //Want an array with one object PER metro area
         //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
         //Convert the trimmed data into a set of (x,y) coordinates for the chart
-        var chartData = scope.chartData(metroAreaData);
+
+        if(scope.state.group == "msa"){
+            var chartData = scope.chartMsaData(metroAreaData);           
+        }
+        if(scope.state.group == "state"){
+            var chartData = scope.chartStateData(metroAreaData);           
+        }  
 
 
         //Add indexes to the objects themselves
@@ -148,16 +235,33 @@ var NewFirmPer1000Graph = React.createClass({
     colorGroup:function(){
         var scope = this;
 
-        if(scope.props.color == "population"){
-            var colorGroup = d3.scale.quantize()
-                .domain([50000,2500000])
-                .range(colorbrewer.YlOrRd[9]);
+        if(scope.state.group == "msa"){
+            if(scope.props.color == "population"){
+                var colorGroup = d3.scale.quantize()
+                    .domain([50000,2500000])
+                    .range(colorbrewer.YlOrRd[9]);
+            }
+            if(scope.props.color == "state"){
+                var colorGroup = d3.scale.linear()
+                    .domain([0,350,700])
+                    .range(['red','green','blue']);
+            }            
         }
-        if(scope.props.color == "state"){
-            var colorGroup = d3.scale.linear()
-                .domain([0,350,700])
-                .range(['red','green','blue']);
+        if(scope.state.group == "state"){
+            if(scope.props.color == "population"){
+                var colorGroup = d3.scale.quantize()
+                    .domain([100000,10000000])
+                    .range(colorbrewer.YlOrRd[9]);            
+            }
+
+            if(scope.props.color == "state"){
+                var colorGroup = d3.scale.linear()
+                    .domain([0,350,700])
+                    .range(['red','green','blue']); 
+            }
+        
         }
+
 
         return colorGroup;
 
@@ -168,29 +272,58 @@ var NewFirmPer1000Graph = React.createClass({
 
         var color = scope.colorGroup();
 
-        if(scope.props.color == "population"){
-                    if(metroPop20002009[params]){
-                        var pop = metroPop20002009[params][2000].replace(/,/g , "");
-                        cityColor = color(pop)
-                    }
-                    else{
-                        cityColor = '#FFFFFF'
-                    }
-        }
-        if(scope.props.color == "state"){
-
-            
-            if(msaIdToName[params]){
-                var state = msaIdToName[params].substr(msaIdToName[params].length - 2);
-                var fips = abbrToFips[state] * 10;
-                cityColor = color(fips);
-                console.log(cityColor);
+        console.log(params);
+        if(scope.state.group == "msa"){
+            if(scope.props.color == "population"){         
+                if(metroPop20002009[params.key]){
+                    var pop = metroPop20002009[params.key][2000].replace(/,/g , "");
+                    cityColor = color(pop)
+                }
+                else{
+                    cityColor = '#FFFFFF'
+                }
             }
-            else{
-                cityColor = '#FFFFFF'                
+            if(scope.props.color == "state"){
+                if(msaIdToName[params.key]){
+                    var state = msaIdToName[params.key].substr(msaIdToName[params.key].length - 2);
+                    var fips = abbrToFips[state] * 10;
+                    cityColor = color(fips);
+                }
+                else{
+                    cityColor = '#FFFFFF'                
+                }
+            }            
+        }
+
+
+        if(scope.state.group == "state"){
+            if(scope.props.color == "state"){
+                var fips = abbrToFips[params.key] * 10;
+                cityColor = color(fips);               
+            }
+            if(scope.props.color == "population"){
+                var totalPop = 0;
+
+                if(params["msaArray"]){
+                    params["msaArray"].forEach(function(msaId){
+                        
+                        if(metroPop20002009[msaId]){
+                            totalPop = totalPop + +metroPop20002009[msaId][2000].replace(/,/g , "");        
+                        }
+                                            
+                    })                    
+                }
+
+                if(totalPop > 0){
+                    cityColor = color(totalPop)                    
+                }
+                else{
+                    cityColor = '#FFFFFF'
+                }
             }
 
         }
+
 
         return cityColor;
 
@@ -264,6 +397,7 @@ var NewFirmPer1000Graph = React.createClass({
                 return {
                     index:data[metroArea].index,
                     name:msaIdToName[data[metroArea].key],
+                    key:data[metroArea].key,
                     msaId:data[metroArea].key,
                     values:curValues
                 }
@@ -309,7 +443,7 @@ var NewFirmPer1000Graph = React.createClass({
             city.append("path")
               .attr("class", "line")
               .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) {return scope.colorFunction(d.msaId);})
+              .style("stroke", function(d) {return scope.colorFunction(d);})
               .style("fill","none");
 
 	   }
@@ -322,9 +456,7 @@ var NewFirmPer1000Graph = React.createClass({
             years = d3.range(2000,2010),
             commaFormat = d3.format(",");
 
-        var color = d3.scale.quantize()
-            .domain([50000,4500000])
-            .range(colorbrewer.YlOrRd[9]);
+
 
         var cities = Object.keys(data).map(function(metroArea){
 
@@ -334,7 +466,7 @@ var NewFirmPer1000Graph = React.createClass({
                 name:msaIdToName[data[metroArea].key],
                 msaId:data[metroArea].key,
                 values:data[metroArea].values,
-                color:scope.colorFunction(data[metroArea].key)
+                color:scope.colorFunction(data[metroArea])
             }
         });
 

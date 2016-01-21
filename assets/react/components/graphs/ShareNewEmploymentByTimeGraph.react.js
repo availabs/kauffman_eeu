@@ -131,7 +131,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             var valueArray = [];
 
-            Object.keys(stateData[state]).map(function(year){
+            Object.keys(stateData[state]).forEach(function(year){
 
                 if(year != "msaArray"){
                     var curCoord={"x":+year,"y":0},
