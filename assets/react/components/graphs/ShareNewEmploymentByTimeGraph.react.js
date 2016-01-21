@@ -454,7 +454,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                   .attr("r", 3.5);
 
               focus.append("text")
-                  .attr("y", -10);
+                  .attr("y", -10)
+                  .style("font-weight","bold");
 
             var voronoiGroup = svg.append("g")
                   .attr("class", "voronoi")
@@ -477,12 +478,18 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             function mouseover(d) {
 
-                //console.log(d);
                 d3.select(d.city.line).style("stroke-width","2.5")
                 d3.select(d.city.line).style("stroke","#000000")
 
                 var popText = "";
-                popText += d.city.name + ': ' + d.x +'  '+ percFormat(d.y);
+                if(scope.state.group == "msa"){
+                    var name = d.city.name;
+                }
+                else{
+                    var name = d.city.key;
+                }
+
+                popText += name + ' | ' + d.x +':  '+ percFormat(d.y);
 
                 d.city.line.parentNode.appendChild(d.city.line);
                 focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
