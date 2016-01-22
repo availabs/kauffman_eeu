@@ -306,6 +306,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         var percFormat = d3.format(".3%"),
             scope = this;
 
+        var selected = "false";
+
         if(scope.state.loading){
             console.log('reloading')
             setTimeout(function(){ scope.renderGraph() }, 2000);
@@ -321,7 +323,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.6 - margin.top - margin.bottom;
+                height = window.innerHeight*.5 - margin.top - margin.bottom;
 
             var voronoi = d3.geom.voronoi()
                 .x(function(d) { return x(d.x); })
@@ -515,20 +517,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .data(years)
                     .enter()
                     .append("th")
-                        .text(function(column) { return column; });
+                        .text(function(column) {if(column==1977){return "Year " +column}else{return column;}  });
 
                 // create 1 row
                 var rows = tbody.append("tr")
                     .selectAll("tr");
-
-                var name = [{0:d.city.name}];
-
-                var nameCell = rows.select("td")
-                    .data(name)
-                    .enter()
-                    .append("td")
-                    .attr("class", "col-md-1")
-                    .text(function(v){console.log("djdfhsjkf",v); return v[0]});
 
                 var color = [{
                     0:{
@@ -544,15 +537,21 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .enter()
                     .append("td")
                     .attr("class", "col-md-1")
-                    .style("background-color",function(v){return v[0].backgroundColor})
-                    .style("width",function(v){return v[0].width})
+                    .style("background",function(v){return v[0].backgroundColor})
+                    .style("min-width",'50px')
                     .style("height",function(v){return v[0].height});
 
+                var name = [{0:d.city.name}];
 
-                // rows.select("td")
-                //     .append("td")
-                //     .text(function(d){console.log("key",d);return "hello"})
-                //     .attr("class", "col-md-1");
+                var nameCell = rows.select("td")
+                    .data(name)
+                    .enter()
+                    .append("td")
+                    .attr("class", "col-md-1")
+                    .text(function(v){console.log("djdfhsjkf",v); return v[0]})
+                    .style("min-width",'150px');
+
+
 
 
                 // create a cell in each row for each column
@@ -574,7 +573,13 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
                 focus.attr("transform", "translate(-100,-100)");
             }
-           
+        $('#currentRow').on('scroll', function () {
+            $('#tableDiv').scrollLeft($(this).scrollLeft());
+        });
+
+        $('#tableDiv').on('scroll', function () {
+            $('#currentRow').scrollLeft($(this).scrollLeft());
+        });  
 
         }
 
@@ -623,14 +628,12 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
 
             var colorStyle = {
-                float:"left",
-                height:38,
-                width:10,
-                backgroundColor:metroArea.color
+                background:metroArea.color,
+                minWidth:50
             }
 
 
-            return(<tr><td className="col-md-1"><div style={colorStyle}></div></td><td className="col-md-1">{metroArea.name}</td>{yearValues}</tr>)
+            return(<tr><td style={colorStyle}className="col-md-1"></td><td className="col-md-1" style={{minWidth:150}}>{metroArea.name}</td>{yearValues}</tr>)
 
         });
 
@@ -647,23 +650,13 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         //Full table
         var table = (
-                    <table className="table table-hover" fixed-header>
-                        <thead>
-                            <tr>
-                                <th>
-                                Color
-                                </th>
-                                <th>
-                                Name
-                                </th>
-                                {yearHead}
-                            </tr>
-                        </thead>
+                    <table id="fullTable" className="table table-hover" fixed-header>
                         <tbody>
                             {allRows}
                         </tbody>
                     </table>
                     )
+
 
         return table;
     },
@@ -678,14 +671,14 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var tableStyle = {
             overflow:'scroll',
-            height:'400px',
-            width:'100%'
+            height:window.innerHeight*.4,
+            width:window.innerWidth
         }
 
         var rowStyle = {
-            overflowX:'scroll',
-            height:'150px',
-            width:'100%'
+            overflow:'hidden',
+            height:window.innerHeight*.2,
+            width:window.innerWidth
         }
 
 		return (
@@ -693,8 +686,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 <div id="currentRow" style={rowStyle}>
 
                 </div>
-    			<div style = {tableStyle} >
-                {table}
+    			<div id="tableDiv" style = {tableStyle} >
+                    {table}
     			</div>
             </div>
 		);
