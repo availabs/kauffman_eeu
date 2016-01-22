@@ -341,6 +341,8 @@ var NewFirmPer1000Graph = React.createClass({
         //One line per metro area -- line graph
 
         var scope = this;
+
+
         if(scope.state.loading){
             console.log('reloading')
             setTimeout(function(){ scope.renderGraph() }, 2000);
@@ -351,13 +353,17 @@ var NewFirmPer1000Graph = React.createClass({
 	        //console.log("render graph in new employment line graph",scope.state.data);
             //Get rid of everything already in the svg
             d3.selectAll("svg").remove();        
-
             var data = scope.state.data;
-
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
                 height = window.innerHeight*.6 - margin.top - margin.bottom;
+
+
+            var voronoi = d3.geom.voronoi()
+                .x(function(d) { return x(d.x); })
+                .y(function(d) { return y(d.y); })
+                .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
 
             var x = d3.scale.linear()
                 .range([0, width]);
@@ -376,7 +382,7 @@ var NewFirmPer1000Graph = React.createClass({
                 .orient("left");
 
             var line = d3.svg.line()
-                .interpolate("basis")
+                .interpolate("cardinal")
                 .x(function(d) { return x(d.x); })
                 .y(function(d) { return y(d.y); });
 
@@ -470,16 +476,73 @@ var NewFirmPer1000Graph = React.createClass({
               .style("text-anchor", "end")
               .text("New Firms per 1000 people");
 
-            var city = svg.selectAll(".city")
-              .data(cities)
-            .enter().append("g")
-              .attr("class", "city");
+            svg.append("g")
+                  .attr("class", "cities")
+                .selectAll("path")
+                  .data(cities)
+                .enter()
+                  .append("path")
+                    .attr("d", function(d) { d.line = this; return line(d.values); })
+                    .style("stroke", function(d) {return scope.colorFunction(d);})
+                    .style("fill","none");
 
-            city.append("path")
-              .attr("class", "line")
-              .attr("d", function(d) { return line(d.values); })
-              .style("stroke", function(d) {return scope.colorFunction(d);})
-              .style("fill","none");
+            var focus = svg.append("g")
+                  .attr("transform", "translate(-100,-100)")
+                  .attr("class", "focus");
+
+                focus.append("circle")
+                  .attr("r", 3.5);
+
+                focus.append("text")
+                  .attr("y", -10)
+                  .style("font-weight","bold");
+
+            var voronoiGroup = svg.append("g")
+                  .attr("class", "voronoi")
+                  .style("fill","#FFFFFF")
+                  .style("stroke","#000000")
+                  .style("opacity","0")
+
+            voronoiGroup.selectAll("path")
+                    .data(voronoi(d3.nest()
+                        .key(function(d) {return x(d.x) + "," + y(d.y); })
+                        .rollup(function(v) { return v[0]; })
+                        .entries(d3.merge(cities.map(function(d) { return d.values; })) )
+                        .map(function(d) { return d.values; })))
+                .enter().append("path")
+                    .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+                    .datum(function(d) { return d.point; })
+                    .on("mouseover", mouseover)
+                    .on("mouseout", mouseout);
+
+
+            function mouseover(d) {
+
+                d3.select(d.city.line).style("stroke-width","2.5")
+                d3.select(d.city.line).style("stroke","#000000")
+
+                var popText = "";
+                if(scope.state.group == "msa"){
+                    var name = d.city.name;
+                }
+                else{
+                    var name = d.city.key;
+                }
+
+                popText += name + ' | ' + d.x +':  '+ d3.round(d.y);
+
+                d.city.line.parentNode.appendChild(d.city.line);
+                focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
+                focus.select("text").text(popText);
+            }
+
+            function mouseout(d) {                              
+
+                d3.select(d.city.line).style("stroke-width","1")
+                d3.select(d.city.line).style("stroke",function(d){return scope.colorFunction(d)})
+
+                focus.attr("transform", "translate(-100,-100)");
+            }
 
 	   }
 	},

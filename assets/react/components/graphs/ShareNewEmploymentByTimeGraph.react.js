@@ -430,10 +430,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
               .text("Share of Employment in New Firms");
 
 
-
-
-
-
             svg.append("g")
                   .attr("class", "cities")
                 .selectAll("path")
@@ -450,10 +446,10 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                   .attr("transform", "translate(-100,-100)")
                   .attr("class", "focus");
 
-              focus.append("circle")
+                focus.append("circle")
                   .attr("r", 3.5);
 
-              focus.append("text")
+                focus.append("text")
                   .attr("y", -10)
                   .style("font-weight","bold");
 
@@ -464,16 +460,16 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                   .style("opacity","0")
 
             voronoiGroup.selectAll("path")
-                  .data(voronoi(d3.nest()
-                      .key(function(d) {return x(d.x) + "," + y(d.y); })
-                      .rollup(function(v) { return v[0]; })
-                      .entries(d3.merge(cities.map(function(d) { return d.values; })) )
-                      .map(function(d) { return d.values; })))
+                    .data(voronoi(d3.nest()
+                        .key(function(d) {return x(d.x) + "," + y(d.y); })
+                        .rollup(function(v) { return v[0]; })
+                        .entries(d3.merge(cities.map(function(d) { return d.values; })) )
+                        .map(function(d) { return d.values; })))
                 .enter().append("path")
-                  .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
-                  .datum(function(d) { return d.point; })
-                  .on("mouseover", mouseover)
-                  .on("mouseout", mouseout);
+                    .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+                    .datum(function(d) { return d.point; })
+                    .on("mouseover", mouseover)
+                    .on("mouseout", mouseout);
 
 
             function mouseover(d) {
@@ -494,15 +490,15 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 d.city.line.parentNode.appendChild(d.city.line);
                 focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
                 focus.select("text").text(popText);
-              }
+            }
 
-              function mouseout(d) {                              
+            function mouseout(d) {                              
 
                 d3.select(d.city.line).style("stroke-width","1")
                 d3.select(d.city.line).style("stroke",function(d){return scope.colorFunction(d)})
 
                 focus.attr("transform", "translate(-100,-100)");
-              }
+            }
            
 
         }

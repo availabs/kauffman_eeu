@@ -133,7 +133,7 @@ var GraphPage = React.createClass({
 
 	    	divs=(
 	    		<div>
-	    			<h3>Share of Employment in new firms colored by {scope.state.color} and grouped by {scope.state.group}</h3>
+	    			<h3>Share of Employment in new firms <br/>Colored by {scope.state.color}, grouped by {scope.state.group}</h3>
 	                <div id="ShareNewEmploymentByTimeGraph"></div>
 	    		</div>
 	    		);
@@ -147,7 +147,7 @@ var GraphPage = React.createClass({
 
 	    	divs=(
 	    		<div>
-	    		    <h3>New Firms per 1000 people colored by {scope.state.color} and grouped by {scope.state.group}</h3>
+	    		    <h3>New Firms per 1000 people <br/>Colored by {scope.state.color}, grouped by {scope.state.group}</h3>
 	                <div id="NewFirmPer1000Graph"></div>
 	    		</div>
 	    		);
