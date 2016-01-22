@@ -323,7 +323,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.5 - margin.top - margin.bottom;
+                height = window.innerHeight*.4 - margin.top - margin.bottom;
 
             var voronoi = d3.geom.voronoi()
                 .x(function(d) { return x(d.x); })
@@ -536,7 +536,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .data(color)
                     .enter()
                     .append("td")
-                    .attr("class", "col-md-1")
+                    .attr("class", "col-md-5")
                     .style("background",function(v){return v[0].backgroundColor})
                     .style("min-width",'50px')
                     .style("height",function(v){return v[0].height});
@@ -547,9 +547,9 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .data(name)
                     .enter()
                     .append("td")
-                    .attr("class", "col-md-1")
+                    .attr("class", "col-md-5")
                     .text(function(v){console.log("djdfhsjkf",v); return v[0]})
-                    .style("min-width",'150px');
+                    .style("min-width",'170px');
 
 
 
@@ -559,7 +559,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .data(d.city.values)
                     .enter()
                     .append("td")
-                    .attr("class", "col-md-1")
+                    .attr("class", "col-md-5")
                         .text(function(d) {return percFormat(d.y); });
                 
                 console.log(d3.select("#hoverRow")[0][0]);
@@ -622,7 +622,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             //Will return the y value for each year of a metro area
             var yearValues = metroArea.values.map(function(firmValues){
-                return (<td className="col-md-1">{percFormat(firmValues.y)}</td>)
+                return (<td className="col-md-5">{percFormat(firmValues.y)}</td>)
             })
 
 
@@ -633,7 +633,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             }
 
 
-            return(<tr><td style={colorStyle}className="col-md-1"></td><td className="col-md-1" style={{minWidth:150}}>{metroArea.name}</td>{yearValues}</tr>)
+            return(<tr><td style={colorStyle}className="col-md-5"></td><td className="col-md-5" style={{minWidth:170}}>{metroArea.name}</td>{yearValues}</tr>)
 
         });
 
@@ -670,13 +670,15 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         }
 
         var tableStyle = {
-            overflow:'scroll',
+            overflowX:'hidden',
+            overflowY:'scroll',
             height:window.innerHeight*.4,
             width:window.innerWidth
         }
 
         var rowStyle = {
-            overflow:'hidden',
+            overflowY:'hidden',
+            overflowX:'scroll',
             height:window.innerHeight*.2,
             width:window.innerWidth
         }
