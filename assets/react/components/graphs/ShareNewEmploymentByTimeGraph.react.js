@@ -469,20 +469,21 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
                     .datum(function(d) { return d.point; })
                     .on("mouseover", mouseover)
-                    .on("mouseout", mouseout);
+                    .on("mouseout", mouseout)
+                    .on("click",click);
 
 
             function mouseover(d) {
-
                 d3.select(d.city.line).style("stroke-width","2.5")
                 d3.select(d.city.line).style("stroke","#000000")
 
-                var popText = "";
+                var popText = "",
+                    name;
                 if(scope.state.group == "msa"){
-                    var name = d.city.name;
+                    name = d.city.name;
                 }
                 else{
-                    var name = d.city.key;
+                    name = d.city.key;
                 }
 
                 popText += name + ' | ' + d.x +':  '+ percFormat(d.y);
@@ -491,6 +492,80 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
                 focus.select("text").text(popText);
             }
+
+            function click(d){
+                d3.select("#hoverRow").remove();
+                var years = d3.range(1977,2013);
+     
+                years.unshift("Name");
+                years.unshift("Color");
+
+                console.log("d.city",d.city);
+
+
+                var table = d3.select("#currentRow").append("table")
+                            .attr("id","hoverRow")
+                            .attr("class", "table table-hover"),
+                        thead = table.append("thead"),
+                        tbody = table.append("tbody");
+
+                // append the header row
+                thead.append("tr")
+                    .selectAll("th")
+                    .data(years)
+                    .enter()
+                    .append("th")
+                        .text(function(column) { return column; });
+
+                // create 1 row
+                var rows = tbody.append("tr")
+                    .selectAll("tr");
+
+                var name = [{0:d.city.name}];
+
+                var nameCell = rows.select("td")
+                    .data(name)
+                    .enter()
+                    .append("td")
+                    .attr("class", "col-md-1")
+                    .text(function(v){console.log("djdfhsjkf",v); return v[0]});
+
+                var color = [{
+                    0:{
+                        float:"left",
+                        height:38,
+                        width:10,
+                        backgroundColor:scope.colorFunction(d.city)
+                    }
+                }]
+
+                var colorCell = rows.select("td")
+                    .data(color)
+                    .enter()
+                    .append("td")
+                    .attr("class", "col-md-1")
+                    .style("background-color",function(v){return v[0].backgroundColor})
+                    .style("width",function(v){return v[0].width})
+                    .style("height",function(v){return v[0].height});
+
+
+                // rows.select("td")
+                //     .append("td")
+                //     .text(function(d){console.log("key",d);return "hello"})
+                //     .attr("class", "col-md-1");
+
+
+                // create a cell in each row for each column
+                var cells = rows.select("td")
+                    .data(d.city.values)
+                    .enter()
+                    .append("td")
+                    .attr("class", "col-md-1")
+                        .text(function(d) {return percFormat(d.y); });
+                
+                console.log(d3.select("#hoverRow")[0][0]);
+            }
+
 
             function mouseout(d) {                              
 
@@ -555,9 +630,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             }
 
 
-
-            //Row has color - name - values
-
             return(<tr><td className="col-md-1"><div style={colorStyle}></div></td><td className="col-md-1">{metroArea.name}</td>{yearValues}</tr>)
 
         });
@@ -610,8 +682,17 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             width:'100%'
         }
 
+        var rowStyle = {
+            overflowX:'scroll',
+            height:'150px',
+            width:'100%'
+        }
+
 		return (
             <div>
+                <div id="currentRow" style={rowStyle}>
+
+                </div>
     			<div style = {tableStyle} >
                 {table}
     			</div>
