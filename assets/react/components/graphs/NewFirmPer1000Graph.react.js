@@ -116,7 +116,7 @@ var NewFirmPer1000Graph = React.createClass({
                 })
             }
         })
-        console.log(stateData);
+
         var chartData = Object.keys(stateData).map(function(state){
 
             var valueArray = [];
@@ -144,7 +144,6 @@ var NewFirmPer1000Graph = React.createClass({
             return {key:state,values:valueArray,area:false,msaArray:stateData[state]["msaArray"]};
 
         })
-
 
         return chartData;
 
@@ -210,7 +209,7 @@ var NewFirmPer1000Graph = React.createClass({
         var scope = this;
 
         var indexedData = Object.keys(data).map(function(index){
-            return {index:(+index),key:data[index].key,values:data[index].values}
+            return {index:(+index),key:data[index].key,values:data[index].values,msaArray:data[index]["msaArray"]}
         })
 
         return indexedData;
@@ -387,7 +386,7 @@ var NewFirmPer1000Graph = React.createClass({
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
+                    console.log("in render graph",data);
             var cities = Object.keys(data).map(function(metroArea){
 
 
@@ -419,6 +418,7 @@ var NewFirmPer1000Graph = React.createClass({
               
                 }
                 else{
+
                     var city = {
                         values:null,
                         index:data[metroArea].index,
@@ -495,15 +495,25 @@ var NewFirmPer1000Graph = React.createClass({
 
         var cities = Object.keys(data).map(function(metroArea){
 
-
-            return {
-                index:data[metroArea].index,
-                name:msaIdToName[data[metroArea].key],
-                msaId:data[metroArea].key,
-                values:data[metroArea].values,
-                color:scope.colorFunction(data[metroArea])
+            if(scope.state.group == "msa"){
+                return {
+                    index:data[metroArea].index,
+                    name:msaIdToName[data[metroArea].key],
+                    values:data[metroArea].values,
+                    color:scope.colorFunction(data[metroArea])
+                }                
             }
+            else{
+                return {
+                    index:data[metroArea].index,
+                    name:data[metroArea].key,
+                    values:data[metroArea].values,
+                    color:scope.colorFunction(data[metroArea])
+                }
+            }
+
         });
+
 
 
 
