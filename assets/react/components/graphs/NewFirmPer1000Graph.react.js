@@ -13,7 +13,8 @@ var NewFirmPer1000Graph = React.createClass({
             curChart:"line",
             data:[],
             loading:true,
-            group:"msa"
+            group:"msa",
+            filter:true
         }
     },
     getDefaultProps:function(){
@@ -745,10 +746,26 @@ var NewFirmPer1000Graph = React.createClass({
 
         return table;
     },
+    filterOutliers:function(e){
+        console.log("FILTER");
+        var scope = this;
+
+
+        if(e.target.className == "btn btn-danger"){
+            e.target.className = "btn btn-success"
+            scope.setState({filter:false});
+        }
+        else{
+            e.target.className = "btn btn-danger"
+            scope.setState({filter:true});
+        }
+
+
+    },
 	render:function() {
 		var scope = this,
             table;
-	
+
         if(scope.state.data != []){
             scope.renderGraph();
             table = scope.renderTable();
@@ -770,6 +787,7 @@ var NewFirmPer1000Graph = React.createClass({
 
         return (
             <div>
+                <button onClick={scope.filterOutliers}className="btn btn-danger">Toggle Outlier Filter</button>
                 <div id="currentRow" style={rowStyle}>
 
                 </div>
