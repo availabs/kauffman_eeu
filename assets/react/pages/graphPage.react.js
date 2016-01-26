@@ -1,6 +1,7 @@
 var React = require("react"),
 	ShareNewEmploymentByTimeGraph = require("../components/graphs/ShareNewEmploymentByTimeGraph.react"),
 	NewFirmPer1000Graph = require("../components/graphs/NewFirmPer1000Graph.react"),
+	RankingsGraph = require("../components/graphs/RankingsGraph.react"),
 	Loading = require("../components/layout/Loading.react");	
 
 
@@ -29,7 +30,6 @@ var GraphPage = React.createClass({
 		headerItems.forEach(function(items){
 			items.forEach(function(item){
 				item.className = "";
-				console.log(item.className);
 			})
 			
 		})
@@ -46,9 +46,9 @@ var GraphPage = React.createClass({
 				.attr('class',"active");
 		}
 		else{
+			scope.setState({graph:"rankings"});
 			d3.select('#rankings')
 				.attr('class',"active");
-			console.log("rankings")
 		}
 	},
     getData:function(cb){
@@ -132,7 +132,7 @@ var GraphPage = React.createClass({
 	    		</div>
 	    		);
 	    }
-	    else{
+	    else if(scope.state.graph == "new"){
 	    	graph=(
 	    		<div>
 	    			<NewFirmPer1000Graph data={scope.state.data} color={scope.state.color} group={scope.state.group}/>
@@ -145,6 +145,20 @@ var GraphPage = React.createClass({
 	                <div id="NewFirmPer1000Graph"></div>
 	    		</div>
 	    		);
+	    }
+	    else{
+	    	graph=(
+	    		<div>
+	    			<RankingsGraph />
+	    		</div>
+	    		)
+	    	divs=(
+	    		<div>
+	    		    <h5 style={{fontWeight:"bold"}}>Density Metric Rankings <br/>Colored by {scope.state.color}, grouped by {scope.state.group}</h5>
+	                <div id="RankingsGraph"></div>
+	    		</div>
+	    		);
+
 	    }
 		
 		if(scope.state.loading == true){
