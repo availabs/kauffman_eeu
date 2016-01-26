@@ -85,11 +85,7 @@ var NewFirmPer1000Graph = React.createClass({
 
                 //Iterating through every year within a metro area
                 var valueArray = Object.keys(data[msaId]).map(function(year){
-                    var curCoord={"x":+year,"y":0},
-                        newFirmSum = 0,
-                        newPer1000 = 0,
-                        pop = 0,
-                        pop1000 = 0;
+                    var pop = 0;
 
                     //Null check for state/year combo    
                     if(!stateData[state][year]){

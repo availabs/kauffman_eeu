@@ -101,9 +101,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 stateData[state]["msaArray"].push(msaId);
                 //Iterating through every year within a metro area
                 Object.keys(data[msaId]).forEach(function(year){
-                    var totalEmploySum = 0,
-                        newFirmSum = 0,
-                        share = 0;
 
                     //Null check for state/year combo
                     if(!stateData[state][year]){
