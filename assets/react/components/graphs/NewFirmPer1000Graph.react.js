@@ -789,13 +789,14 @@ var NewFirmPer1000Graph = React.createClass({
         console.log("FILTER");
         var scope = this;
 
-
         if(e.target.className == "btn btn-danger"){
             e.target.className = "btn btn-success"
+            e.target.textContent = "Including Outliers"
             scope.setState({filter:false});
         }
         else{
             e.target.className = "btn btn-danger"
+            e.target.textContent = "Excluding Outliers"
             scope.setState({filter:true});
         }
 
@@ -826,7 +827,7 @@ var NewFirmPer1000Graph = React.createClass({
 
         return (
             <div>
-                <button onClick={scope.filterOutliers}className="btn btn-danger">Toggle Outlier Filter</button>
+                <button onClick={scope.filterOutliers}className="btn btn-danger">Excluding Outliers</button>
                 <div id="currentRow" style={rowStyle}>
 
                 </div>
