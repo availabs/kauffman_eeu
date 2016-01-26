@@ -36,7 +36,7 @@ var RankingsGraph = React.createClass({
         //Extract only the fields we need from the dataset
         var metroAreaData = scope.trimData(data);
         //Data Now arranged by MSAID -> Year -> Firm Age
-        console.log("trimmed",metroAreaData);
+
 
         //Want an array with one object PER metro area
         //Object will look like: {values:[{x:1977,y:val}, {x:1978,y:val}....],key=msa,}
@@ -48,13 +48,8 @@ var RankingsGraph = React.createClass({
         if(scope.state.group == "state"){
             var chartData = scope.chartStateData(metroAreaData);           
         }        
-        console.log("chartdata",chartData);
 
-
-        // //Add indexes to the objects themselves
-        // var finalData = scope.addIndex(chartData);
-
-        return metroAreaData;
+        return chartData;
     },
     trimData:function(data){
         var scope = this,
@@ -320,6 +315,273 @@ var RankingsGraph = React.createClass({
        
         return chartData;
     },
+    colorGroup:function(){
+        var scope = this;
+
+        if(scope.state.group == "msa"){
+            if(scope.props.color == "population"){
+                var colorGroup = d3.scale.quantize()
+                    .domain([50000,2500000])
+                    .range(colorbrewer.YlOrRd[9]);
+            }
+            if(scope.props.color == "state"){
+                var colorGroup = d3.scale.linear()
+                    .domain([0,350,700])
+                    .range(['red','green','blue']);
+            }            
+        }
+        if(scope.state.group == "state"){
+            if(scope.props.color == "population"){
+                var colorGroup = d3.scale.quantize()
+                    .domain([100000,10000000])
+                    .range(colorbrewer.YlOrRd[9]);            
+            }
+
+            if(scope.props.color == "state"){
+                var colorGroup = d3.scale.linear()
+                    .domain([0,350,700])
+                    .range(['red','green','blue']); 
+            }
+        
+        }
+
+
+        return colorGroup;
+
+    },
+    colorFunction:function(params){
+        var scope = this,
+            cityColor;
+
+        var color = scope.colorGroup();
+
+        if(scope.state.group == "msa"){
+            if(scope.props.color == "population"){         
+                if(metroPop20002009[params.key]){
+                    var pop = metroPop20002009[params.key][2000].replace(/,/g , "");
+                    cityColor = color(pop)
+                }
+                else{
+                    cityColor = '#FFFFFF'
+                }
+            }
+            if(scope.props.color == "state"){
+                if(msaIdToName[params.key]){
+                    var state = msaIdToName[params.key].substr(msaIdToName[params.key].length - 2);
+                    var fips = abbrToFips[state] * 10;
+                    cityColor = color(fips);
+                }
+                else{
+                    cityColor = '#FFFFFF'                
+                }
+            }            
+        }
+
+
+        if(scope.state.group == "state"){
+            if(scope.props.color == "state"){
+                var fips = abbrToFips[params.key] * 10;
+                cityColor = color(fips);               
+            }
+            if(scope.props.color == "population"){
+                var totalPop = 0;
+
+                if(params["msaArray"]){
+                    params["msaArray"].forEach(function(msaId){
+                        
+                        if(metroPop20002009[msaId]){
+                            totalPop = totalPop + +metroPop20002009[msaId][2000].replace(/,/g , "");        
+                        }
+                                            
+                    })                    
+                }
+
+                if(totalPop > 0){
+                    cityColor = color(totalPop)                    
+                }
+                else{
+                    cityColor = '#FFFFFF'
+                }
+            }
+
+        }
+
+
+        return cityColor;
+
+    },
+    renderTable:function(){
+
+		var scope = this,
+            data = scope.state.data,
+            color = d3.scale.category20(),
+            newFirmYears = d3.range(2000,2010),
+            shareYears = d3.range(1977,2009),
+            commaFormat = d3.format(","),
+            percFormat = d3.format(".3%");
+
+
+
+        var cities = Object.keys(data).map(function(metroArea){
+            if(scope.state.group == "msa"){
+                return {
+                    name:msaIdToName[data[metroArea].key],
+                    newFirmValues:data[metroArea]['newFirmData'],
+                    shareValues:data[metroArea]['shareData'],
+                    color:scope.colorFunction(data[metroArea])
+                }                
+            }
+            else{
+                return {
+                    name:data[metroArea].key,
+                    newFirmValues:data[metroArea]['newFirmData'],
+                    shareValues:data[metroArea]['shareData'],
+                    color:scope.colorFunction(data[metroArea])
+                }
+            }
+
+        });
+
+        var nameStyle = {
+            minWidth:'180px'
+        }
+
+    	var dataStyle = {
+            minWidth:'100px'
+        }
+
+        var tableStyle={
+            tableLayout:'fixed'
+        }
+
+        var newFirmRows = cities.map(function(metroArea){
+
+	        var colorStyle = {
+	            background:metroArea.color,
+	            minWidth:50
+	        }
+
+            //Will return the y value for each year of a metro area
+            var newFirmValues = metroArea.newFirmValues.map(function(firmValues){
+                var curValue = d3.round(firmValues.y);
+                return (<td style={dataStyle} className="col-md-1">{curValue}</td>)
+            })
+
+            //Row has color - name - values
+            return(<tr><td style={colorStyle} className="col-md-1"></td><td style={nameStyle}className="col-md-1">{metroArea.name}</td>{newFirmValues}</tr>)
+        });
+
+        var shareRows = cities.map(function(metroArea){
+        	
+	        var colorStyle = {
+	            background:metroArea.color,
+	            minWidth:50
+	        }
+
+            //Will return the y value for each year of a metro area
+            var shareValues = metroArea.shareValues.map(function(firmValues){
+                return (<td style={dataStyle} className="col-md-5">{percFormat(firmValues.y)}</td>)
+            })
+
+            return(<tr><td style={colorStyle} className="col-md-5"></td><td style={nameStyle}className="col-md-5">{metroArea.name}</td>{shareValues}</tr>)
+        });
+
+        var newFirmYearHead = newFirmYears.map(function(year){
+            if(year == 2000){
+                return(<th>Year: <br/>{year}</th>)               
+            }
+            else{
+                return(<th>{year}</th>)
+            }
+
+        })
+
+        var shareYearHead  = shareYears.map(function(year){
+            if(year == 1977){
+                return(<th>Year: <br/>{year}</th>)               
+            }
+            else{
+                return(<th>{year}</th>)
+            }
+
+        }) 
+
+        //Full table
+
+        var newFirmHead = (
+            <table className="table table-hover" style={tableStyle}>
+                <thead>
+                    <tr>
+                        <th>
+                        Color
+                        </th>
+                        <th>
+                        Name
+                        </th>
+                        {newFirmYearHead}
+                    </tr>
+                </thead>
+            </table>
+            )
+
+        var shareHead = (
+            <table className="table table-hover" style={tableStyle}>
+                <thead>
+                    <tr>
+                        <th>
+                        Color
+                        </th>
+                        <th>
+                        Name
+                        </th>
+                        {shareYearHead}
+                    </tr>
+                </thead>
+            </table>
+            )
+
+
+        var newFirmBody = (
+            <table className="table table-hover" style={tableStyle}>                    
+                <tbody>
+                    {newFirmRows}
+                </tbody>
+            </table>
+                    )
+
+        var shareBody = (
+            <table className="table table-hover" style={tableStyle}>                    
+                <tbody>
+                    {shareRows}
+                </tbody>
+            </table>
+                    )
+
+        var tables = {};
+
+
+        tables["newFirmTable"] = (	
+            <div id="newFirmTable">
+                <div>
+                {newFirmHead}
+                </div>
+                <div>
+                {newFirmBody}
+                </div>
+            </div>)
+
+        tables["shareTable"] = (	
+            <div id="shareTable">
+                <div>
+                {shareHead}
+                </div>
+                <div >
+                {shareBody}
+                </div>
+            </div>)
+
+    	return tables;
+    },
 	shareRank:function(){
 
 	},
@@ -327,14 +589,34 @@ var RankingsGraph = React.createClass({
 
 	},
 	render:function() {
+		var scope = this;
 		console.log("RANKINGS GRAPH")
 		d3.selectAll("svg").remove();
 
+		var tables;
+
+		if(scope.state.data != []){
+			console.log("render data",scope.state.data);
+			tables = scope.renderTable();
+		}
+        var divStyle = {
+            overflowX:'scroll',
+            overflowY:'scroll',
+            height:window.innerHeight*.4,
+            width:window.innerWidth
+        }
 
 
 		return (
 			<div>
 				<h3>Rankings</h3>
+				<div style = {divStyle}>
+					{tables["newFirmTable"]}
+				</div>
+				<div style = {divStyle}>
+					{tables["shareTable"]}
+				</div>
+
 			</div>
 			
 		);
