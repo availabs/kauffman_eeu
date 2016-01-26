@@ -397,43 +397,66 @@ var NewFirmPer1000Graph = React.createClass({
 
 
                 var curValues = data[metroArea].values.map(function(oldValues){
-                    if(oldValues.y > 8){
-                        return ({x:oldValues.x,y:oldValues.y})
+                    if(scope.state.filter == true){
+                        if(oldValues.y > 13){
+                            return ({x:oldValues.x,y:13})
+                        }
+                        else{
+                            return ({x:oldValues.x,y:oldValues.y})
+                        }                        
                     }
                     else{
                         return ({x:oldValues.x,y:oldValues.y})
                     }
+
                 })
 
                 if(scope.state.group == "msa"){
                     
                     var city = {
                         values:null,
+                        origValues:null,
                         index:data[metroArea].index,
                         name:msaIdToName[data[metroArea].key],
                         key:data[metroArea].key
                     }
 
-                    city.values = data[metroArea].values.map(function(i){
+                    city.values = curValues.map(function(i){
                         return {
                             city:city,
                             x:i.x,
                             y:i.y
                         }
                     })
+                    city.origValues = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+
               
                 }
                 else{
 
                     var city = {
                         values:null,
+                        origValues:null,
                         index:data[metroArea].index,
                         msaArray:data[metroArea].msaArray,
                         key:data[metroArea].key,
                         name:data[metroArea].key
                     }
 
-                    city.values = data[metroArea].values.map(function(i){
+                    city.values = curValues.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+                    city.origValues = data[metroArea].values.map(function(i){
                         return {
                             city:city,
                             x:i.x,
@@ -519,7 +542,6 @@ var NewFirmPer1000Graph = React.createClass({
 
 
             function mouseover(d) {
-
                 d3.select(d.city.line).style("stroke-width","2.5")
                 d3.select(d.city.line).style("stroke","#000000")
 
@@ -531,7 +553,24 @@ var NewFirmPer1000Graph = React.createClass({
                     var name = d.city.key;
                 }
 
-                popText += name + ' | ' + d.x +':  '+ d3.round(d.y);
+                if(scope.state.filter == true){
+
+                    var origY;
+
+                    d.city.origValues.forEach(function(coord){
+                        if(coord.x==d.x){
+                            origY = coord.y
+                        }
+                    })
+
+                    popText += name + ' | ' + d.x +':  '+ d3.round(origY);
+                }
+                else{
+                    popText += name + ' | ' + d.x +':  '+ d3.round(d.y);                    
+                }
+
+
+
 
                 d.city.line.parentNode.appendChild(d.city.line);
                 focus.attr("transform", "translate(" + x(d.x) + "," + y(d.y) + ")");
@@ -608,7 +647,7 @@ var NewFirmPer1000Graph = React.createClass({
 
                 // create a cell in each row for each column
                 var cells = rows.select("td")
-                    .data(d.city.values)
+                    .data(d.city.origValues)
                     .enter()
                     .append("td")
                     .attr("class", "col-md-1")
