@@ -173,28 +173,45 @@ var RankingsGraph = React.createClass({
 
 	console.log("statedata",stateData);
 
-        var chartData = Object.keys(stateData).map(function(state){
+		var chartData = {};
 
-            var valueArray = [];
 
-            Object.keys(stateData[state]).forEach(function(year){
+		var chartData = Object.keys(stateData).map(function(state){
+			var shareData = [],
+				newFirmData = [];
+
+			Object.keys(stateData[state]["shareData"]).forEach(function(year){
+                if(year != "msaArray"){
+                    var curCoord={"x":+year,"y":0},
+                        share = 0;
+
+                    share = stateData[state]["shareData"][year]["newFirmSum"]/stateData[state]["shareData"][year]["totalEmploySum"]       
+                    curCoord["y"] = share;
+                    //Want to return: x:year y:percent
+                    shareData.push(curCoord);
+                }
+			})
+
+			Object.keys(stateData[state]["newFirmData"]).forEach(function(year){
 
                 if(year != "msaArray"){
                     var curCoord={"x":+year,"y":0},
                         share = 0;
 
-                    share = stateData[state][year]["newFirmSum"]/stateData[state][year]["totalEmploySum"]       
-                    curCoord["y"] = share;
-                    //Want to return: x:year y:percent
-                    valueArray.push(curCoord);
+                    if(stateData[state]["newFirmData"][year]["totalPopSum"] != 0 && stateData[state]["newFirmData"][year]["newFirmSum"] != 0){
+                        var pop1000 = stateData[state]["newFirmData"][year]["totalPopSum"]/1000;
+                        var newPer1000 =  stateData[state]["newFirmData"][year]["newFirmSum"]/pop1000;      
+                        curCoord["y"] = newPer1000;
+
+                        //Want to return: x:year y:percent
+                        newFirmData.push(curCoord);                        
+                    }
+
                 }
+			})
+            return {key:state,newFirmData:newFirmData,shareData:shareData,area:false,msaArray:stateData[state]["msaArray"]};   
 
-            })
-
-            return {key:state,values:valueArray,area:false,msaArray:stateData[state]["msaArray"]};                
-            
-        })
-
+		})
 
        
         return chartData;
