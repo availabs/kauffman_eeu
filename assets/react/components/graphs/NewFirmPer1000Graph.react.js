@@ -640,10 +640,8 @@ var NewFirmPer1000Graph = React.createClass({
                     .enter()
                     .append("td")
                     .attr("class", "col-md-1")
-                    .text(function(v){console.log("djdfhsjkf",v); return v[0]})
-                    .style("min-width",'170px');
-
-
+                    .text(function(v){return v[0]})
+                    .style("min-width",'180px');
 
 
                 // create a cell in each row for each column
@@ -652,7 +650,8 @@ var NewFirmPer1000Graph = React.createClass({
                     .enter()
                     .append("td")
                     .attr("class", "col-md-1")
-                        .text(function(d) {return d3.round(d.y); });
+                        .text(function(d) {return d3.round(d.y); })
+                        .style('min-width','100px');
                 
                 console.log(d3.select("#hoverRow")[0][0]);
             }
@@ -705,14 +704,21 @@ var NewFirmPer1000Graph = React.createClass({
 
         var allRows = cities.map(function(metroArea){
 
+            var dataStyle = {
+                minWidth:'100px'
+            }
 
             //Will return the y value for each year of a metro area
             var yearValues = metroArea.values.map(function(firmValues){
                 var curValue = d3.round(firmValues.y);
-                return (<td className="col-md-1">{curValue}</td>)
+                return (<td style={dataStyle} className="col-md-1">{curValue}</td>)
             })
 
 
+
+            var nameStyle = {
+                minWidth:'180px'
+            }
 
             var colorStyle = {
                 background:metroArea.color,
@@ -723,57 +729,10 @@ var NewFirmPer1000Graph = React.createClass({
 
             //Row has color - name - values
 
-            return(<tr><td style={colorStyle} className="col-md-1"></td><td className="col-md-1" style={{minWidth:170}}>{metroArea.name}</td>{yearValues}</tr>)
+            return(<tr><td style={colorStyle} className="col-md-1"></td><td className="col-md-1" style={nameStyle}>{metroArea.name}</td>{yearValues}</tr>)
 
         });
 
-        var yearHead = years.map(function(year){
-            if(year == 2000){
-                return(<th>Year: <br/>{year}</th>)               
-            }
-            else{
-                return(<th>{year}</th>)
-            }
-
-        })
-
-
-        var tableStyle={
-            tableLayout:'fixed'
-        }
-
-        //Full table
-
-        var tableHead = (
-            <table className="table table-hover" style={tableStyle}>
-                <thead>
-                    <tr>
-                        <th>
-                        Color
-                        </th>
-                        <th>
-                        Name
-                        </th>
-                        {yearHead}
-                    </tr>
-                </thead>
-            </table>
-            )
-        var tableBody = (
-            <table className="table table-hover" style={tableStyle}>                    
-                <tbody>
-                    {allRows}
-                </tbody>
-            </table>
-                    )
-
-        var contentStyle ={
-            overflow:'scroll',
-            overflowX:'hidden',
-            tableLayout:'fixed',
-            height:'400px',
-            width:'100%'          
-        }
 
         //Full table
         var table = (

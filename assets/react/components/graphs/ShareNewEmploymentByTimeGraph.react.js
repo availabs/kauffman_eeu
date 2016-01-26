@@ -518,7 +518,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .data(years)
                     .enter()
                     .append("th")
-                        .text(function(column) {if(column==1977){return "Year " +column}else{return column;}  });
+                        .text(function(column) {if(column==1977){return "Year \n" +column}else{return column;}  })
+                        .style("white-space","pre");;
 
                 // create 1 row
                 var rows = tbody.append("tr")
@@ -549,8 +550,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .enter()
                     .append("td")
                     .attr("class", "col-md-5")
-                    .text(function(v){console.log("djdfhsjkf",v); return v[0]})
-                    .style("min-width",'170px');
+                    .text(function(v){return v[0]})
+                    .style("min-width",'180px');
 
 
 
@@ -561,7 +562,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .enter()
                     .append("td")
                     .attr("class", "col-md-5")
-                        .text(function(d) {return percFormat(d.y); });
+                        .text(function(d) {return percFormat(d.y); })
+                        .style("min-width",'100px');;
                 
                 console.log(d3.select("#hoverRow")[0][0]);
             }
@@ -621,21 +623,29 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var allRows = cities.map(function(metroArea){
 
+            var dataStyle = {
+                minWidth:'100px'
+            }
 
             //Will return the y value for each year of a metro area
             var yearValues = metroArea.values.map(function(firmValues){
-                return (<td className="col-md-5">{percFormat(firmValues.y)}</td>)
+                return (<td style={dataStyle} className="col-md-5">{percFormat(firmValues.y)}</td>)
             })
 
 
+            var nameStyle = {
+                minWidth:'180px'
+            }
 
             var colorStyle = {
                 background:metroArea.color,
                 minWidth:50
             }
 
+  
 
-            return(<tr><td style={colorStyle}className="col-md-5"></td><td className="col-md-5" style={{minWidth:170}}>{metroArea.name}</td>{yearValues}</tr>)
+
+            return(<tr><td style={colorStyle}className="col-md-5"></td><td style={nameStyle}className="col-md-5">{metroArea.name}</td>{yearValues}</tr>)
 
         });
 
