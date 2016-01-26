@@ -385,7 +385,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                         values:null,
                         index:data[metroArea].index,
                         msaArray:data[metroArea].msaArray,
-                        key:data[metroArea].key
+                        key:data[metroArea].key,
+                        name:data[metroArea].key
                     }
 
                     city.values = data[metroArea].values.map(function(i){
@@ -676,7 +677,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             height:window.innerHeight*.2,
             width:window.innerWidth
         }
-        
+
         var tableStyle = {
             overflowX:'hidden',
             overflowY:'scroll',

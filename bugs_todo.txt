@@ -12,10 +12,7 @@ If a line is clicked, it should stay highlited until it is clicked again or anot
 
 TODO on current functionality:
 
-Display row for current selection on both graphs
-Finish newfirmper1000 group by state color issue
 Dock left side of both tables
-on new firm graph, toggle to filter out outlier
 
 TODO new functionality:
 rank metro area/state per metric per year separately
