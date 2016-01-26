@@ -513,7 +513,8 @@ var NewFirmPer1000Graph = React.createClass({
                     .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
                     .datum(function(d) { return d.point; })
                     .on("mouseover", mouseover)
-                    .on("mouseout", mouseout);
+                    .on("mouseout", mouseout)
+                    .on("click",click);
 
 
             function mouseover(d) {
@@ -543,6 +544,86 @@ var NewFirmPer1000Graph = React.createClass({
 
                 focus.attr("transform", "translate(-100,-100)");
             }
+
+            function click(d){
+                d3.select("#hoverRow").remove();
+                var years = d3.range(2000,2010);
+     
+                years.unshift("Name");
+                years.unshift("Color");
+
+                console.log("d.city",d.city);
+
+
+                var table = d3.select("#currentRow").append("table")
+                            .attr("id","hoverRow")
+                            .attr("class", "table table-hover"),
+                        thead = table.append("thead"),
+                        tbody = table.append("tbody");
+
+                // append the header row
+                thead.append("tr")
+                    .selectAll("th")
+                    .data(years)
+                    .enter()
+                    .append("th")
+                        .text(function(column) {if(column==1977){return "Year " +column}else{return column;}  });
+
+                // create 1 row
+                var rows = tbody.append("tr")
+                    .selectAll("tr");
+
+                var color = [{
+                    0:{
+                        float:"left",
+                        height:38,
+                        width:10,
+                        backgroundColor:scope.colorFunction(d.city)
+                    }
+                }]
+
+                var colorCell = rows.select("td")
+                    .data(color)
+                    .enter()
+                    .append("td")
+                    .attr("class", "col-md-1")
+                    .style("background",function(v){return v[0].backgroundColor})
+                    .style("min-width",'50px')
+                    .style("height",function(v){return v[0].height});
+
+                var name = [{0:d.city.name}];
+
+                var nameCell = rows.select("td")
+                    .data(name)
+                    .enter()
+                    .append("td")
+                    .attr("class", "col-md-1")
+                    .text(function(v){console.log("djdfhsjkf",v); return v[0]})
+                    .style("min-width",'170px');
+
+
+
+
+                // create a cell in each row for each column
+                var cells = rows.select("td")
+                    .data(d.city.values)
+                    .enter()
+                    .append("td")
+                    .attr("class", "col-md-1")
+                        .text(function(d) {return d3.round(d.y); });
+                
+                console.log(d3.select("#hoverRow")[0][0]);
+            }
+
+            $('#currentRow').on('scroll', function () {
+                $('#tableDiv').scrollLeft($(this).scrollLeft());
+            });
+
+            $('#tableDiv').on('scroll', function () {
+                $('#currentRow').scrollLeft($(this).scrollLeft());
+            });  
+
+
 
 	   }
 	},
@@ -592,17 +673,15 @@ var NewFirmPer1000Graph = React.createClass({
 
 
             var colorStyle = {
-                float:"left",
-                height:38,
-                width:10,
-                backgroundColor:metroArea.color
+                background:metroArea.color,
+                minWidth:50
             }
 
 
 
             //Row has color - name - values
 
-            return(<tr><td className="col-md-1"><div style={colorStyle}></div></td><td className="col-md-1">{metroArea.name}</td>{yearValues}</tr>)
+            return(<tr><td style={colorStyle} className="col-md-1"></td><td className="col-md-1" style={{minWidth:170}}>{metroArea.name}</td>{yearValues}</tr>)
 
         });
 
@@ -654,16 +733,14 @@ var NewFirmPer1000Graph = React.createClass({
             width:'100%'          
         }
 
-        return(
-            <div>
-                <div>
-                {tableHead}
-                </div>
-                <div style = {contentStyle}>
-                {tableBody}
-                </div>
-            </div>)
-
+        //Full table
+        var table = (
+                    <table id="fullTable" className="table table-hover" fixed-header>
+                        <tbody>
+                            {allRows}
+                        </tbody>
+                    </table>
+                    )
 
         return table;
     },
@@ -676,11 +753,30 @@ var NewFirmPer1000Graph = React.createClass({
             table = scope.renderTable();
         }
 
-		return (
+        var rowStyle = {
+            overflowY:'hidden',
+            overflowX:'scroll',
+            height:window.innerHeight*.2,
+            width:window.innerWidth
+        }
+        
+        var tableStyle = {
+            overflowX:'hidden',
+            overflowY:'scroll',
+            height:window.innerHeight*.4,
+            width:window.innerWidth
+        }
+
+        return (
             <div>
-                {table}
+                <div id="currentRow" style={rowStyle}>
+
+                </div>
+                <div id="tableDiv" style = {tableStyle} >
+                    {table}
+                </div>
             </div>
-		);
+        );
 	}
 	
 });
