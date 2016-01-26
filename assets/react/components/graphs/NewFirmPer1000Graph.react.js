@@ -607,7 +607,8 @@ var NewFirmPer1000Graph = React.createClass({
                     .data(years)
                     .enter()
                     .append("th")
-                        .text(function(column) {if(column==1977){return "Year " +column}else{return column;}  });
+                        .text(function(column) {if(column==2000){return "Year \n" +column}else{return column;}  })
+                        .style("white-space","pre");
 
                 // create 1 row
                 var rows = tbody.append("tr")
@@ -814,7 +815,7 @@ var NewFirmPer1000Graph = React.createClass({
         var rowStyle = {
             overflowY:'hidden',
             overflowX:'scroll',
-            height:window.innerHeight*.2,
+            height:window.innerHeight*.18,
             width:window.innerWidth
         }
         

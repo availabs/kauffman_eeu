@@ -674,7 +674,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         var rowStyle = {
             overflowY:'hidden',
             overflowX:'scroll',
-            height:window.innerHeight*.2,
+            height:window.innerHeight*.18,
             width:window.innerWidth
         }
 
