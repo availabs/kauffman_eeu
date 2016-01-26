@@ -149,7 +149,7 @@ var GraphPage = React.createClass({
 	    else{
 	    	graph=(
 	    		<div>
-	    			<RankingsGraph />
+	    			<RankingsGraph data={scope.state.data} color={scope.state.color} group={scope.state.group}/>
 	    		</div>
 	    		)
 	    	divs=(
