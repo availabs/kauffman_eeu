@@ -5,16 +5,10 @@ Changing grouping requires selecting two times for graph and table to appear pro
 Sync'd scrolling between row and table requires loading anything -- IE does not work on initial render	
 
 
-
-
-Display/small BUGS:
-Consistent Column size for tables
-Get header to show up before click event
-If a line is clicked, it should stay highlited until it is clicked again or another is clicked	
-
 TODO on current functionality:
 Dock left side of both tables
-
+Get header to show up before click event
+If a line is clicked, it should stay highlited until it is clicked again or another is clicked	
 
 
 TODO new functionality:

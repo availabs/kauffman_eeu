@@ -23,22 +23,32 @@ var GraphPage = React.createClass({
     },
 	toggleGraph:function(e){
 		var scope = this;
-		console.log("toggle",e.target.id);
+
+		var headerItems = d3.selectAll('li');
+
+		headerItems.forEach(function(items){
+			items.forEach(function(item){
+				item.className = "";
+				console.log(item.className);
+			})
+			
+		})
+
 		if(e.target.id == "new"){
 			scope.setState({graph:"new"});
 			d3.select('#newList')
 				.attr('class',"active");
-			d3.select('#shareList')
-				.attr('class',"");
 
 		}
-		else{
+		else if(e.target.id == "share"){
 			scope.setState({graph:"share"});
-			d3.select('#newList')
-				.attr('class',"");
 			d3.select('#shareList')
 				.attr('class',"active");
-
+		}
+		else{
+			d3.select('#rankings')
+				.attr('class',"active");
+			console.log("rankings")
 		}
 	},
     getData:function(cb){
@@ -93,6 +103,7 @@ var GraphPage = React.createClass({
 	    	<ul className="nav nav-tabs">
 	    		<li id="shareList" className="active" onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
 	    		<li id="newList" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
+	    		<li id="rankings" onClick={scope.toggleGraph}><a id="rank" >Rankings</a></li>
 	    		<li id="color">{colorHeader}</li>
 	    		<li id="group">{groupHeader}</li>
 	    	</ul>
