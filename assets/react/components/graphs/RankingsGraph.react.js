@@ -132,8 +132,6 @@ var RankingsGraph = React.createClass({
                     }
 
 
-
-
                     //Creates Total Employment number for that year
                     //Creates Employment in new firms for that year
                     ages.forEach(function(age){
@@ -170,8 +168,6 @@ var RankingsGraph = React.createClass({
             }
 
         })
-
-	console.log("statedata",stateData);
 
 		var chartData = {};
 
@@ -218,45 +214,111 @@ var RankingsGraph = React.createClass({
     },
     chartMsaData:function(data){
         var scope = this,
-            ages = d3.range(12);
+            ages = d3.range(12),
+            msaData = {};
 
-        //Every msa represented as:
-        //{values:[{x:val,y:val}....],key=msa,}
-        //Want to return 1 (x,y) object for each year, where x=year and y=percent employed in new firms
-        var chartData = Object.keys(data).map(function(msaId){
+        Object.keys(data["share"]).forEach(function(msaId){
 
+   
+            if(!msaData[msaId]){
+                msaData[msaId] = {newFirmData:{},shareData:{}};
+            }                 
             //Iterating through every year within a metro area
-            var valueArray = Object.keys(data[msaId]).map(function(year){
-                var curCoord={"x":+year,"y":0},
-                    totalEmploySum = 0,
-                    newFirmSum = 0,
-                    share = 0;
+            Object.keys(data["share"][msaId]).forEach(function(year){
+               var pop = 0;
+
+
+
+                //Null check for state/year combo
+                if(!msaData[msaId]["shareData"][year]){
+                    //If its new, default to 0
+                    msaData[msaId]["shareData"][year] = {"totalEmploySum":0,"newFirmSum":0};
+                }
+                if(!msaData[msaId]["newFirmData"][year]){
+                    //If its new, default to 0
+                    msaData[msaId]["newFirmData"][year] = {"totalPopSum":0,"newFirmSum":0};
+                }
 
 
                 //Creates Total Employment number for that year
                 //Creates Employment in new firms for that year
                 ages.forEach(function(age){
-                    if(data[msaId][year][age]){
-                        totalEmploySum = totalEmploySum + data[msaId][year][age];                   
+                    if(data["share"][msaId][year][age]){
+                        msaData[msaId]["shareData"][year]["totalEmploySum"] =  msaData[msaId]["shareData"][year]["totalEmploySum"] + data["share"][msaId][year][age];                   
                     }
-                    if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
-                        newFirmSum = newFirmSum + data[msaId][year][age];
+                    if(data["share"][msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                         msaData[msaId]["shareData"][year]["newFirmSum"] =  msaData[msaId]["shareData"][year]["newFirmSum"] + data["share"][msaId][year][age];
                     }
                 })
-                share = newFirmSum/totalEmploySum;
-
-                curCoord["y"] = share;
-                //Want to return: x:year y:percent
-                return curCoord;
-            })
 
 
-            //Only return once per metroArea
-            return {key:msaId,values:valueArray,area:false};
+
+
+                //Creates number of new firms for that year
+                ages.forEach(function(age){
+                	if(data["new"][msaId][year]){
+                        if(data["new"][msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                            var localNewFirm = +data["new"][msaId][year][age];
+                            msaData[msaId]["newFirmData"][year]["newFirmSum"] = msaData[msaId]["newFirmData"][year]["newFirmSum"] + localNewFirm;        
+                        }
+                	}
+                })
+                //Instead of share, want newFirmSum/(pop/1000)
+
+                if(metroPop20002009[msaId] && metroPop20002009[msaId][year]){
+                    pop = metroPop20002009[msaId][year].replace(/,/g , "");
+                    pop = +pop;
+
+
+                    msaData[msaId]["newFirmData"][year]["totalPopSum"] = msaData[msaId]["newFirmData"][year]["totalPopSum"] + pop;                   
+                }
+            })               
+            
+
         })
 
-        return chartData;
+		var chartData = {};
 
+
+		var chartData = Object.keys(msaData).map(function(msaId){
+			var shareData = [],
+				newFirmData = [];
+
+			Object.keys(msaData[msaId]["shareData"]).forEach(function(year){
+                if(year != "msaArray"){
+                    var curCoord={"x":+year,"y":0},
+                        share = 0;
+
+                    share = msaData[msaId]["shareData"][year]["newFirmSum"]/msaData[msaId]["shareData"][year]["totalEmploySum"]       
+                    curCoord["y"] = share;
+                    //Want to return: x:year y:percent
+                    shareData.push(curCoord);
+                }
+			})
+
+			Object.keys(msaData[msaId]["newFirmData"]).forEach(function(year){
+
+                if(year != "msaArray"){
+                    var curCoord={"x":+year,"y":0},
+                        share = 0;
+
+                    if(msaData[msaId]["newFirmData"][year]["totalPopSum"] != 0 && msaData[msaId]["newFirmData"][year]["newFirmSum"] != 0){
+                        var pop1000 = msaData[msaId]["newFirmData"][year]["totalPopSum"]/1000;
+                        var newPer1000 =  msaData[msaId]["newFirmData"][year]["newFirmSum"]/pop1000;      
+                        curCoord["y"] = newPer1000;
+
+                        //Want to return: x:year y:percent
+                        newFirmData.push(curCoord);                        
+                    }
+
+                }
+			})
+            return {key:msaId,newFirmData:newFirmData,shareData:shareData,area:false};   
+
+		})
+
+       
+        return chartData;
     },
 	shareRank:function(){
 
