@@ -357,7 +357,7 @@ var NewFirmPer1000Graph = React.createClass({
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.6 - margin.top - margin.bottom;
+                height = window.innerHeight*.4 - margin.top - margin.bottom;
 
 
             var voronoi = d3.geom.voronoi()
@@ -392,7 +392,6 @@ var NewFirmPer1000Graph = React.createClass({
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                    console.log("in render graph",data);
             var cities = Object.keys(data).map(function(metroArea){
 
 
@@ -429,7 +428,8 @@ var NewFirmPer1000Graph = React.createClass({
                         values:null,
                         index:data[metroArea].index,
                         msaArray:data[metroArea].msaArray,
-                        key:data[metroArea].key
+                        key:data[metroArea].key,
+                        name:data[metroArea].key
                     }
 
                     city.values = data[metroArea].values.map(function(i){
@@ -590,6 +590,7 @@ var NewFirmPer1000Graph = React.createClass({
                     .style("background",function(v){return v[0].backgroundColor})
                     .style("min-width",'50px')
                     .style("height",function(v){return v[0].height});
+
 
                 var name = [{0:d.city.name}];
 
