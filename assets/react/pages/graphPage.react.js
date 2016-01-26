@@ -2,24 +2,7 @@ var React = require("react"),
 	ShareNewEmploymentByTimeGraph = require("../components/graphs/ShareNewEmploymentByTimeGraph.react"),
 	NewFirmPer1000Graph = require("../components/graphs/NewFirmPer1000Graph.react"),
 	Loading = require("../components/layout/Loading.react");	
-	
 
-
-	//Display row for current selection on both graphs
-	//Finish newfirmper1000 group by state color issue
-	//Add voronoi to newfirmper1000
-
-
-	//on new firm graph, toggle to filter out outlier
-	//rank metro area/state per metric per year separately
-	//also create aggregate ranking (have to determine how to weigh each metric against each other)
-		//Using rank within the metric as well as the value of the metric itself
-
-
-	//Explore using 3? year averages to calculate metrics rather than single year to smooth out data
-
-
-	//read fluidity and diversity FROM KAUFFMAN PAPER
 
 var GraphPage = React.createClass({
 	getInitialState:function(){
@@ -147,7 +130,7 @@ var GraphPage = React.createClass({
 
 	    	divs=(
 	    		<div>
-	    		    <h5 style={{fontWeight:bold}}>New Firms per 1000 people <br/>Colored by {scope.state.color}, grouped by {scope.state.group}</h5>
+	    		    <h5 style={{fontWeight:"bold"}}>New Firms per 1000 people <br/>Colored by {scope.state.color}, grouped by {scope.state.group}</h5>
 	                <div id="NewFirmPer1000Graph"></div>
 	    		</div>
 	    		);

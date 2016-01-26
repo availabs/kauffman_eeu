@@ -1,0 +1,27 @@
+Functionality BUGS:
+
+Changing grouping requires selecting two times for graph and table to appear properly
+	Likely due to default props/state and when the data loads
+
+Sync'd scrolling between row and table requires loading anything -- IE does not work on initial render	
+
+Display/small BUGS:
+Consistent Column size for tables
+Get header to show up before click event
+If a line is clicked, it should stay highlited until it is clicked again or another is clicked	
+
+TODO on current functionality:
+
+Display row for current selection on both graphs
+Finish newfirmper1000 group by state color issue
+Dock left side of both tables
+on new firm graph, toggle to filter out outlier
+
+TODO new functionality:
+rank metro area/state per metric per year separately
+also create aggregate ranking (have to determine how to weigh each metric against each other)
+	Using rank within the metric as well as the value of the metric itself
+
+EXPLORE:
+Explore using 3? year averages to calculate metrics rather than single year to smooth out data
+read fluidity and diversity FROM KAUFFMAN PAPER

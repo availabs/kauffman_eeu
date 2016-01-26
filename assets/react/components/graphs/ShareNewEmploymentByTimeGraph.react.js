@@ -573,13 +573,14 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
                 focus.attr("transform", "translate(-100,-100)");
             }
-        $('#currentRow').on('scroll', function () {
-            $('#tableDiv').scrollLeft($(this).scrollLeft());
-        });
 
-        $('#tableDiv').on('scroll', function () {
-            $('#currentRow').scrollLeft($(this).scrollLeft());
-        });  
+            $('#currentRow').on('scroll', function () {
+                $('#tableDiv').scrollLeft($(this).scrollLeft());
+            });
+
+            $('#tableDiv').on('scroll', function () {
+                $('#currentRow').scrollLeft($(this).scrollLeft());
+            });  
 
         }
 
@@ -669,17 +670,17 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             table = scope.renderTable();
         }
 
-        var tableStyle = {
-            overflowX:'hidden',
-            overflowY:'scroll',
-            height:window.innerHeight*.4,
-            width:window.innerWidth
-        }
-
         var rowStyle = {
             overflowY:'hidden',
             overflowX:'scroll',
             height:window.innerHeight*.2,
+            width:window.innerWidth
+        }
+        
+        var tableStyle = {
+            overflowX:'hidden',
+            overflowY:'scroll',
+            height:window.innerHeight*.4,
             width:window.innerWidth
         }
 
