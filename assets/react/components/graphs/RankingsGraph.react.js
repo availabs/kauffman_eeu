@@ -422,23 +422,27 @@ var RankingsGraph = React.createClass({
             percFormat = d3.format(".3%");
 
 
-
-        var newFirmCities = Object.keys(data).map(function(metroArea){
-            if(scope.state.group == "msa"){
-                return {
-                    name:msaIdToName[data[metroArea].key],
-                    values:data[metroArea]['newFirmData'],
-                    color:scope.colorFunction(data[metroArea])
-                }                
-            }
-            else{
-                return {
-                    name:data[metroArea].key,
-                    values:data[metroArea]['newFirmData'],
-                    color:scope.colorFunction(data[metroArea])
-                }
-            }
-
+        console.log(data);
+        var newFirmCities = [];
+        Object.keys(data).forEach(function(metroArea){
+        	if(data[metroArea]['newFirmData'].length != 0){
+        		
+	            if(scope.state.group == "msa"){
+	                newFirmCities.push( {
+	                    name:msaIdToName[data[metroArea].key],
+	                    values:data[metroArea]['newFirmData'],
+	                    color:scope.colorFunction(data[metroArea])
+	                })                
+	            }
+	            else{
+	            	newFirmCities.push({
+	                    name:data[metroArea].key,
+	                    values:data[metroArea]['newFirmData'],
+	                    color:scope.colorFunction(data[metroArea])
+	                })
+	                
+	            }
+			}
         });
 
         var shareCities = Object.keys(data).map(function(metroArea){
@@ -458,18 +462,19 @@ var RankingsGraph = React.createClass({
             }
 
         });
-
-        console.log("unsorted cities",newFirmCities,shareCities);
-
         newFirmCities = scope.rankNewFirm(newFirmCities);
 
         shareCities = scope.rankShare(shareCities);
-        console.log("sorted cities",newFirmCities,shareCities);
+        //console.log("sorted cities",newFirmCities,shareCities);
 
 
         //Sort by year given by state
         var sortYear = scope.state.sortYear;
         newFirmCities.sort(scope.sortCities(sortYear));
+
+        var rankStyle = {
+        	fontWeight:'bold'
+        }
 
         var bodyRows = newFirmCities.map(function(city){
 
@@ -480,7 +485,7 @@ var RankingsGraph = React.createClass({
         	//Need a cell with (rank,value) for each year
 
         	var yearCells = city.values.map(function(curYear){
-        		return (<td className="col-md-1">{curYear.rank}: {d3.round(curYear.y)}</td>)
+        		return (<td className="col-md-1"><p style={rankStyle}>Rank: {curYear.rank}</p> New Firms: {d3.round(curYear.y)}</td>)
         	})
 
         	//Row needs color - name - yearCells
@@ -495,12 +500,18 @@ var RankingsGraph = React.createClass({
         newFirmYears.unshift("Color");
 
         var headRow = newFirmYears.map(function(year){
-            if(year == 2000){
-                return(<th>Year: <br/>{year}</th>);               
-            }
-            else{
-                return(<th>{year}</th>);
-            }        	
+        	if(isNaN(year)){
+        		return(<th>{year}</th>)
+        	}
+        	else{
+	            if(year == 2000){
+	                return(<th><a onClick={scope.sortTable} id={year}>Year: <br/>{year}</a></th>);               
+	            }
+	            else{
+	                return(<th><a onClick={scope.sortTable} id={year}>{year}</a></th>);
+	            }          		
+        	}
+      	
         })
 
         var body = (<tbody>{bodyRows}</tbody>);
@@ -513,6 +524,11 @@ var RankingsGraph = React.createClass({
  
         return fullTable;
 
+    },
+    sortTable:function(e){
+    	var scope = this;
+    	console.log("sortTable",e.target.id);
+    	scope.setState({sortYear:e.target.id})
     },
     sortCities:function(year){
         var scope = this;
@@ -601,7 +617,7 @@ var RankingsGraph = React.createClass({
 		var tables;
 
 		if(scope.state.data != []){
-			console.log("render data",scope.state.data);
+			//console.log("render data",scope.state.data);
 			tables = scope.renderTable();
 		}
         var divStyle = {
