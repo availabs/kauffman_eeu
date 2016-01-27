@@ -422,170 +422,84 @@ var RankingsGraph = React.createClass({
 
 
 
-        var cities = Object.keys(data).map(function(metroArea){
+        var newFirmCities = Object.keys(data).map(function(metroArea){
             if(scope.state.group == "msa"){
                 return {
                     name:msaIdToName[data[metroArea].key],
-                    newFirmValues:data[metroArea]['newFirmData'],
-                    shareValues:data[metroArea]['shareData'],
+                    values:data[metroArea]['newFirmData'],
                     color:scope.colorFunction(data[metroArea])
                 }                
             }
             else{
                 return {
                     name:data[metroArea].key,
-                    newFirmValues:data[metroArea]['newFirmData'],
-                    shareValues:data[metroArea]['shareData'],
+                    values:data[metroArea]['newFirmData'],
                     color:scope.colorFunction(data[metroArea])
                 }
             }
 
         });
 
-        var nameStyle = {
-            minWidth:'180px'
-        }
-
-    	var dataStyle = {
-            minWidth:'100px'
-        }
-
-        var tableStyle={
-            tableLayout:'fixed'
-        }
-
-        var newFirmRows = cities.map(function(metroArea){
-
-	        var colorStyle = {
-	            background:metroArea.color,
-	            minWidth:50
-	        }
-
-            //Will return the y value for each year of a metro area
-            var newFirmValues = metroArea.newFirmValues.map(function(firmValues){
-                var curValue = d3.round(firmValues.y);
-                return (<td style={dataStyle} className="col-md-1">{curValue}</td>)
-            })
-
-            //Row has color - name - values
-            return(<tr><td style={colorStyle} className="col-md-1"></td><td style={nameStyle}className="col-md-1">{metroArea.name}</td>{newFirmValues}</tr>)
-        });
-
-        var shareRows = cities.map(function(metroArea){
-        	
-	        var colorStyle = {
-	            background:metroArea.color,
-	            minWidth:50
-	        }
-
-            //Will return the y value for each year of a metro area
-            var shareValues = metroArea.shareValues.map(function(firmValues){
-                return (<td style={dataStyle} className="col-md-5">{percFormat(firmValues.y)}</td>)
-            })
-
-            return(<tr><td style={colorStyle} className="col-md-5"></td><td style={nameStyle}className="col-md-5">{metroArea.name}</td>{shareValues}</tr>)
-        });
-
-        var newFirmYearHead = newFirmYears.map(function(year){
-            if(year == 2000){
-                return(<th>Year: <br/>{year}</th>)               
+        var shareCities = Object.keys(data).map(function(metroArea){
+            if(scope.state.group == "msa"){
+                return {
+                    name:msaIdToName[data[metroArea].key],
+                    values:data[metroArea]['shareData'],
+                    color:scope.colorFunction(data[metroArea])
+                }                
             }
             else{
-                return(<th>{year}</th>)
+                return {
+                    name:data[metroArea].key,
+                    values:data[metroArea]['shareData'],
+                    color:scope.colorFunction(data[metroArea])
+                }
             }
 
-        })
+        });
 
-        var shareYearHead  = shareYears.map(function(year){
-            if(year == 1977){
-                return(<th>Year: <br/>{year}</th>)               
-            }
-            else{
-                return(<th>{year}</th>)
-            }
+        console.log("unsorted cities",newFirmCities,shareCities);
 
-        }) 
-
-        //Full table
-
-        var newFirmHead = (
-            <table className="table table-hover" style={tableStyle}>
-                <thead>
-                    <tr>
-                        <th>
-                        Color
-                        </th>
-                        <th>
-                        Name
-                        </th>
-                        {newFirmYearHead}
-                    </tr>
-                </thead>
-            </table>
-            )
-
-        var shareHead = (
-            <table className="table table-hover" style={tableStyle}>
-                <thead>
-                    <tr>
-                        <th>
-                        Color
-                        </th>
-                        <th>
-                        Name
-                        </th>
-                        {shareYearHead}
-                    </tr>
-                </thead>
-            </table>
-            )
-
-
-        var newFirmBody = (
-            <table className="table table-hover" style={tableStyle}>                    
-                <tbody>
-                    {newFirmRows}
-                </tbody>
-            </table>
-                    )
-
-        var shareBody = (
-            <table className="table table-hover" style={tableStyle}>                    
-                <tbody>
-                    {shareRows}
-                </tbody>
-            </table>
-                    )
-
-        var tables = {};
-
-
-        tables["newFirmTable"] = (	
-            <div id="newFirmTable">
-                <div>
-                {newFirmHead}
-                </div>
-                <div>
-                {newFirmBody}
-                </div>
-            </div>)
-
-        tables["shareTable"] = (	
-            <div id="shareTable">
-                <div>
-                {shareHead}
-                </div>
-                <div >
-                {shareBody}
-                </div>
-            </div>)
-
-    	return tables;
+        newFirmCities.sort(scope.sortCities);
+        shareCities.sort(scope.sortCities);
+        console.log("sorted cities",newFirmCities,shareCities);
+ 
     },
-	shareRank:function(){
+    sortCities:function(a,b){
+    	var scope = this;
+
+			var aValue,
+        		bValue;
+
+        	//THIS COMES FROM STATE
+        	var sortYear = 2002;
+        	//var sortYear = scope.state.sortYear;
+
+        	a.values.forEach(function(yearValues){
+        		if(yearValues.x == sortYear){
+        			aValue = yearValues.y;
+        		}
+        	})
+
+        	b.values.forEach(function(yearValues){
+        		if(yearValues.x == sortYear){
+        			bValue = yearValues.y;
+        		}
+        	})
+
+        	if(aValue > bValue){
+        		return -1;
+        	}
+        	if(bValue > aValue){
+        		return 1;
+        	}
+        	return 0;    	
+
+    },
+	rankShare:function(){
 
 	},
-	newFirmRank:function(){
+	rankNewFirm:function(){
 
 	},
 	render:function() {
