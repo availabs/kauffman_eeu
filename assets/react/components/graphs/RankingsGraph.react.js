@@ -460,10 +460,10 @@ var RankingsGraph = React.createClass({
 
         console.log("unsorted cities",newFirmCities,shareCities);
 
-        scope.rankNewFirm(newFirmCities);
+        newFirmCities = scope.rankNewFirm(newFirmCities);
+
+        shareCities = scope.rankShare(shareCities);
         console.log("sorted cities",newFirmCities,shareCities);
-
-
 
  
     },
@@ -497,7 +497,28 @@ var RankingsGraph = React.createClass({
     	}
     },
 	rankShare:function(cities){
+		var scope=this,
+            years = d3.range(1977,2013);
 
+        years.forEach(function(year){
+        	var rank = 1;
+        	//Sort cities according to each year
+        	cities.sort(scope.sortCities(year));
+
+        	//Go through and assign ranks for current year
+        	cities.forEach(function(city){
+
+        		city.values.forEach(function(yearValues){
+        			if(yearValues.x == year){
+        				yearValues.rank = rank;
+        			}
+        		})
+
+        		rank++;
+        	})
+        })			
+
+		return cities; 
 	},
 	rankNewFirm:function(cities){
 		var scope=this,
@@ -522,7 +543,7 @@ var RankingsGraph = React.createClass({
         	})
         })			
 
-
+		return cities;        
 
 	},
 	render:function() {
@@ -547,13 +568,6 @@ var RankingsGraph = React.createClass({
 		return (
 			<div>
 				<h3>Rankings</h3>
-				<div style = {divStyle}>
-					{tables["newFirmTable"]}
-				</div>
-				<div style = {divStyle}>
-					{tables["shareTable"]}
-				</div>
-
 			</div>
 			
 		);
