@@ -11,7 +11,8 @@ var RankingsGraph = React.createClass({
             data:[],
             loading:true,
             group:"msa",
-            sortYear:2002
+            sortYear:2002,
+            metric:"newFirms"
         }
     },
     getDefaultProps:function(){
@@ -418,8 +419,7 @@ var RankingsGraph = React.createClass({
             color = d3.scale.category20(),
             newFirmYears = d3.range(2000,2010),
             shareYears = d3.range(1977,2009),
-            commaFormat = d3.format(","),
-            percFormat = d3.format(".3%");
+            commaFormat = d3.format(",");
 
         var newFirmCities = [];
         Object.keys(data).forEach(function(metroArea){
@@ -463,15 +463,25 @@ var RankingsGraph = React.createClass({
         	}
         });
 
-        newFirmCities = scope.rankNewFirm(newFirmCities);
 
-        shareCities = scope.rankShare(shareCities);
-        //console.log("sorted cities",newFirmCities,shareCities);
+        var currentCities,
+        	currentYears,
+        	currentFormat;
 
+        if(scope.state.metric == "newFirms"){
+        	currentCities = scope.rankNewFirm(newFirmCities);
+        	currentYears = newFirmYears;
+        	currentFormat = d3.round;
+        }
+        else if(scope.state.metric == "share"){
+        	currentCities = scope.rankShare(shareCities);
+        	currentYears = shareYears;
+        	currentFormat = d3.format(".3%");
+        }
 
         //Sort by year given by state
         var sortYear = scope.state.sortYear;
-        newFirmCities.sort(scope.sortCities(sortYear));
+        currentCities.sort(scope.sortCities(sortYear));
 
         var rankStyle = {
         	fontWeight:'bold'
@@ -479,7 +489,7 @@ var RankingsGraph = React.createClass({
 
         var valueClass = "col-md-1";
 
-        var bodyRows = newFirmCities.map(function(city){
+        var bodyRows = currentCities.map(function(city){
 
             var colorStyle = {
                 background:city.color,
@@ -494,7 +504,7 @@ var RankingsGraph = React.createClass({
         		else{
         			valueClass = "col-md-1";
         		}
-        		return (<td className={valueClass}><p style={rankStyle}>Year Rank: {curYear.rank}</p> New Firms: {d3.round(curYear.y)}</td>)
+        		return (<td className={valueClass}><p style={rankStyle}>Year Rank: {curYear.rank}</p> New Firms: {currentFormat(curYear.y)}</td>)
         	})
 
         	//Row needs color - name - yearCells
@@ -508,7 +518,7 @@ var RankingsGraph = React.createClass({
         newFirmYears.unshift("Name");
         newFirmYears.unshift("Color");
 
-        var headRow = newFirmYears.map(function(year){
+        var headRow = currentYears.map(function(year){
     	    if(year == scope.state.sortYear){
     			valueClass = "col-md-1 active"
     		}
@@ -519,7 +529,7 @@ var RankingsGraph = React.createClass({
         		return(<th>{year}</th>)
         	}
         	else{
-	            if(year == 2000){
+	            if((scope.state.metric == "newFirms" && year == 2000) || (scope.state.metric == "share" && year == 1977)){
 	                return(<th className={valueClass}><a onClick={scope.sortTable} id={year}>Year: <br/>{year}</a></th>);               
 	            }
 	            else{
@@ -627,20 +637,48 @@ var RankingsGraph = React.createClass({
 		return cities;        
 
 	},
+	toggleChart:function(e){
+		var scope = this;
+
+		var headerItems = d3.selectAll('li');
+
+		headerItems.forEach(function(items){
+			items.forEach(function(item){
+				item.className = "";
+			})
+		})
+		d3.select('#rankings')
+			.attr('class',"active");
+		console.log(e.target.id);
+		if(e.target.id == "newFirms"){
+			scope.setState({metric:"newFirms"});
+			d3.select('#newFirmsList')
+				.attr('class',"active");
+
+		}
+		else if(e.target.id == "share"){
+			scope.setState({metric:"share"});
+			d3.select('#shareNewList')
+				.attr('class',"active");
+		}
+		else{
+			scope.setState({metric:"composite"});
+			d3.select('#compositeList')
+				.attr('class',"active");
+		}
+	},
 	render:function() {
 		var scope = this;
-		console.log("RANKINGS GRAPH")
+
 		d3.selectAll("svg").remove();
 
 		var tables;
-
+		console.log("render setstate");
 		if(scope.state.data != []){
 			//console.log("render data",scope.state.data);
 			tables = scope.renderTable();
 		}
         var divStyle = {
-            overflowX:'scroll',
-            overflowY:'scroll',
             height:window.innerHeight*.8,
             width:window.innerWidth
         }
@@ -651,6 +689,11 @@ var RankingsGraph = React.createClass({
 		return (
 			<div>
 				<h3>Rankings</h3>
+		    	<ul className="nav nav-tabs">
+		    		<li id="newFirmsList" className="active" onClick={scope.toggleChart}><a id="newFirms" >New Firms Per 1000 People</a></li>
+		    		<li id="shareNewList" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
+		    		<li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
+		    	</ul>
 				<div id="table">
 					<div id="tableHead">
 						<table style={headStyle} className="table table-hover" fixed-header>{tables.head}</table>
