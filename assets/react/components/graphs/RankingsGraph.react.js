@@ -486,14 +486,19 @@ var RankingsGraph = React.createClass({
         var rankStyle = {
         	fontWeight:'bold'
         }
-
+        var nameStyle ={
+        	minWidth:'150px'
+        }
+        var dataStyle={
+        	minWidth:'100px'
+        }
         var valueClass = "col-md-1";
 
         var bodyRows = currentCities.map(function(city){
 
             var colorStyle = {
                 background:city.color,
-                minWidth:50
+                minWidth:150
             }
         	//Need a cell with (rank,value) for each year
 
@@ -504,19 +509,21 @@ var RankingsGraph = React.createClass({
         		else{
         			valueClass = "col-md-1";
         		}
-        		return (<td className={valueClass}><p style={rankStyle}>Year Rank: {curYear.rank}</p> New Firms: {currentFormat(curYear.y)}</td>)
+        		return (<td className={valueClass}style={dataStyle}><p style={rankStyle}>Year Rank: {curYear.rank}</p>New Firms: {currentFormat(curYear.y)}</td>)
         	})
 
         	//Row needs color - name - yearCells
 
-        	return(<tr><td style={colorStyle}></td><td>{city.name}</td>{yearCells}</tr>)
+        	return(<tr><td style={colorStyle}></td><td style={nameStyle}>{city.name}</td>{yearCells}</tr>)
 
 
         })
 
 
-        newFirmYears.unshift("Name");
-        newFirmYears.unshift("Color");
+        currentYears.unshift("Name");
+        currentYears.unshift("Color");
+
+
 
         var headRow = currentYears.map(function(year){
     	    if(year == scope.state.sortYear){
@@ -525,15 +532,16 @@ var RankingsGraph = React.createClass({
     		else{
     			valueClass = "col-md-1";
     		}
+
         	if(isNaN(year)){
-        		return(<th>{year}</th>)
+        		return(<th style={nameStyle}>{year}</th>)
         	}
         	else{
 	            if((scope.state.metric == "newFirms" && year == 2000) || (scope.state.metric == "share" && year == 1977)){
-	                return(<th className={valueClass}><a onClick={scope.sortTable} id={year}>Year: <br/>{year}</a></th>);               
+	                return(<th style={dataStyle} className={valueClass}><a onClick={scope.sortTable} id={year}>Year: <br/>{year}</a></th>);               
 	            }
 	            else{
-	                return(<th className={valueClass}><a onClick={scope.sortTable} id={year}>{year}</a></th>);
+	                return(<th style={dataStyle} className={valueClass}><a onClick={scope.sortTable} id={year}>{year}</a></th>);
 	            }          		
         	}
       	
@@ -543,13 +551,13 @@ var RankingsGraph = React.createClass({
 
 
         var tableComponents = {head:headRow,body:body};
+             $('#tableHead').on('scroll', function () {
+                $('#tableBody').scrollLeft($(this).scrollLeft());
+            });
 
-        var fullTable = (<table>
-        		{headRow}
-        		{body}
-        	</table>
-        	)
- 
+            $('#tableBody').on('scroll', function () {
+                $('#tableHead').scrollLeft($(this).scrollLeft());
+            });  
         return tableComponents;
 
     },
@@ -678,12 +686,18 @@ var RankingsGraph = React.createClass({
 			//console.log("render data",scope.state.data);
 			tables = scope.renderTable();
 		}
-        var divStyle = {
+        var bodyStyle = {
             height:window.innerHeight*.8,
-            width:window.innerWidth
+            width:window.innerWidth,
+            overflow:'auto'
         }
         var headStyle = {
-        	margin:'0'
+        	margin:'0',
+        	overflowX:'scroll',
+        	overflowY:'hidden'
+        }
+        var divStyle = {
+        	position:'absolute'
         }
 
 		return (
@@ -694,11 +708,11 @@ var RankingsGraph = React.createClass({
 		    		<li id="shareNewList" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
 		    		<li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
 		    	</ul>
-				<div id="table">
-					<div id="tableHead">
-						<table style={headStyle} className="table table-hover" fixed-header>{tables.head}</table>
+				<div style={divStyle}id="table">
+					<div style={headStyle} id="tableHead">
+						<table className="table table-hover" fixed-header>{tables.head}</table>
 					</div>
-					<div style={divStyle} id="tableBody">
+					<div style={bodyStyle} id="tableBody">
 						<table className="table table-hover" fixed-header>{tables.body}</table>
 					</div>
 				</div>
