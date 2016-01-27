@@ -421,8 +421,6 @@ var RankingsGraph = React.createClass({
             commaFormat = d3.format(","),
             percFormat = d3.format(".3%");
 
-
-        console.log(data);
         var newFirmCities = [];
         Object.keys(data).forEach(function(metroArea){
         	if(data[metroArea]['newFirmData'].length != 0){
@@ -511,15 +509,21 @@ var RankingsGraph = React.createClass({
         newFirmYears.unshift("Color");
 
         var headRow = newFirmYears.map(function(year){
+    	    if(year == scope.state.sortYear){
+    			valueClass = "col-md-1 active"
+    		}
+    		else{
+    			valueClass = "col-md-1";
+    		}
         	if(isNaN(year)){
         		return(<th>{year}</th>)
         	}
         	else{
 	            if(year == 2000){
-	                return(<th><a onClick={scope.sortTable} id={year}>Year: <br/>{year}</a></th>);               
+	                return(<th className={valueClass}><a onClick={scope.sortTable} id={year}>Year: <br/>{year}</a></th>);               
 	            }
 	            else{
-	                return(<th><a onClick={scope.sortTable} id={year}>{year}</a></th>);
+	                return(<th className={valueClass}><a onClick={scope.sortTable} id={year}>{year}</a></th>);
 	            }          		
         	}
       	
@@ -527,13 +531,16 @@ var RankingsGraph = React.createClass({
 
         var body = (<tbody>{bodyRows}</tbody>);
 
-        var fullTable = (<table id="newFirmTable" className="table table-hover" fixed-header>
+
+        var tableComponents = {head:headRow,body:body};
+
+        var fullTable = (<table>
         		{headRow}
         		{body}
         	</table>
         	)
  
-        return fullTable;
+        return tableComponents;
 
     },
     sortTable:function(e){
@@ -634,15 +641,24 @@ var RankingsGraph = React.createClass({
         var divStyle = {
             overflowX:'scroll',
             overflowY:'scroll',
-            height:window.innerHeight*.4,
+            height:window.innerHeight*.8,
             width:window.innerWidth
         }
-
+        var headStyle = {
+        	margin:'0'
+        }
 
 		return (
 			<div>
 				<h3>Rankings</h3>
-				{tables}
+				<div id="table">
+					<div id="tableHead">
+						<table style={headStyle} className="table table-hover" fixed-header>{tables.head}</table>
+					</div>
+					<div style={divStyle} id="tableBody">
+						<table className="table table-hover" fixed-header>{tables.body}</table>
+					</div>
+				</div>
 			</div>
 			
 		);

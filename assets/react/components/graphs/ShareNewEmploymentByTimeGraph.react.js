@@ -505,7 +505,8 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
                 var table = d3.select("#currentRow").append("table")
                             .attr("id","hoverRow")
-                            .attr("class", "table table-hover"),
+                            .attr("class", "table table-hover")
+                            .style("margin","5px"),
                         thead = table.append("thead"),
                         tbody = table.append("tbody");
 
@@ -516,7 +517,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .enter()
                     .append("th")
                         .text(function(column) {if(column==1977){return "Year \n" +column}else{return column;}  })
-                        .style("white-space","pre");;
+                        .style("white-space","pre");
 
                 // create 1 row
                 var rows = tbody.append("tr")
@@ -655,11 +656,14 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             }
 
         })
+        var headStyle = {
+            margin:'5px'
+        }
 
 
         //Full table
         var table = (
-                    <table id="fullTable" className="table table-hover" fixed-header>
+                    <table style={headStyle}id="fullTable" className="table table-hover" fixed-header>
                         <tbody>
                             {allRows}
                         </tbody>
@@ -680,9 +684,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var rowStyle = {
             overflowY:'hidden',
-            overflowX:'scroll',
-            height:window.innerHeight*.18,
-            width:window.innerWidth
+            overflowX:'scroll'
         }
 
         var tableStyle = {

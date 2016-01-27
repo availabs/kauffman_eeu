@@ -593,7 +593,8 @@ var NewFirmPer1000Graph = React.createClass({
 
                 var table = d3.select("#currentRow").append("table")
                             .attr("id","hoverRow")
-                            .attr("class", "table table-hover"),
+                            .attr("class", "table table-hover")
+                            .style("margin","5px"),
                         thead = table.append("thead"),
                         tbody = table.append("tbody");
 
@@ -728,11 +729,13 @@ var NewFirmPer1000Graph = React.createClass({
             return(<tr><td style={colorStyle} className="col-md-1"></td><td className="col-md-1" style={nameStyle}>{metroArea.name}</td>{yearValues}</tr>)
 
         });
-
+        var headStyle = {
+            margin:'5px'
+        }
 
         //Full table
         var table = (
-                    <table id="fullTable" className="table table-hover" fixed-header>
+                    <table style={headStyle} id="fullTable" className="table table-hover" fixed-header>
                         <tbody>
                             {allRows}
                         </tbody>
@@ -770,8 +773,6 @@ var NewFirmPer1000Graph = React.createClass({
         var rowStyle = {
             overflowY:'hidden',
             overflowX:'scroll',
-            height:window.innerHeight*.18,
-            width:window.innerWidth
         }
         
         var tableStyle = {
