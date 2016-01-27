@@ -10,7 +10,8 @@ var RankingsGraph = React.createClass({
         return {
             data:[],
             loading:true,
-            group:"msa"
+            group:"msa",
+            sortYear:2002
         }
     },
     getDefaultProps:function(){
@@ -465,7 +466,53 @@ var RankingsGraph = React.createClass({
         shareCities = scope.rankShare(shareCities);
         console.log("sorted cities",newFirmCities,shareCities);
 
+
+        //Sort by year given by state
+        var sortYear = scope.state.sortYear;
+        newFirmCities.sort(scope.sortCities(sortYear));
+
+        var bodyRows = newFirmCities.map(function(city){
+
+            var colorStyle = {
+                background:city.color,
+                minWidth:50
+            }
+        	//Need a cell with (rank,value) for each year
+
+        	var yearCells = city.values.map(function(curYear){
+        		return (<td className="col-md-1">{curYear.rank}: {d3.round(curYear.y)}</td>)
+        	})
+
+        	//Row needs color - name - yearCells
+
+        	return(<tr><td style={colorStyle}></td><td>{city.name}</td>{yearCells}</tr>)
+
+
+        })
+
+
+        newFirmYears.unshift("Name");
+        newFirmYears.unshift("Color");
+
+        var headRow = newFirmYears.map(function(year){
+            if(year == 2000){
+                return(<th>Year: <br/>{year}</th>);               
+            }
+            else{
+                return(<th>{year}</th>);
+            }        	
+        })
+
+        var body = (<tbody>{bodyRows}</tbody>);
+
+        var fullTable = (<table id="newFirmTable" className="table table-hover" fixed-header>
+        		{headRow}
+        		{body}
+        	</table>
+        	)
  
+        return fullTable;
+
     },
     sortCities:function(year){
         var scope = this;
@@ -568,6 +615,7 @@ var RankingsGraph = React.createClass({
 		return (
 			<div>
 				<h3>Rankings</h3>
+				{tables}
 			</div>
 			
 		);
