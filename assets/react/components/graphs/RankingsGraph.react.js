@@ -460,29 +460,28 @@ var RankingsGraph = React.createClass({
 
         console.log("unsorted cities",newFirmCities,shareCities);
 
-        newFirmCities.sort(scope.sortCities);
-        shareCities.sort(scope.sortCities);
+        scope.rankNewFirm(newFirmCities);
         console.log("sorted cities",newFirmCities,shareCities);
+
+
+
  
     },
-    sortCities:function(a,b){
-    	var scope = this;
+    sortCities:function(year){
+        var scope = this;
+        return function(a,b){
 
 			var aValue,
         		bValue;
 
-        	//THIS COMES FROM STATE
-        	var sortYear = 2002;
-        	//var sortYear = scope.state.sortYear;
-
         	a.values.forEach(function(yearValues){
-        		if(yearValues.x == sortYear){
+        		if(yearValues.x == year){
         			aValue = yearValues.y;
         		}
         	})
 
         	b.values.forEach(function(yearValues){
-        		if(yearValues.x == sortYear){
+        		if(yearValues.x == year){
         			bValue = yearValues.y;
         		}
         	})
@@ -495,11 +494,35 @@ var RankingsGraph = React.createClass({
         	}
         	return 0;    	
 
+    	}
     },
-	rankShare:function(){
+	rankShare:function(cities){
 
 	},
-	rankNewFirm:function(){
+	rankNewFirm:function(cities){
+		var scope=this,
+            years = d3.range(2000,2010);
+
+
+        years.forEach(function(year){
+        	var rank = 1;
+        	//Sort cities according to each year
+        	cities.sort(scope.sortCities(year));
+
+        	//Go through and assign ranks for current year
+        	cities.forEach(function(city){
+
+        		city.values.forEach(function(yearValues){
+        			if(yearValues.x == year){
+        				yearValues.rank = rank;
+        			}
+        		})
+
+        		rank++;
+        	})
+        })			
+
+
 
 	},
 	render:function() {
