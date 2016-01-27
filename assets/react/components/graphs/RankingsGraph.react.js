@@ -445,23 +445,26 @@ var RankingsGraph = React.createClass({
 			}
         });
 
-        var shareCities = Object.keys(data).map(function(metroArea){
-            if(scope.state.group == "msa"){
-                return {
-                    name:msaIdToName[data[metroArea].key],
-                    values:data[metroArea]['shareData'],
-                    color:scope.colorFunction(data[metroArea])
-                }                
-            }
-            else{
-                return {
-                    name:data[metroArea].key,
-                    values:data[metroArea]['shareData'],
-                    color:scope.colorFunction(data[metroArea])
-                }
-            }
-
+        var shareCities = []
+        Object.keys(data).forEach(function(metroArea){
+        	if(data[metroArea]['shareData'].length != 0){
+	            if(scope.state.group == "msa"){
+	                shareCities.push({
+	                    name:msaIdToName[data[metroArea].key],
+	                    values:data[metroArea]['shareData'],
+	                    color:scope.colorFunction(data[metroArea])
+	                }) 
+	            }
+	            else{
+	                shareCities.push({
+	                    name:data[metroArea].key,
+	                    values:data[metroArea]['shareData'],
+	                    color:scope.colorFunction(data[metroArea])
+	                }) 
+	            }        		
+        	}
         });
+
         newFirmCities = scope.rankNewFirm(newFirmCities);
 
         shareCities = scope.rankShare(shareCities);
@@ -476,6 +479,8 @@ var RankingsGraph = React.createClass({
         	fontWeight:'bold'
         }
 
+        var valueClass = "col-md-1";
+
         var bodyRows = newFirmCities.map(function(city){
 
             var colorStyle = {
@@ -485,7 +490,13 @@ var RankingsGraph = React.createClass({
         	//Need a cell with (rank,value) for each year
 
         	var yearCells = city.values.map(function(curYear){
-        		return (<td className="col-md-1"><p style={rankStyle}>Rank: {curYear.rank}</p> New Firms: {d3.round(curYear.y)}</td>)
+        		if(curYear.x == scope.state.sortYear){
+        			valueClass = "col-md-1 active"
+        		}
+        		else{
+        			valueClass = "col-md-1";
+        		}
+        		return (<td className={valueClass}><p style={rankStyle}>Year Rank: {curYear.rank}</p> New Firms: {d3.round(curYear.y)}</td>)
         	})
 
         	//Row needs color - name - yearCells
