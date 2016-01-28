@@ -523,7 +523,6 @@ var RankingsGraph = React.createClass({
 			    	</ul>
 			    	<RankTable data={scope.state.data} metric={scope.state.metric} />
 				</div>
-				
 			);			
 		}
 		else{
@@ -536,7 +535,6 @@ var RankingsGraph = React.createClass({
 			    		<li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
 			    	</ul>
 				</div>
-				
 			);			
 		}
 
@@ -562,7 +560,6 @@ var RankTable = React.createClass({
     	var scope = this;
     	console.log("sortTable",e.target.id);
     	if(!e.target.id){
-    		console.log("annyong")
     		if(scope.props.metric == "share"){
     			scope.setState({sortYear:"1977"})    			
     		}
@@ -577,7 +574,6 @@ var RankTable = React.createClass({
     },
     sortCities:function(year){
         var scope = this;
-        console.log(scope.state);
         return function(a,b){
 
 			var aValue,
@@ -750,9 +746,10 @@ var RankTable = React.createClass({
         })
 
         var body = (<tbody>{bodyRows}</tbody>);
+        var head = (<tbody><tr>{headRow}</tr></tbody>);
 
 
-        var tableComponents = {head:headRow,body:body};
+        var tableComponents = {head:head,body:body};
 
          $('#tableHead').on('scroll', function () {
             $('#tableBody').scrollLeft($(this).scrollLeft());
