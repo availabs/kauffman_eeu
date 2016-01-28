@@ -596,15 +596,22 @@ var RankTable = React.createClass({
         		}
         	})       
 
-
-        	if(aValue > bValue){
-        		return -1;
+        	if(scope.props.metric == "composite"){
+	        	if(aValue > bValue){
+	        		return 1;
+	        	}
+	        	if(bValue > aValue){
+	        		return -1;
+	        	}
         	}
-        	if(bValue > aValue){
-        		return 1;
-        	}
-        	
-   	
+        	else{
+	        	if(aValue > bValue){
+	        		return -1;
+	        	}
+	        	if(bValue > aValue){
+	        		return 1;
+	        	}        		
+        	}        	
 
 
 
@@ -668,7 +675,7 @@ var RankTable = React.createClass({
 
 		var newFirms = scope.rankNewFirm(scope.props.data["newFirms"]),
 			share = scope.rankShare(scope.props.data["share"]);
-		//console.log(newFirms,share);
+		console.log(newFirms,share);
 
 		var compositeCityRanks = [];
 
@@ -678,14 +685,14 @@ var RankTable = React.createClass({
 
 
 					if(item.name == "Boston-Cambridge-Newton, MA-NH"){
-						console.log(item,share[i]);
+						console.log(item.values,share[i].values);
 					}
 					var resultValues = [];
 
 					item.values.forEach(function(itemValues){
 						for(var j=0;j<share[i].values.length;j++){
 							if(itemValues.x == share[i].values[j].x){
-								resultValues.push({x:itemValues.x,y:( (itemValues.rank + share[i].values[j].rank)/2 )})
+								resultValues.push({x:itemValues.x,y:( ((newFirms.length - itemValues.rank)+1 + (share.length-share[i].values[j].rank)+1)/2 )})
 							}
 						}
 					})
@@ -716,7 +723,9 @@ var RankTable = React.createClass({
         		})
 
         		rank++;
-
+					if(city.name == "Boston-Cambridge-Newton, MA-NH"){
+						console.log(city);
+					}
         	})
 
         })			
