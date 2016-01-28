@@ -432,6 +432,7 @@ var RankingsGraph = React.createClass({
 	            if(scope.state.group == "msa"){
 	                newFirmCities.push( {
 	                    name:msaIdToName[data[metroArea].key],
+	                    key:data[metroArea].key,
 	                    values:data[metroArea]['newFirmData'],
 	                    color:scope.colorFunction(data[metroArea])
 	                })                
@@ -439,6 +440,7 @@ var RankingsGraph = React.createClass({
 	            else{
 	            	newFirmCities.push({
 	                    name:data[metroArea].key,
+	                    key:data[metroArea].key,
 	                    values:data[metroArea]['newFirmData'],
 	                    color:scope.colorFunction(data[metroArea])
 	                })
@@ -453,6 +455,7 @@ var RankingsGraph = React.createClass({
 	            if(scope.state.group == "msa"){
 	                shareCities.push({
 	                    name:msaIdToName[data[metroArea].key],
+	                    key:data[metroArea].key,
 	                    values:data[metroArea]['shareData'],
 	                    color:scope.colorFunction(data[metroArea])
 	                }) 
@@ -460,6 +463,7 @@ var RankingsGraph = React.createClass({
 	            else{
 	                shareCities.push({
 	                    name:data[metroArea].key,
+	                    key:data[metroArea].key,
 	                    values:data[metroArea]['shareData'],
 	                    color:scope.colorFunction(data[metroArea])
 	                }) 
@@ -583,13 +587,15 @@ var RankTable = React.createClass({
         		if(yearValues.x == year){
         			aValue = yearValues.y;
         		}
-        	})
+        	})        		
+    	
 
         	b.values.forEach(function(yearValues){
         		if(yearValues.x == year){
         			bValue = yearValues.y;
         		}
-        	})
+        	})       
+
 
         	if(aValue > bValue){
         		return -1;
@@ -597,6 +603,11 @@ var RankTable = React.createClass({
         	if(bValue > aValue){
         		return 1;
         	}
+        	
+   	
+
+
+
         	return 0;    	
 
     	}
@@ -651,6 +662,71 @@ var RankTable = React.createClass({
 		return cities;        
 
 	},
+	rankComposite:function(){
+		var scope = this,
+			years = d3.range(2000,2010);
+
+		var newFirms = scope.rankNewFirm(scope.props.data["newFirms"]),
+			share = scope.rankShare(scope.props.data["share"]);
+		//console.log(newFirms,share);
+
+		var compositeCityRanks = [];
+
+		newFirms.forEach(function(item){
+			for(var i=0; i<share.length;i++){
+				if(item.key == share[i].key){
+
+
+					if(item.name == "Boston-Cambridge-Newton, MA-NH"){
+						console.log(item,share[i]);
+					}
+					var resultValues = [];
+
+					item.values.forEach(function(itemValues){
+						for(var j=0;j<share[i].values.length;j++){
+							if(itemValues.x == share[i].values[j].x){
+								resultValues.push({x:itemValues.x,y:( (itemValues.rank + share[i].values[j].rank)/2 )})
+							}
+						}
+					})
+
+					compositeCityRanks.push({name:item.name,color:item.color,values:resultValues})
+				}
+			}
+		})
+
+		//console.log(compositeCityRanks);
+
+		var years = d3.range(2000,2010);
+
+		//Rank them
+        years.forEach(function(year){
+        	var rank = 1;
+        	//Sort cities according to each year
+        	compositeCityRanks.sort(scope.sortCities(year));
+
+        	//Go through and assign ranks for current year
+        	compositeCityRanks.forEach(function(city){
+
+        		city.values.forEach(function(yearValues){
+
+        			if(yearValues.x == year){
+        				yearValues.rank = rank;
+        			}
+        		})
+
+        		rank++;
+
+        	})
+
+        })			
+
+
+
+
+		console.log(compositeCityRanks);
+		return compositeCityRanks;
+	},
     renderTable:function(){
 
 		var scope = this,
@@ -675,6 +751,11 @@ var RankTable = React.createClass({
         	currentCities = scope.rankShare(shareCities);
         	currentYears = shareYears;
         	currentFormat = d3.format(".3%");
+        }
+        else{
+        	currentCities = scope.rankComposite();
+        	currentYears = newFirmYears;
+        	currentFormat = d3.format("");
         }
 
         //Sort by year given by state
@@ -707,8 +788,10 @@ var RankTable = React.createClass({
         		else{
         			valueClass = "col-md-1";
         		}
-        		return (<td className={valueClass}style={dataStyle}><p style={rankStyle}>Year Rank: {curYear.rank}</p>New Firms: {currentFormat(curYear.y)}</td>)
-        	})
+        		return (<td className={valueClass}style={dataStyle}><p style={rankStyle}>Year Rank: {curYear.rank}</p>Value: {currentFormat(curYear.y)}</td>)
+        	})        		
+        	
+
 
         	//Row needs color - name - yearCells
 
