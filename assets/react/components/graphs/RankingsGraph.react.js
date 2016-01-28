@@ -770,12 +770,15 @@ var RankTable = React.createClass({
             overflow:'auto'
         }
         var headStyle = {
-        	margin:'0',
+        	width:window.innerWidth,
         	overflowX:'scroll',
         	overflowY:'hidden'
         }
         var divStyle = {
         	position:'absolute'
+        }
+        var tableStyle = {
+        	margin:'0'
         }
 
        	tables = scope.renderTable();
@@ -784,7 +787,7 @@ var RankTable = React.createClass({
         return (
 				<div style={divStyle}id="table">
 					<div style={headStyle} id="tableHead">
-						<table className="table table-hover" fixed-header>{tables.head}</table>
+						<table style = {tableStyle}className="table table-hover" fixed-header>{tables.head}</table>
 					</div>
 					<div style={bodyStyle} id="tableBody">
 						<table className="table table-hover" fixed-header>{tables.body}</table>
