@@ -561,10 +561,23 @@ var RankTable = React.createClass({
     sortTable:function(e){
     	var scope = this;
     	console.log("sortTable",e.target.id);
-    	scope.setState({sortYear:e.target.id})
+    	if(!e.target.id){
+    		console.log("annyong")
+    		if(scope.props.metric == "share"){
+    			scope.setState({sortYear:"1977"})    			
+    		}
+    		if(scope.props.metric == "newFirms"){
+    		    scope.setState({sortYear:"2000"})	
+    		}
+    	}
+    	else{
+    		scope.setState({sortYear:e.target.id})    		
+    	}
+
     },
     sortCities:function(year){
         var scope = this;
+        console.log(scope.state);
         return function(a,b){
 
 			var aValue,
