@@ -526,7 +526,9 @@ var RankingsGraph = React.createClass({
 			    		<li id="shareNewList" className="active" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
 			    		<li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
 			    	</ul>
-			    	<RankTable data={scope.state.data} metric={scope.state.metric} />
+                    <div>
+			    	    <RankTable data={scope.state.data} metric={scope.state.metric} />
+                    </div>
 				</div>
 			);			
 		}

@@ -307,7 +307,50 @@ var RankTable = React.createClass({
 
         var tableComponents = {head:head,body:body,name:name,nameHead:nameHead};
 
-        $('#tableHead').on('scroll', function () {
+
+
+
+
+        return tableComponents;
+    },
+    render: function(){
+    	var scope = this,
+    		tables;
+
+
+        var headStyle = {
+        	width:window.innerWidth
+        }
+        var tableHeadStyle = {
+        	margin:'0'
+        }
+        var tableBodyHeadStyle = {
+            display:'inline-block' ,
+            width:window.innerWidth*.8,
+            overflowX:'scroll',
+            overflowY:'hidden'     
+        }
+
+
+        var bodyStyle = {
+            height:window.innerHeight*.8,
+            width:window.innerWidth,
+            overflow:'auto'
+        }
+        var tableBodyStyle = {
+        	display:'inline-block' ,
+        	width:window.innerWidth*.8 - 10,
+            overflow:'auto'
+        }
+        var nameStyle = {
+        	width:window.innerWidth*.05,
+        	display:'inline-block',
+        	float:'left',
+        	paddingRight:'300px',
+        }
+
+       	tables = scope.renderTable();
+         $('#tableHead').on('scroll', function () {
             $('#tableBody').scrollLeft($(this).scrollLeft());
         });
 
@@ -315,36 +358,13 @@ var RankTable = React.createClass({
             $('#tableHead').scrollLeft($(this).scrollLeft());
         });  
 
-        return tableComponents;
-    },
-    render: function(){
-    	var scope = this,
-    		tables;
-        var bodyStyle = {
-            height:window.innerHeight*.8,
-            width:window.innerWidth
-        }
-        var headStyle = {
-        	width:window.innerWidth
-        }
-        var tableHeadStyle = {
-        	margin:'0'
-        }
-        var tableBodyStyle = {
-        	display:'inline-block' ,
-        	width:window.innerWidth*.8,
-        	overflow:'auto'   	
-        }
+        $('#tableName').on('scroll', function () {
+            $('#tableBody').scrollTop($(this).scrollTop());
+        });
 
-        var nameStyle = {
-        	width:window.innerWidth*.1,
-        	display:'inline-block',
-        	float:'left',
-        	paddingRight:'300px'
-        }
-
-       	tables = scope.renderTable();
-        
+        $('#tableBody').on('scroll', function () {
+            $('#tableName').scrollTop($(this).scrollTop());
+        });         
         console.log("table",scope)
         return (
 				<div id="table">
@@ -352,12 +372,12 @@ var RankTable = React.createClass({
                         <div style={nameStyle}>
                             <table style = {tableHeadStyle}className="table table-hover" fixed-header>{tables.nameHead}</table>
                         </div>
-						<div style={tableBodyStyle}  id="tableHead">
+						<div style={tableBodyHeadStyle}  id="tableHead">
                             <table style = {tableHeadStyle}className="table table-hover" fixed-header>{tables.head}</table>
                         </div>
 					</div>
 					<div style={bodyStyle}>
-						<div style={nameStyle}>
+						<div style={nameStyle} id ="tableName">
                             <table className="table table-hover" >{tables.name}</table>
                         </div>
 						<div style={tableBodyStyle} id="tableBody">

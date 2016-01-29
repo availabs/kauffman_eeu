@@ -110,14 +110,6 @@ var GraphPage = React.createClass({
 	    	);
 
 
-
-        var tableStyle = {
-            overflow:scroll,
-            height:'500px',
-            width:'100%'
-        }
-
-
 	    if(scope.state.graph == "share"){
 	    	graph=(
 	    		<div>

@@ -655,7 +655,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var scrollStyle = {
             display:'inline-block' ,
-            width:window.innerWidth*.8            
+            width:window.innerWidth*.8 - 50           
         }
 
         var currentRowStyle = {

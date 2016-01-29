@@ -729,7 +729,7 @@ var NewFirmPer1000Graph = React.createClass({
             overflowX:'hidden',
             overflowY:'scroll',
             height:window.innerHeight*.4,
-            width:window.innerWidth
+            width:window.innerWidth - 30
         }
 
         var lockStyle = {
@@ -741,11 +741,11 @@ var NewFirmPer1000Graph = React.createClass({
 
         var scrollStyle = {
             display:'inline-block' ,
-            width:window.innerWidth*.8            
+            width:window.innerWidth*.8           
         }
 
         var currentRowStyle = {
-            width:window.innerWidth
+            width:window.innerWidth - 30
         }
 
         var buttonStyle = {
