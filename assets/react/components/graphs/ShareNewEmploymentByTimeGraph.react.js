@@ -3,6 +3,7 @@ var React = require("react"),
 	colorbrewer = require('colorbrewer'),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
     msaIdToName = require('../utils/msaIdToName.json'),
+    RankTable = require('../graphs/RankTable.react'),
     abbrToFips = require('../utils/abbrToFips.json');
 
 
@@ -510,14 +511,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                         thead = table.append("thead"),
                         tbody = table.append("tbody");
 
-                // append the header row
-                thead.append("tr")
-                    .selectAll("th")
-                    .data(years)
-                    .enter()
-                    .append("th")
-                        .text(function(column) {if(column==1977){return "Year \n" +column}else{return column;}  })
-                        .style("white-space","pre");
 
                 // create 1 row
                 var rows = tbody.append("tr")
@@ -538,7 +531,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .append("td")
                     .attr("class", "col-md-5")
                     .style("background",function(v){return v[0].backgroundColor})
-                    .style("min-width",'50px')
+                    .style("min-width",'150px')
                     .style("height",function(v){return v[0].height});
 
                 var name = [{0:d.city.name}];
@@ -549,7 +542,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .append("td")
                     .attr("class", "col-md-5")
                     .text(function(v){return v[0]})
-                    .style("min-width",'180px');
+                    .style("min-width",'150px');
 
 
 
@@ -561,7 +554,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     .append("td")
                     .attr("class", "col-md-5")
                         .text(function(d) {return percFormat(d.y); })
-                        .style("min-width",'100px');;
+                        .style("min-width",'150px');;
                 
                 console.log(d3.select("#hoverRow")[0][0]);
             }
@@ -576,10 +569,10 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             }
 
             $('#currentRow').on('scroll', function () {
-                $('#tableDiv').scrollLeft($(this).scrollLeft());
+                $('#tableBody').scrollLeft($(this).scrollLeft());
             });
 
-            $('#tableDiv').on('scroll', function () {
+            $('#tableBody').on('scroll', function () {
                 $('#currentRow').scrollLeft($(this).scrollLeft());
             });  
 
@@ -619,59 +612,9 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
 
 
-        var allRows = cities.map(function(metroArea){
+       
 
-            var dataStyle = {
-                minWidth:'100px'
-            }
-
-            //Will return the y value for each year of a metro area
-            var yearValues = metroArea.values.map(function(firmValues){
-                return (<td style={dataStyle} className="col-md-5">{percFormat(firmValues.y)}</td>)
-            })
-
-
-            var nameStyle = {
-                minWidth:'180px'
-            }
-
-            var colorStyle = {
-                background:metroArea.color,
-                minWidth:50
-            }
-
-  
-
-
-            return(<tr><td style={colorStyle}className="col-md-5"></td><td style={nameStyle}className="col-md-5">{metroArea.name}</td>{yearValues}</tr>)
-
-        });
-
-        var yearHead = years.map(function(year){
-            if(year == 1977){
-                return(<th>Year: <br/>{year}</th>)               
-            }
-            else{
-                return(<th>{year}</th>)
-            }
-
-        })
-        var headStyle = {
-            margin:'5px'
-        }
-
-
-        //Full table
-        var table = (
-                    <table style={headStyle}id="fullTable" className="table table-hover" fixed-header>
-                        <tbody>
-                            {allRows}
-                        </tbody>
-                    </table>
-                    )
-
-
-        return table;
+        return (<RankTable metric="share" data={{share:cities}} />);
     },
 	render:function() {
 		var scope = this,

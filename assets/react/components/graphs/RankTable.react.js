@@ -323,16 +323,13 @@ var RankTable = React.createClass({
         var headStyle = {
         	width:window.innerWidth
         }
-        var divStyle = {
-        	position:'absolute',
-        }
         var tableHeadStyle = {
         	margin:'0'
         }
         var tableBodyStyle = {
         	display:'inline-block' ,
         	width:window.innerWidth*.8,
-        	            overflow:'auto'   	
+        	overflow:'auto'   	
         }
 
         var nameStyle = {
@@ -346,7 +343,7 @@ var RankTable = React.createClass({
         
         console.log("table",scope)
         return (
-				<div style={divStyle}id="table">
+				<div id="table">
 					<div style={headStyle}>
                         <div style={nameStyle}>
                             <table style = {tableHeadStyle}className="table table-hover" fixed-header>{tables.nameHead}</table>
