@@ -496,24 +496,60 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             function click(d){
                 d3.select("#hoverRow").remove();
+                d3.select("#hoverRowLock").remove();
                 var years = d3.range(1977,2013);
      
-                years.unshift("Name");
-                years.unshift("Color");
+
 
                 console.log("d.city",d.city);
 
 
-                var table = d3.select("#currentRow").append("table")
+                var table = d3.select("#currentRowScroll").append("table")
                             .attr("id","hoverRow")
                             .attr("class", "table table-hover")
-                            .style("margin","5px"),
-                        thead = table.append("thead"),
+                            .style("margin","0px"),
+                        thead = table.append("tbody"),
                         tbody = table.append("tbody");
+
 
 
                 // create 1 row
                 var rows = tbody.append("tr")
+                    .selectAll("tr");
+
+
+
+
+
+
+
+
+                // create a cell in each row for each column
+                var cells = rows.select("td")
+                    .data(d.city.values)
+                    .enter()
+                    .append("td")
+                        .text(function(d) {return percFormat(d.y); })
+                        .style("min-width",'150px')
+                        .style("height",'60px');
+                
+                console.log(d3.select("#hoverRow")[0][0]);
+
+
+
+                var tableLock = d3.select("#currentRowLock").append("table")
+                            .attr("id","hoverRowLock")
+                            .attr("class", "table table-hover")
+                            .style("margin","0px"),
+                        theadLock = tableLock.append("tbody"),
+                        tbodyLock = tableLock.append("tbody");
+
+       
+
+
+
+               // create 1 row
+                var rowsLock = tbodyLock.append("tr")
                     .selectAll("tr");
 
                 var color = [{
@@ -525,38 +561,25 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     }
                 }]
 
-                var colorCell = rows.select("td")
+                var colorCell = rowsLock.select("td")
                     .data(color)
                     .enter()
                     .append("td")
-                    .attr("class", "col-md-5")
                     .style("background",function(v){return v[0].backgroundColor})
                     .style("min-width",'150px')
-                    .style("height",function(v){return v[0].height});
+                    .style("height",'60px');  
 
-                var name = [{0:d.city.name}];
 
-                var nameCell = rows.select("td")
-                    .data(name)
+                var nameLock = [{0:d.city.name}];
+
+                var nameCellLock = rowsLock.select("td")
+                    .data(nameLock)
                     .enter()
                     .append("td")
-                    .attr("class", "col-md-5")
                     .text(function(v){return v[0]})
-                    .style("min-width",'150px');
+                    .style("min-width",'150px')
+                    .style("height",'60px');
 
-
-
-
-                // create a cell in each row for each column
-                var cells = rows.select("td")
-                    .data(d.city.values)
-                    .enter()
-                    .append("td")
-                    .attr("class", "col-md-5")
-                        .text(function(d) {return percFormat(d.y); })
-                        .style("min-width",'150px');;
-                
-                console.log(d3.select("#hoverRow")[0][0]);
             }
 
 
@@ -568,13 +591,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                 focus.attr("transform", "translate(-100,-100)");
             }
 
-            $('#currentRow').on('scroll', function () {
-                $('#tableBody').scrollLeft($(this).scrollLeft());
-            });
 
-            $('#tableBody').on('scroll', function () {
-                $('#currentRow').scrollLeft($(this).scrollLeft());
-            });  
 
         }
 
@@ -626,8 +643,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         }
 
         var rowStyle = {
-            overflowY:'hidden',
-            overflowX:'scroll'
+            overflow:'hidden'
         }
 
         var tableStyle = {
@@ -637,12 +653,35 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             width:window.innerWidth
         }
 
+        var lockStyle = {
+            width:window.innerWidth*.1,
+            float:'left',
+            display:'inline-block',
+            paddingRight:'300px'
+        }
+
+        var scrollStyle = {
+            display:'inline-block' ,
+            width:window.innerWidth*.8            
+        }
+
+        var currentRowStyle = {
+            width:window.innerWidth
+        }
+            $('#currentRowScroll').on('scroll', function () {
+                $('#tableBody').scrollLeft($(this).scrollLeft());
+            });
+
+            $('#tableHead').on('scroll', function () {
+                $('#currentRowScroll').scrollLeft($(this).scrollLeft());
+            });  
 		return (
             <div>
-                <div id="currentRow" style={rowStyle}>
-
+                <div style = {currentRowStyle}>
+                    <div style={lockStyle} id="currentRowLock"></div>
+                    <div style={scrollStyle} id="currentRowScroll" style={rowStyle}></div>
                 </div>
-    			<div id="tableDiv" style = {tableStyle} >
+    			<div id="tableDiv" style = {tableStyle}>
                     {table}
     			</div>
             </div>

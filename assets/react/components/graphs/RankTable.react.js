@@ -193,7 +193,7 @@ var RankTable = React.createClass({
 		var scope = this,
             color = d3.scale.category20(),
             newFirmYears = d3.range(2000,2010),
-            shareYears = d3.range(1977,2009),
+            shareYears = d3.range(1977,2013),
             commaFormat = d3.format(",");
 
         var newFirmCities = scope.props.data["newFirms"],
@@ -232,6 +232,10 @@ var RankTable = React.createClass({
         var dataStyle={
         	minWidth:'150px',
         	height:'80px'
+        }
+        var headStyle ={
+            minWidth:'150px',
+            height:'60px'            
         }
         var valueClass = "col-md-1";
 
@@ -283,10 +287,10 @@ var RankTable = React.createClass({
 
 
             if((scope.props.metric == "newFirms" && year == 2000) || (scope.props.metric == "share" && year == 1977)){
-                return(<th style={dataStyle} className={valueClass}><a onClick={scope.sortTable} id={year}>Year: <br/>{year}</a></th>);               
+                return(<th style={headStyle} className={valueClass}><a onClick={scope.sortTable} id={year}>Year: <br/>{year}</a></th>);               
             }
             else{
-                return(<th style={dataStyle} className={valueClass}><a onClick={scope.sortTable} id={year}>{year}</a></th>);
+                return(<th style={headStyle} className={valueClass}><a onClick={scope.sortTable} id={year}>{year}</a></th>);
             }          		
         	
       	
@@ -303,7 +307,7 @@ var RankTable = React.createClass({
 
         var tableComponents = {head:head,body:body,name:name,nameHead:nameHead};
 
-         $('#tableHead').on('scroll', function () {
+        $('#tableHead').on('scroll', function () {
             $('#tableBody').scrollLeft($(this).scrollLeft());
         });
 
