@@ -333,7 +333,7 @@ var RankTable = React.createClass({
 
 
         var bodyStyle = {
-            height:window.innerHeight*.8,
+            height:window.innerHeight*.8 - 30,
             width:window.innerWidth,
             overflow:'auto'
         }

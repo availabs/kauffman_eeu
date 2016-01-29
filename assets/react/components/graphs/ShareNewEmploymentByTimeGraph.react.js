@@ -641,12 +641,12 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var tableStyle = {
             overflow:'hidden',
-            height:window.innerHeight*.4,
-            width:window.innerWidth - 30
+            height:window.innerHeight*.4 - 10,
+            width:window.innerWidth
         }
 
         var lockStyle = {
-            width:window.innerWidth*.1,
+            width:window.innerWidth*.1 - 50,
             float:'left',
             display:'inline-block',
             paddingRight:'300px'
@@ -654,7 +654,11 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
         var scrollStyle = {
             display:'inline-block' ,
-            width:window.innerWidth*.8 - 50           
+            width:window.innerWidth*.8 - 50         
+        }
+
+        var divStyle = {
+            width:window.innerWidth*.8 - 50
         }
 
         var currentRowStyle = {
@@ -668,7 +672,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             $('#currentRowScroll').scrollLeft($(this).scrollLeft());
         });  
 		return (
-            <div>
+            <div style = {divStyle}>
                 <div style = {currentRowStyle}>
                     <div style={lockStyle} id="currentRowLock"></div>
                     <div style={scrollStyle} id="currentRowScroll" style={rowStyle}></div>

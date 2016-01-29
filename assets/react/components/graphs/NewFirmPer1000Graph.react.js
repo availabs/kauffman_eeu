@@ -355,7 +355,7 @@ var NewFirmPer1000Graph = React.createClass({
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.4 - margin.top - margin.bottom;
+                height = window.innerHeight*.32 - margin.top - margin.bottom;
 
 
             var voronoi = d3.geom.voronoi()
@@ -727,8 +727,8 @@ var NewFirmPer1000Graph = React.createClass({
 
         var tableStyle = {
             overflow:'hidden',
-            height:window.innerHeight*.4,
-            width:window.innerWidth - 30
+            height:window.innerHeight*.4 - 10,
+            width:window.innerWidth
         }
 
         var lockStyle = {
@@ -744,7 +744,7 @@ var NewFirmPer1000Graph = React.createClass({
         }
 
         var currentRowStyle = {
-            width:window.innerWidth - 30
+            width:window.innerWidth
         }
 
         var buttonStyle = {
@@ -758,9 +758,11 @@ var NewFirmPer1000Graph = React.createClass({
         $('#tableHead').on('scroll', function () {
             $('#currentRowScroll').scrollLeft($(this).scrollLeft());
         }); 
-
+        var divStyle = {
+            width:window.innerWidth*.8 - 50
+        }
         return (
-            <div>
+            <div style = {divStyle}>
                 <button style={buttonStyle} onClick={scope.filterOutliers}className="btn btn-danger">Excluding Outliers</button>
                 <div style = {currentRowStyle}>
                     <div style={lockStyle} id="currentRowLock"></div>
