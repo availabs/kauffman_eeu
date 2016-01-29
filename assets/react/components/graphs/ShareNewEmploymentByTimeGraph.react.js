@@ -590,9 +590,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
                 focus.attr("transform", "translate(-100,-100)");
             }
-
-
-
         }
 
 	},
@@ -626,10 +623,6 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
             }
 
         });
-
-
-
-       
 
         return (<RankTable metric="share" data={{share:cities}} />);
     },
@@ -668,13 +661,13 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         var currentRowStyle = {
             width:window.innerWidth
         }
-            $('#currentRowScroll').on('scroll', function () {
-                $('#tableBody').scrollLeft($(this).scrollLeft());
-            });
+        $('#currentRowScroll').on('scroll', function () {
+            $('#tableBody').scrollLeft($(this).scrollLeft());
+        });
 
-            $('#tableHead').on('scroll', function () {
-                $('#currentRowScroll').scrollLeft($(this).scrollLeft());
-            });  
+        $('#tableHead').on('scroll', function () {
+            $('#currentRowScroll').scrollLeft($(this).scrollLeft());
+        });  
 		return (
             <div>
                 <div style = {currentRowStyle}>

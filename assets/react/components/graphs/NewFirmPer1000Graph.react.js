@@ -3,6 +3,7 @@ var React = require("react"),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
 	nv = require("nvd3"),
     colorbrewer = require('colorbrewer'),
+    RankTable = require('../graphs/RankTable.react'),
     msaIdToName = require('../utils/msaIdToName.json'),
     abbrToFips = require('../utils/abbrToFips.json');
 
@@ -582,33 +583,49 @@ var NewFirmPer1000Graph = React.createClass({
             }
 
             function click(d){
-                d3.select("#hoverRow").remove();
-                var years = d3.range(2000,2010);
+                                d3.select("#hoverRow").remove();
+                d3.select("#hoverRowLock").remove();
+                var years = d3.range(2000,201);
      
-                years.unshift("Name");
-                years.unshift("Color");
+
 
                 console.log("d.city",d.city);
 
 
-                var table = d3.select("#currentRow").append("table")
+                var table = d3.select("#currentRowScroll").append("table")
                             .attr("id","hoverRow")
                             .attr("class", "table table-hover")
-                            .style("margin","5px"),
-                        thead = table.append("thead"),
+                            .style("margin","0px"),
+                        thead = table.append("tbody"),
                         tbody = table.append("tbody");
 
-                // append the header row
-                thead.append("tr")
-                    .selectAll("th")
-                    .data(years)
-                    .enter()
-                    .append("th")
-                        .text(function(column) {if(column==2000){return "Year \n" +column}else{return column;}  })
-                        .style("white-space","pre");
+
 
                 // create 1 row
                 var rows = tbody.append("tr")
+                    .selectAll("tr");
+
+
+                // create a cell in each row for each column
+                var cells = rows.select("td")
+                    .data(d.city.values)
+                    .enter()
+                    .append("td")
+                        .text(function(d) {return d3.round(d.y); })
+                        .style("min-width",'150px')
+                        .style("height",'60px');
+                
+
+                var tableLock = d3.select("#currentRowLock").append("table")
+                            .attr("id","hoverRowLock")
+                            .attr("class", "table table-hover")
+                            .style("margin","0px"),
+                        theadLock = tableLock.append("tbody"),
+                        tbodyLock = tableLock.append("tbody");
+
+       
+               // create 1 row
+                var rowsLock = tbodyLock.append("tr")
                     .selectAll("tr");
 
                 var color = [{
@@ -620,46 +637,26 @@ var NewFirmPer1000Graph = React.createClass({
                     }
                 }]
 
-                var colorCell = rows.select("td")
+                var colorCell = rowsLock.select("td")
                     .data(color)
                     .enter()
                     .append("td")
-                    .attr("class", "col-md-1")
                     .style("background",function(v){return v[0].backgroundColor})
-                    .style("min-width",'50px')
-                    .style("height",function(v){return v[0].height});
+                    .style("min-width",'150px')
+                    .style("height",'60px');  
 
 
-                var name = [{0:d.city.name}];
+                var nameLock = [{0:d.city.name}];
 
-                var nameCell = rows.select("td")
-                    .data(name)
+                var nameCellLock = rowsLock.select("td")
+                    .data(nameLock)
                     .enter()
                     .append("td")
-                    .attr("class", "col-md-1")
                     .text(function(v){return v[0]})
-                    .style("min-width",'180px');
-
-
-                // create a cell in each row for each column
-                var cells = rows.select("td")
-                    .data(d.city.origValues)
-                    .enter()
-                    .append("td")
-                    .attr("class", "col-md-1")
-                        .text(function(d) {return d3.round(d.y); })
-                        .style('min-width','100px');
-                
-                console.log(d3.select("#hoverRow")[0][0]);
+                    .style("min-width",'150px')
+                    .style("height",'60px');
             }
 
-            $('#currentRow').on('scroll', function () {
-                $('#tableDiv').scrollLeft($(this).scrollLeft());
-            });
-
-            $('#tableDiv').on('scroll', function () {
-                $('#currentRow').scrollLeft($(this).scrollLeft());
-            });  
 
 
 
@@ -696,53 +693,7 @@ var NewFirmPer1000Graph = React.createClass({
 
         });
 
-
-
-
-        var allRows = cities.map(function(metroArea){
-
-            var dataStyle = {
-                minWidth:'100px'
-            }
-
-            //Will return the y value for each year of a metro area
-            var yearValues = metroArea.values.map(function(firmValues){
-                var curValue = d3.round(firmValues.y);
-                return (<td style={dataStyle} className="col-md-1">{curValue}</td>)
-            })
-
-
-
-            var nameStyle = {
-                minWidth:'180px'
-            }
-
-            var colorStyle = {
-                background:metroArea.color,
-                minWidth:50
-            }
-
-
-
-            //Row has color - name - values
-
-            return(<tr><td style={colorStyle} className="col-md-1"></td><td className="col-md-1" style={nameStyle}>{metroArea.name}</td>{yearValues}</tr>)
-
-        });
-        var headStyle = {
-            margin:'5px'
-        }
-
-        //Full table
-        var table = (
-                    <table style={headStyle} id="fullTable" className="table table-hover" fixed-header>
-                        <tbody>
-                            {allRows}
-                        </tbody>
-                    </table>
-                    )
-
-        return table;
+        return (<RankTable metric="newFirms" data={{newFirms:cities}} />);;
     },
     filterOutliers:function(e){
         console.log("FILTER");
@@ -771,10 +722,9 @@ var NewFirmPer1000Graph = React.createClass({
         }
 
         var rowStyle = {
-            overflowY:'hidden',
-            overflowX:'scroll',
+            overflow:'hidden'
         }
-        
+
         var tableStyle = {
             overflowX:'hidden',
             overflowY:'scroll',
@@ -782,13 +732,42 @@ var NewFirmPer1000Graph = React.createClass({
             width:window.innerWidth
         }
 
+        var lockStyle = {
+            width:window.innerWidth*.1,
+            float:'left',
+            display:'inline-block',
+            paddingRight:'300px'
+        }
+
+        var scrollStyle = {
+            display:'inline-block' ,
+            width:window.innerWidth*.8            
+        }
+
+        var currentRowStyle = {
+            width:window.innerWidth
+        }
+
+        var buttonStyle = {
+            margin:'10px'
+        }
+
+        $('#currentRowScroll').on('scroll', function () {
+            $('#tableBody').scrollLeft($(this).scrollLeft());
+        });
+
+        $('#tableHead').on('scroll', function () {
+            $('#currentRowScroll').scrollLeft($(this).scrollLeft());
+        }); 
+
         return (
             <div>
-                <button onClick={scope.filterOutliers}className="btn btn-danger">Excluding Outliers</button>
-                <div id="currentRow" style={rowStyle}>
-
+                <button style={buttonStyle} onClick={scope.filterOutliers}className="btn btn-danger">Excluding Outliers</button>
+                <div style = {currentRowStyle}>
+                    <div style={lockStyle} id="currentRowLock"></div>
+                    <div style={scrollStyle} id="currentRowScroll" style={rowStyle}></div>
                 </div>
-                <div id="tableDiv" style = {tableStyle} >
+                <div id="tableDiv" style = {tableStyle}>
                     {table}
                 </div>
             </div>
