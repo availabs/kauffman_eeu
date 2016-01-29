@@ -12,7 +12,7 @@ var RankingsGraph = React.createClass({
             loading:true,
             group:"msa",
             sortYear:2002,
-            metric:"newFirms",
+            metric:"share",
             loading:true
         }
     },
@@ -521,8 +521,8 @@ var RankingsGraph = React.createClass({
 				<div>
 					<h3>Rankings</h3>
 			    	<ul className="nav nav-tabs">
-			    		<li id="newFirmsList" className="active" onClick={scope.toggleChart}><a id="newFirms" >New Firms Per 1000 People</a></li>
-			    		<li id="shareNewList" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
+			    		<li id="newFirmsList"  onClick={scope.toggleChart}><a id="newFirms" >New Firms Per 1000 People</a></li>
+			    		<li id="shareNewList" className="active" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
 			    		<li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
 			    	</ul>
 			    	<RankTable data={scope.state.data} metric={scope.state.metric} />
@@ -683,10 +683,6 @@ var RankTable = React.createClass({
 			for(var i=0; i<share.length;i++){
 				if(item.key == share[i].key){
 
-
-					if(item.name == "Boston-Cambridge-Newton, MA-NH"){
-						console.log(item.values,share[i].values);
-					}
 					var resultValues = [];
 
 					item.values.forEach(function(itemValues){
@@ -723,9 +719,6 @@ var RankTable = React.createClass({
         		})
 
         		rank++;
-					if(city.name == "Boston-Cambridge-Newton, MA-NH"){
-						console.log(city);
-					}
         	})
 
         })			
@@ -778,16 +771,13 @@ var RankTable = React.createClass({
         	minWidth:'150px'
         }
         var dataStyle={
-        	minWidth:'100px'
+        	minWidth:'150px',
+        	height:'80px'
         }
         var valueClass = "col-md-1";
 
         var bodyRows = currentCities.map(function(city){
 
-            var colorStyle = {
-                background:city.color,
-                minWidth:150
-            }
         	//Need a cell with (rank,value) for each year
 
         	var yearCells = city.values.map(function(curYear){
@@ -804,9 +794,22 @@ var RankTable = React.createClass({
 
         	//Row needs color - name - yearCells
 
-        	return(<tr><td style={colorStyle}></td><td style={nameStyle}>{city.name}</td>{yearCells}</tr>)
+        	return(<tr>{yearCells}</tr>)
 
 
+        })
+
+        var nameColumns = currentCities.map(function(city){
+
+            var colorStyle = {
+                background:city.color,
+                minWidth:150,
+                height:80
+            }        	
+
+            var nameClass = "col-md-1";
+
+			return(<tr><td className={nameClass} style={colorStyle}></td><td className={nameClass} style={nameStyle}>{city.name}</td></tr>)
         })
 
 
@@ -837,11 +840,12 @@ var RankTable = React.createClass({
       	
         })
 
+        var name = (<tbody>{nameColumns}</tbody>)
         var body = (<tbody>{bodyRows}</tbody>);
         var head = (<tbody><tr>{headRow}</tr></tbody>);
 
 
-        var tableComponents = {head:head,body:body};
+        var tableComponents = {head:head,body:body,name:name};
 
          $('#tableHead').on('scroll', function () {
             $('#tableBody').scrollLeft($(this).scrollLeft());
@@ -858,8 +862,7 @@ var RankTable = React.createClass({
     		tables;
         var bodyStyle = {
             height:window.innerHeight*.8,
-            width:window.innerWidth,
-            overflow:'auto'
+            width:window.innerWidth
         }
         var headStyle = {
         	width:window.innerWidth,
@@ -867,10 +870,22 @@ var RankTable = React.createClass({
         	overflowY:'hidden'
         }
         var divStyle = {
-        	position:'absolute'
+        	position:'absolute',
         }
-        var tableStyle = {
+        var tableHeadStyle = {
         	margin:'0'
+        }
+        var tableBodyStyle = {
+        	display:'inline-block' ,
+        	width:window.innerWidth*.8,
+        	            overflow:'auto'   	
+        }
+
+        var nameStyle = {
+        	width:window.innerWidth*.1,
+        	display:'inline-block',
+        	float:'left',
+        	paddingRight:'300px'
         }
 
        	tables = scope.renderTable();
@@ -879,10 +894,13 @@ var RankTable = React.createClass({
         return (
 				<div style={divStyle}id="table">
 					<div style={headStyle} id="tableHead">
-						<table style = {tableStyle}className="table table-hover" fixed-header>{tables.head}</table>
+						<table style = {tableHeadStyle}className="table table-hover" fixed-header>{tables.head}</table>
 					</div>
-					<div style={bodyStyle} id="tableBody">
-						<table className="table table-hover" fixed-header>{tables.body}</table>
+					<div style={bodyStyle}>
+
+						<div style={nameStyle}><table className="table table-hover" >{tables.name}</table></div>
+						<div style={tableBodyStyle} id="tableBody"><table  className="table table-hover" >{tables.body}</table></div>
+
 					</div>
 				</div>
         )
