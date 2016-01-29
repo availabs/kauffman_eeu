@@ -726,8 +726,7 @@ var NewFirmPer1000Graph = React.createClass({
         }
 
         var tableStyle = {
-            overflowX:'hidden',
-            overflowY:'scroll',
+            overflow:'hidden',
             height:window.innerHeight*.4,
             width:window.innerWidth - 30
         }

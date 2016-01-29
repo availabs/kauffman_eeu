@@ -640,10 +640,9 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
         }
 
         var tableStyle = {
-            overflowX:'hidden',
-            overflowY:'scroll',
+            overflow:'hidden',
             height:window.innerHeight*.4,
-            width:window.innerWidth
+            width:window.innerWidth - 30
         }
 
         var lockStyle = {
