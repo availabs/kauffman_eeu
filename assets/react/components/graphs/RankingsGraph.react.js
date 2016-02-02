@@ -622,10 +622,9 @@ var RankingsGraph = React.createClass({
         var scope = this,
             years = d3.range(2000,2010);
 
-        var newFirms = scope.rankNewFirm(scope.props.data["newFirms"]),
-            share = scope.rankShare(scope.props.data["share"]);
-        console.log(newFirms,share);
-
+        var newFirms = scope.newFirmsGraph(scope.state.data["newFirms"]),
+            share = scope.shareGraph(scope.state.data["share"]);
+            console.log("newifmrs",newFirms);
         var compositeCityRanks = [];
 
         newFirms.forEach(function(item){
@@ -642,7 +641,7 @@ var RankingsGraph = React.createClass({
                         }
                     })
 
-                    compositeCityRanks.push({name:item.name,color:item.color,values:resultValues})
+                    compositeCityRanks.push({key:item.key,name:item.name,color:item.color,values:resultValues})
                 }
             }
         })
@@ -673,17 +672,10 @@ var RankingsGraph = React.createClass({
         })          
 
 
-
-
-        console.log(compositeCityRanks);
         return compositeCityRanks;
     },
     shareGraph:function(data){
-        console.log(data);
-        //Want an array that is: [{values:[],key:msaId,name:name}]
-        //Values is (for each msa), [x:year y:rank]
-        var scope = this,
-            years = d3.range(1977,2013);
+        var scope = this;
 
         var cities = Object.keys(data).map(function(metroArea){
 
@@ -727,10 +719,91 @@ var RankingsGraph = React.createClass({
 
     },
     newFirmsGraph:function(data){
+        var scope = this;
 
+        var cities = Object.keys(data).map(function(metroArea){
+
+                if(scope.state.group == "msa"){
+                    
+                    var city = {
+                        values:null,
+                        name:msaIdToName[data[metroArea].key],
+                        key:data[metroArea].key
+                    }
+
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+              
+                }
+                else{
+                    var city = {
+                        values:null,
+                        msaArray:data[metroArea].msaArray,
+                        key:data[metroArea].key,
+                        name:data[metroArea].key
+                    }
+
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+                }
+                return city;
+            });
+
+        return scope.rankNewFirm(cities);
     },
     compositeGraph:function(data){
+        var scope = this;
 
+        var newData = scope.rankComposite();
+        console.log("newdata",newData);
+        var cities = Object.keys(newData).map(function(metroArea){
+
+                if(scope.state.group == "msa"){
+                    
+                    var city = {
+                        values:null,
+                        key:newData[metroArea].key,
+                        name:newData[metroArea].name
+                    }
+
+                    city.values = newData[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+              
+                }
+                else{
+                    var city = {
+                        values:null,
+                        msaArray:newData[metroArea].msaArray,
+                        key:newData[metroArea].key,
+                        name:newData[metroArea].name
+                    }
+
+                    city.values = newData[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+                }
+                return city;
+            });
+        return scope.rankNewFirm(cities);
     },
     renderGraph:function(){
 
@@ -1003,7 +1076,35 @@ var RankingsGraph = React.createClass({
 
 		var tables;
 		console.log("render setstate",scope.state);
+        var rowStyle = {
+            overflow:'hidden'
+        }
 
+        var tableStyle = {
+            overflow:'hidden',
+            height:window.innerHeight*.4 - 10,
+            width:window.innerWidth
+        }
+
+        var lockStyle = {
+            width:window.innerWidth*.1 - 50,
+            float:'left',
+            display:'inline-block',
+            paddingRight:'300px'
+        }
+
+        var scrollStyle = {
+            display:'inline-block' ,
+            width:window.innerWidth*.8 - 50         
+        }
+
+        var divStyle = {
+            width:window.innerWidth*.8 - 50
+        }
+
+        var currentRowStyle = {
+            width:window.innerWidth
+        }
 		if(scope.state.loading == false){
             scope.renderGraph();
 			return (
@@ -1016,6 +1117,10 @@ var RankingsGraph = React.createClass({
 			    	</ul>
                     <div id="rankGraph"></div>
                     <div>
+                        <div style = {currentRowStyle}>
+                            <div style={lockStyle} id="currentRowLock"></div>
+                            <div style={scrollStyle} id="currentRowScroll" style={rowStyle}></div>
+                        </div>
 			    	    <RankTable data={scope.state.data} metric={scope.state.metric} />
                     </div>
 				</div>
