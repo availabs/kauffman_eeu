@@ -234,8 +234,7 @@ var RankTable = React.createClass({
         	height:'80px'
         }
         var headStyle ={
-            minWidth:'150px',
-            height:'60px'            
+            minWidth:'150px'            
         }
         var valueClass = "col-md-1";
 

@@ -509,6 +509,493 @@ var RankingsGraph = React.createClass({
 				.attr('class',"active");
 		}
 	},
+    sortTable:function(e){
+        var scope = this;
+        console.log("sortTable",e.target.id);
+        if(!e.target.id){
+            if(scope.props.metric == "share"){
+                scope.setState({sortYear:"1977"})               
+            }
+            if(scope.props.metric == "newFirms"){
+                scope.setState({sortYear:"2000"})   
+            }
+        }
+        else{
+            scope.setState({sortYear:e.target.id})          
+        }
+
+    },
+    sortCities:function(year){
+        var scope = this;
+        return function(a,b){
+
+            var aValue,
+                bValue;
+
+            a.values.forEach(function(yearValues){
+                if(yearValues.x == year){
+                    aValue = yearValues.y;
+                }
+            })              
+        
+
+            b.values.forEach(function(yearValues){
+                if(yearValues.x == year){
+                    bValue = yearValues.y;
+                }
+            })       
+
+            if(scope.props.metric == "composite"){
+                if(aValue > bValue){
+                    return 1;
+                }
+                if(bValue > aValue){
+                    return -1;
+                }
+            }
+            else{
+                if(aValue > bValue){
+                    return -1;
+                }
+                if(bValue > aValue){
+                    return 1;
+                }               
+            }           
+
+
+
+            return 0;       
+
+        }
+    },
+    rankShare:function(cities){
+        var scope=this,
+            years = d3.range(1977,2013);
+
+        years.forEach(function(year){
+            var rank = 1;
+            //Sort cities according to each year
+            cities.sort(scope.sortCities(year));
+
+            //Go through and assign ranks for current year
+            cities.forEach(function(city){
+
+                city.values.forEach(function(yearValues){
+                    if(yearValues.x == year){
+                        yearValues.rank = rank;
+                    }
+                })
+
+                rank++;
+            })
+        })          
+
+        return cities; 
+    },
+    rankNewFirm:function(cities){
+        var scope=this,
+            years = d3.range(2000,2010);
+
+
+        years.forEach(function(year){
+            var rank = 1;
+            //Sort cities according to each year
+            cities.sort(scope.sortCities(year));
+
+            //Go through and assign ranks for current year
+            cities.forEach(function(city){
+
+                city.values.forEach(function(yearValues){
+                    if(yearValues.x == year){
+                        yearValues.rank = rank;
+                    }
+                })
+
+                rank++;
+            })
+        })          
+
+        return cities;        
+
+    },
+    rankComposite:function(){
+        var scope = this,
+            years = d3.range(2000,2010);
+
+        var newFirms = scope.rankNewFirm(scope.props.data["newFirms"]),
+            share = scope.rankShare(scope.props.data["share"]);
+        console.log(newFirms,share);
+
+        var compositeCityRanks = [];
+
+        newFirms.forEach(function(item){
+            for(var i=0; i<share.length;i++){
+                if(item.key == share[i].key){
+
+                    var resultValues = [];
+
+                    item.values.forEach(function(itemValues){
+                        for(var j=0;j<share[i].values.length;j++){
+                            if(itemValues.x == share[i].values[j].x){
+                                resultValues.push({x:itemValues.x,y:( ((newFirms.length - itemValues.rank)+1 + (share.length-share[i].values[j].rank)+1)/2 )})
+                            }
+                        }
+                    })
+
+                    compositeCityRanks.push({name:item.name,color:item.color,values:resultValues})
+                }
+            }
+        })
+
+        //console.log(compositeCityRanks);
+
+        var years = d3.range(2000,2010);
+
+        //Rank them
+        years.forEach(function(year){
+            var rank = 1;
+            //Sort cities according to each year
+            compositeCityRanks.sort(scope.sortCities(year));
+
+            //Go through and assign ranks for current year
+            compositeCityRanks.forEach(function(city){
+
+                city.values.forEach(function(yearValues){
+
+                    if(yearValues.x == year){
+                        yearValues.rank = rank;
+                    }
+                })
+
+                rank++;
+            })
+
+        })          
+
+
+
+
+        console.log(compositeCityRanks);
+        return compositeCityRanks;
+    },
+    shareGraph:function(data){
+        console.log(data);
+        //Want an array that is: [{values:[],key:msaId,name:name}]
+        //Values is (for each msa), [x:year y:rank]
+        var scope = this,
+            years = d3.range(1977,2013);
+
+        var cities = Object.keys(data).map(function(metroArea){
+
+                if(scope.state.group == "msa"){
+                    
+                    var city = {
+                        values:null,
+                        name:msaIdToName[data[metroArea].key],
+                        key:data[metroArea].key
+                    }
+
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+              
+                }
+                else{
+                    var city = {
+                        values:null,
+                        msaArray:data[metroArea].msaArray,
+                        key:data[metroArea].key,
+                        name:data[metroArea].key
+                    }
+
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y
+                        }
+                    })
+                }
+                return city;
+            });
+
+        return scope.rankShare(cities);
+
+    },
+    newFirmsGraph:function(data){
+
+    },
+    compositeGraph:function(data){
+
+    },
+    renderGraph:function(){
+
+        //1 - Share of employmment in new firms OVER TIME
+        //One line per metro area -- line graph
+        var percFormat = d3.format(".3%"),
+            scope = this;
+
+        var selected = "false";
+
+        if(scope.state.loading){
+            console.log('reloading')
+            setTimeout(function(){ scope.renderGraph() }, 2000);
+        }
+        else{
+            //Get rid of everything already in the svg
+            d3.selectAll("svg").remove();
+            var data = scope.state.data;
+
+            if(scope.state.metric == "share"){
+                var cities = scope.shareGraph(data.share);
+            }
+            if(scope.state.metric == "newFirms"){
+                var cities = scope.newFirmsGraph(data.newFirms);
+            }
+            if(scope.state.metric == "composite"){
+                var cities = scope.compositeGraph(data);
+            }
+
+
+            var margin = {top: 20, right: 40, bottom: 50, left: 75},
+                width = window.innerWidth*.98 - margin.left - margin.right,
+                height = window.innerHeight*.4 - margin.top - margin.bottom;
+
+            var voronoi = d3.geom.voronoi()
+                .x(function(d) { return x(d.x); })
+                .y(function(d) { return y(d.rank); })
+                .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
+
+
+            var x = d3.scale.linear()
+                .range([0, width]);
+
+            var y = d3.scale.linear()
+                .range([height, 0]);
+
+
+
+            var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+            var yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left");
+
+            var line = d3.svg.line()
+                .interpolate("cardinal")
+                .x(function(d) { return x(d.x); })
+                .y(function(d) { return y(d.rank); });
+  
+
+            var svg = d3.select("#rankGraph").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+            
+
+            x.domain([
+                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
+                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.x }); })
+            ]);
+
+            y.domain([
+                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.rank; }); }),
+                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.rank; }); })
+            ]);
+
+            svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + height + ")")
+              .call(xAxis)
+            .append("text")
+              .style("text-anchor", "end")
+              .attr("dx","50em")
+              .attr("dy","3em")
+              .text("Year");
+
+            svg.append("g")
+              .attr("class", "y axis")
+              .call(yAxis)
+            .append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("y", "-5em")
+              .attr("dy", ".71em")
+              .attr("x","-6em")
+              .style("text-anchor", "end")
+              .text("Share of Employment in New Firms");
+
+
+            svg.append("g")
+                  .attr("class", "cities")
+                .selectAll("path")
+                  .data(cities)
+                .enter()
+                  .append("path")
+                    .attr("d", function(d) { d.line = this; return line(d.values); })
+                    .style("stroke", function(d) {return scope.colorFunction(d);})
+                    .style("fill","none");
+
+
+
+            var focus = svg.append("g")
+                  .attr("transform", "translate(-100,-100)")
+                  .attr("class", "focus");
+
+                focus.append("circle")
+                  .attr("r", 3.5);
+
+                focus.append("text")
+                  .attr("y", -10)
+                  .style("font-weight","bold");
+
+            var voronoiGroup = svg.append("g")
+                  .attr("class", "voronoi")
+                  .style("fill","#FFFFFF")
+                  .style("stroke","#000000")
+                  .style("opacity","0")
+
+            voronoiGroup.selectAll("path")
+                    .data(voronoi(d3.nest()
+                        .key(function(d) {return x(d.x) + "," + y(d.y); })
+                        .rollup(function(v) { return v[0]; })
+                        .entries(d3.merge(cities.map(function(d) { return d.values; })) )
+                        .map(function(d) { return d.values; })))
+                .enter().append("path")
+                    .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+                    .datum(function(d) { return d.point; })
+                    .on("mouseover", mouseover)
+                    .on("mouseout", mouseout)
+                    .on("click",click);
+
+
+            function mouseover(d) {
+                d3.select(d.city.line).style("stroke-width","2.5")
+                d3.select(d.city.line).style("stroke","#000000")
+
+                var popText = "",
+                    name;
+                if(scope.state.group == "msa"){
+                    name = d.city.name;
+                }
+                else{
+                    name = d.city.key;
+                }
+
+                popText += name + ' | ' + d.x +':  '+ d.rank;
+
+                d.city.line.parentNode.appendChild(d.city.line);
+                focus.attr("transform", "translate(" + x(d.x) + "," + y(d.rank) + ")");
+                focus.select("text").text(popText);
+            }
+
+            function click(d){
+                d3.select("#hoverRow").remove();
+                d3.select("#hoverRowLock").remove();
+                var years = d3.range(1977,2013);
+     
+
+
+                console.log("d.city",d.city);
+
+
+                var table = d3.select("#currentRowScroll").append("table")
+                            .attr("id","hoverRow")
+                            .attr("class", "table table-hover")
+                            .style("margin","0px"),
+                        thead = table.append("tbody"),
+                        tbody = table.append("tbody");
+
+
+
+                // create 1 row
+                var rows = tbody.append("tr")
+                    .selectAll("tr");
+
+
+
+
+
+
+
+
+                // create a cell in each row for each column
+                var cells = rows.select("td")
+                    .data(d.city.values)
+                    .enter()
+                    .append("td")
+                        .text(function(d) {return d.rank; })
+                        .style("min-width",'150px')
+                        .style("height",'60px');
+                
+                console.log(d3.select("#hoverRow")[0][0]);
+
+
+
+                var tableLock = d3.select("#currentRowLock").append("table")
+                            .attr("id","hoverRowLock")
+                            .attr("class", "table table-hover")
+                            .style("margin","0px"),
+                        theadLock = tableLock.append("tbody"),
+                        tbodyLock = tableLock.append("tbody");
+
+       
+
+
+
+               // create 1 row
+                var rowsLock = tbodyLock.append("tr")
+                    .selectAll("tr");
+
+                var color = [{
+                    0:{
+                        float:"left",
+                        height:38,
+                        width:10,
+                        backgroundColor:scope.colorFunction(d.city)
+                    }
+                }]
+
+                var colorCell = rowsLock.select("td")
+                    .data(color)
+                    .enter()
+                    .append("td")
+                    .style("background",function(v){return v[0].backgroundColor})
+                    .style("min-width",'150px')
+                    .style("height",'60px');  
+
+
+                var nameLock = [{0:d.city.name}];
+
+                var nameCellLock = rowsLock.select("td")
+                    .data(nameLock)
+                    .enter()
+                    .append("td")
+                    .text(function(v){return v[0]})
+                    .style("min-width",'150px')
+                    .style("height",'60px');
+
+            }
+
+
+            function mouseout(d) {                              
+
+                d3.select(d.city.line).style("stroke-width","1")
+                d3.select(d.city.line).style("stroke",function(d){return scope.colorFunction(d)})
+
+                focus.attr("transform", "translate(-100,-100)");
+            }
+        }
+
+    },
 	render:function() {
 		var scope = this;
 
@@ -518,6 +1005,7 @@ var RankingsGraph = React.createClass({
 		console.log("render setstate",scope.state);
 
 		if(scope.state.loading == false){
+            scope.renderGraph();
 			return (
 				<div>
 					<h3>Rankings</h3>
@@ -526,6 +1014,7 @@ var RankingsGraph = React.createClass({
 			    		<li id="shareNewList" className="active" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
 			    		<li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
 			    	</ul>
+                    <div id="rankGraph"></div>
                     <div>
 			    	    <RankTable data={scope.state.data} metric={scope.state.metric} />
                     </div>
