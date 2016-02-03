@@ -844,16 +844,15 @@ var RankingsGraph = React.createClass({
 
             var filteredData = [];
             filteredData = cities.filter(function(city){
-                var withinBounds;
+                var withinBounds = true;
                 city.values.forEach(function(yearVal){
-                    if(yearVal.x == scope.state.sortYear){
                         if(yearVal.rank <= scope.state.extent[0] && yearVal.rank >= scope.state.extent[1]){
-                            withinBounds = true;
+                            
                         }
                         else{
                             withinBounds =  false;
                         }
-                    }
+                    
                 })
 
                 if(withinBounds){
