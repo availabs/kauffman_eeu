@@ -388,31 +388,36 @@ var RankingsGraph = React.createClass({
 
 
         if(scope.state.group == "state"){
-            if(scope.props.color == "state"){
-                var fips = abbrToFips[params.key] * 10;
-                cityColor = color(fips);               
+
+            if(params.color){
+                cityColor = params.color;
             }
-            if(scope.props.color == "population"){
-                var totalPop = 0;
-
-                if(params["msaArray"]){
-                    params["msaArray"].forEach(function(msaId){
-                        
-                        if(metroPop20002009[msaId]){
-                            totalPop = totalPop + +metroPop20002009[msaId][2000].replace(/,/g , "");        
-                        }
-                                            
-                    })                    
+            else{
+                if(scope.props.color == "state"){
+                    var fips = abbrToFips[params.key] * 10;
+                    cityColor = color(fips);               
                 }
+                if(scope.props.color == "population"){
+                    var totalPop = 0;
 
-                if(totalPop > 0){
-                    cityColor = color(totalPop)                    
-                }
-                else{
-                    cityColor = '#FFFFFF'
+                    if(params["msaArray"]){
+                        params["msaArray"].forEach(function(msaId){
+                            
+                            if(metroPop20002009[msaId]){
+                                totalPop = totalPop + +metroPop20002009[msaId][2000].replace(/,/g , "");        
+                            }
+                                                
+                        })                    
+                    }
+
+                    if(totalPop > 0){
+                        cityColor = color(totalPop)                    
+                    }
+                    else{
+                        cityColor = '#FFFFFF'
+                    }
                 }
             }
-
         }
 
 
@@ -700,6 +705,7 @@ var RankingsGraph = React.createClass({
                 else{
                     var city = {
                         values:null,
+                        color:data[metroArea].color,
                         msaArray:data[metroArea].msaArray,
                         key:data[metroArea].key,
                         name:data[metroArea].key
@@ -744,6 +750,7 @@ var RankingsGraph = React.createClass({
                 else{
                     var city = {
                         values:null,
+                        color:data[metroArea].color,
                         msaArray:data[metroArea].msaArray,
                         key:data[metroArea].key,
                         name:data[metroArea].key
@@ -766,7 +773,7 @@ var RankingsGraph = React.createClass({
         var scope = this;
 
         var newData = scope.rankComposite();
-        console.log("newdata",newData);
+        
         var cities = Object.keys(newData).map(function(metroArea){
 
                 if(scope.state.group == "msa"){
@@ -789,6 +796,7 @@ var RankingsGraph = React.createClass({
                 else{
                     var city = {
                         values:null,
+                        color:newData[metroArea].color,
                         msaArray:newData[metroArea].msaArray,
                         key:newData[metroArea].key,
                         name:newData[metroArea].name
@@ -823,7 +831,6 @@ var RankingsGraph = React.createClass({
             //Get rid of everything already in the svg
             d3.selectAll("svg").remove();
             var data = scope.state.data;
-
             if(scope.state.metric == "share"){
                 var cities = scope.shareGraph(data.share);
             }
@@ -853,7 +860,6 @@ var RankingsGraph = React.createClass({
 
             })
 
-            console.log(filteredData)
 
             var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
@@ -901,7 +907,13 @@ var RankingsGraph = React.createClass({
                 d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
             ]);
 
-            y.domain([1,363]);
+            if(scope.props.group == "state"){
+                y.domain([1,51]);
+            }
+            else{
+                y.domain([1,366]);
+            }
+
 
             svg.append("g")
               .attr("class", "x axis")
@@ -1079,8 +1091,17 @@ var RankingsGraph = React.createClass({
                 focus.attr("transform", "translate(-100,-100)");
             }
 
+
+            if(scope.props.group == "state"){
+            var startValue = 51
+            var endValue = 1                
+            }
+            else{
             var startValue = scope.state.extent[1];
-            var endValue = scope.state.extent[0];
+            var endValue = scope.state.extent[0];                
+            }
+
+
 
             var brush = d3.svg.brush()
                 .y(y)
@@ -1125,15 +1146,26 @@ var RankingsGraph = React.createClass({
             }            
 
             function brushend() {
-            var s = brush.extent();
-            if(Math.round(s[1]) - Math.round(s[0]) > 75 ){
-                brush.extent([Math.round(s[1]),Math.round(s[1]-75)]) (d3.select(this));
-            }
-            else{
-                brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
-            }
-                s = brush.extent();
-                scope.setState({extent:[Math.round(s[1]),Math.round(s[0])]})
+                var s = brush.extent();
+
+                if(scope.state.group == "state"){
+                    brush.extent([51,0]) (d3.select(this));
+                    s = brush.extent();
+                    scope.setState({extent:[Math.round(s[1]),Math.round(s[0])]})
+                }
+                else{
+                    if(Math.round(s[1]) - Math.round(s[0]) > 75 ){
+                        brush.extent([Math.round(s[1]),Math.round(s[1]-75)]) (d3.select(this));
+                    }
+                    else{
+                        brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
+                    }
+                    s = brush.extent();
+                    scope.setState({extent:[Math.round(s[1]),Math.round(s[0])]})
+                }
+
+
+
 
 
 
