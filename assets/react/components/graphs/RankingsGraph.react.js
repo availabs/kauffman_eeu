@@ -840,13 +840,15 @@ var RankingsGraph = React.createClass({
             if(scope.state.metric == "composite"){
                 var cities = scope.compositeGraph(data);
             }
-
+            var filterMargin = (scope.state.extent[0] - scope.state.extent[1])/20
+            console.log(filterMargin);
 
             var filteredData = [];
             filteredData = cities.filter(function(city){
                 var withinBounds = true;
                 city.values.forEach(function(yearVal){
-                        if(yearVal.rank <= scope.state.extent[0] && yearVal.rank >= scope.state.extent[1]){
+
+                        if(yearVal.rank <= scope.state.extent[0]+filterMargin && yearVal.rank >= scope.state.extent[1]-filterMargin){
                             
                         }
                         else{
