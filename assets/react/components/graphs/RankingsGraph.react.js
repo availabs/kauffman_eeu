@@ -901,10 +901,7 @@ var RankingsGraph = React.createClass({
                 d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
             ]);
 
-            y.domain([
-                d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.rank; }); }),
-                d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.rank; }); })
-            ]);
+            y.domain([1,363]);
 
             svg.append("g")
               .attr("class", "x axis")
