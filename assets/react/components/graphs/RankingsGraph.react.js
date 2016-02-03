@@ -14,7 +14,7 @@ var RankingsGraph = React.createClass({
             group:"msa",
             sortYear:2002,
             metric:"share",
-            extent:[125,50],
+            extent:[366,0],
             loading:true
         }
     },
@@ -862,11 +862,6 @@ var RankingsGraph = React.createClass({
                 }
 
             })
-            console.log("filtered data",filteredData)
-
-            if(filteredData.length == 0){
-                filteredData = cities;
-            }
 
             var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
