@@ -864,7 +864,6 @@ var RankingsGraph = React.createClass({
             console.log("filtered data",filteredData)
 
             if(filteredData.length == 0){
-                console.log("sdjfds")
                 filteredData = cities;
             }
 
@@ -1066,7 +1065,7 @@ var RankingsGraph = React.createClass({
 
             }
 
-console.log((height/(y.domain()[1]-y.domain()[0])))
+
             function mouseout(d) {                              
 
                 d3.select(d.city.line).style("stroke-width",(height/(y.domain()[1]-y.domain()[0])))
@@ -1077,12 +1076,12 @@ console.log((height/(y.domain()[1]-y.domain()[0])))
 
 
             if(scope.props.group == "state"){
-            var startValue = 51
-            var endValue = 1                
+                var startValue = scope.state.extent[1];
+                var endValue = scope.state.extent[0];             
             }
             else{
-            var startValue = scope.state.extent[1];
-            var endValue = scope.state.extent[0];                
+                var startValue = scope.state.extent[1];
+                var endValue = scope.state.extent[0];                
             }
 
 
@@ -1132,7 +1131,12 @@ console.log((height/(y.domain()[1]-y.domain()[0])))
                 var s = brush.extent();
 
                 if(scope.state.group == "state"){
-                    brush.extent([51,0]) (d3.select(this));
+                    if(Math.round(s[1]) - Math.round(s[0]) > 50 ){
+                        brush.extent([Math.round(s[1]),Math.round(s[1]-50)]) (d3.select(this));
+                    }
+                    else{
+                        brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
+                    }
                     s = brush.extent();
                     scope.setState({extent:[Math.round(s[1]),Math.round(s[0])]})
                 }
@@ -1182,7 +1186,12 @@ console.log((height/(y.domain()[1]-y.domain()[0])))
     resetBrush:function(){
         var scope = this;
 
-        var extent = [366,1];
+        if(scope.state.group == "msa"){
+        var extent = [366,1];            
+        }
+        else{
+            var extent = [49,0];
+        }
         scope.setState({extent:extent})
     },
 	render:function() {
@@ -1222,7 +1231,8 @@ console.log((height/(y.domain()[1]-y.domain()[0])))
             width:window.innerWidth
         }
             var buttonStyle = {
-            margin:'10px'
+            marginTop:'10px',
+            marginLeft:'10px'
         }
 		if(scope.state.loading == false){
             scope.renderGraph();
@@ -1234,7 +1244,7 @@ console.log((height/(y.domain()[1]-y.domain()[0])))
 			    		<li id="shareNewList" className="active" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
 			    		<li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
 			    	</ul>
-                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush</button></div>
+                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button></div>
                     <div>
                         <div style = {currentRowStyle}>
                             <div style={lockStyle} id="currentRowLock"></div>
