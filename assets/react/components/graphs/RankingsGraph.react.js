@@ -841,7 +841,9 @@ var RankingsGraph = React.createClass({
                 var cities = scope.compositeGraph(data);
             }
 
-            var filteredData = cities.filter(function(city){
+
+            var filteredData = [];
+            filteredData = cities.filter(function(city){
                 var withinBounds;
                 city.values.forEach(function(yearVal){
                     if(yearVal.x == scope.state.sortYear){
@@ -859,11 +861,16 @@ var RankingsGraph = React.createClass({
                 }
 
             })
+            console.log("filtered data",filteredData)
 
+            if(filteredData.length == 0){
+                console.log("sdjfds")
+                filteredData = cities;
+            }
 
             var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.5 - margin.top - margin.bottom;
+                height = window.innerHeight*.8 - margin.top - margin.bottom;
 
             var voronoi = d3.geom.voronoi()
                 .x(function(d) { return x(d.x); })
@@ -888,7 +895,6 @@ var RankingsGraph = React.createClass({
                 .orient("left");
 
             var line = d3.svg.line()
-                .interpolate("cardinal")
                 .x(function(d) { return x(d.x); })
                 .y(function(d) { return y(d.rank); });
   
@@ -907,34 +913,13 @@ var RankingsGraph = React.createClass({
                 d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
             ]);
 
-            if(scope.props.group == "state"){
-                y.domain([1,51]);
-            }
-            else{
-                y.domain([1,366]);
-            }
+            y.domain([
+                d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.rank; }); }),
+                d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.rank; }); })
+            ]);
 
 
-            svg.append("g")
-              .attr("class", "x axis")
-              .attr("transform", "translate(0," + height + ")")
-              .call(xAxis)
-            .append("text")
-              .style("text-anchor", "end")
-              .attr("dx","50em")
-              .attr("dy","3em")
-              .text("Year");
 
-            svg.append("g")
-              .attr("class", "y axis")
-              .call(yAxis)
-            .append("text")
-              .attr("transform", "rotate(-90)")
-              .attr("y", "-5em")
-              .attr("dy", "2em")
-              .attr("x","2em")
-              .style("text-anchor", "end")
-              .text("Share of Employment in New Firms");
 
 
             svg.append("g")
@@ -945,6 +930,7 @@ var RankingsGraph = React.createClass({
                   .append("path")
                     .attr("d", function(d) { d.line = this; return line(d.values); })
                     .style("stroke", function(d) {return scope.colorFunction(d);})
+                    .style("stroke-width",(height/(y.domain()[1]-y.domain()[0])))
                     .style("fill","none");
 
 
@@ -981,7 +967,7 @@ var RankingsGraph = React.createClass({
 
 
             function mouseover(d) {
-                d3.select(d.city.line).style("stroke-width","2.5")
+                d3.select(d.city.line).style("stroke-width",(height/(y.domain()[1]-y.domain()[0])))
                 d3.select(d.city.line).style("stroke","#000000")
 
                 var popText = "",
@@ -1082,10 +1068,10 @@ var RankingsGraph = React.createClass({
 
             }
 
-
+console.log((height/(y.domain()[1]-y.domain()[0])))
             function mouseout(d) {                              
 
-                d3.select(d.city.line).style("stroke-width","1")
+                d3.select(d.city.line).style("stroke-width",(height/(y.domain()[1]-y.domain()[0])))
                 d3.select(d.city.line).style("stroke",function(d){return scope.colorFunction(d)})
 
                 focus.attr("transform", "translate(-100,-100)");
@@ -1135,7 +1121,6 @@ var RankingsGraph = React.createClass({
                 .attr("width",22);
 
             brushstart();
-            brushmove();
 
             function brushstart() {
                 svg.classed("selecting", true);
@@ -1171,6 +1156,27 @@ var RankingsGraph = React.createClass({
 
                 svg.classed("selecting", !d3.event.target.empty());
             }
+
+            svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + height + ")")
+              .call(xAxis)
+            .append("text")
+              .style("text-anchor", "end")
+              .attr("dx","50em")
+              .attr("dy","3em")
+              .text("Year");
+
+            svg.append("g")
+              .attr("class", "y axis")
+              .call(yAxis)
+            .append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("y", "-5em")
+              .attr("dy", "2em")
+              .attr("x","2em")
+              .style("text-anchor", "end")
+              .text("Share of Employment in New Firms");            
 
         }
 
