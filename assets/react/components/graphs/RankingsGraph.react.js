@@ -14,6 +14,7 @@ var RankingsGraph = React.createClass({
             group:"msa",
             sortYear:2002,
             metric:"share",
+            extent:[125,50],
             loading:true
         }
     },
@@ -833,6 +834,26 @@ var RankingsGraph = React.createClass({
                 var cities = scope.compositeGraph(data);
             }
 
+            var filteredData = cities.filter(function(city){
+                var withinBounds;
+                city.values.forEach(function(yearVal){
+                    if(yearVal.x == scope.state.sortYear){
+                        if(yearVal.rank <= scope.state.extent[1] && yearVal.rank >= scope.state.extent[0]){
+                            withinBounds = true;
+                        }
+                        else{
+                            withinBounds =  false;
+                        }
+                    }
+                })
+
+                if(withinBounds){
+                    return city;
+                }
+
+            })
+
+            console.log(filteredData)
 
             var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
@@ -876,13 +897,13 @@ var RankingsGraph = React.createClass({
             
 
             x.domain([
-                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
-                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.x }); })
+                d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
+                d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
             ]);
 
             y.domain([
-                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.rank; }); }),
-                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.rank; }); })
+                d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.rank; }); }),
+                d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.rank; }); })
             ]);
 
             svg.append("g")
@@ -910,7 +931,7 @@ var RankingsGraph = React.createClass({
             svg.append("g")
                   .attr("class", "cities")
                 .selectAll("path")
-                  .data(cities)
+                  .data(filteredData)
                 .enter()
                   .append("path")
                     .attr("d", function(d) { d.line = this; return line(d.values); })
@@ -940,7 +961,7 @@ var RankingsGraph = React.createClass({
                     .data(voronoi(d3.nest()
                         .key(function(d) {return x(d.x) + "," + y(d.y); })
                         .rollup(function(v) { return v[0]; })
-                        .entries(d3.merge(cities.map(function(d) { return d.values; })) )
+                        .entries(d3.merge(filteredData.map(function(d) { return d.values; })) )
                         .map(function(d) { return d.values; })))
                 .enter().append("path")
                     .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
@@ -1061,8 +1082,8 @@ var RankingsGraph = React.createClass({
                 focus.attr("transform", "translate(-100,-100)");
             }
 
-            var startValue = 50;
-            var endValue = 125;
+            var startValue = scope.state.extent[1];
+            var endValue = scope.state.extent[0];
 
             var brush = d3.svg.brush()
                 .y(y)
@@ -1114,6 +1135,10 @@ var RankingsGraph = React.createClass({
             else{
                 brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
             }
+                s = brush.extent();
+                scope.setState({extent:[Math.round(s[1]),Math.round(s[0])]})
+
+
 
                 svg.classed("selecting", !d3.event.target.empty());
             }
