@@ -939,8 +939,6 @@ var RankingsGraph = React.createClass({
                   .attr("transform", "translate(-100,-100)")
                   .attr("class", "focus");
 
-                focus.append("circle")
-                  .attr("r", 3.5);
 
                 focus.append("text")
                   .attr("y", -10)
@@ -967,7 +965,7 @@ var RankingsGraph = React.createClass({
 
 
             function mouseover(d) {
-                d3.select(d.city.line).style("stroke-width",(height/(y.domain()[1]-y.domain()[0])))
+                d3.select(d.city.line).style("stroke-width",(height/(y.domain()[1]-y.domain()[0])+2))
                 d3.select(d.city.line).style("stroke","#000000")
 
                 var popText = "",
@@ -982,7 +980,7 @@ var RankingsGraph = React.createClass({
                 popText += name + ' | ' + d.x +':  '+ d.rank;
 
                 d.city.line.parentNode.appendChild(d.city.line);
-                focus.attr("transform", "translate(" + x(d.x) + "," + y(d.rank) + ")");
+                focus.attr("transform", "translate(100,-25)");
                 focus.select("text").text(popText);
             }
 
