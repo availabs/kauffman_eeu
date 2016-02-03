@@ -1179,6 +1179,12 @@ console.log((height/(y.domain()[1]-y.domain()[0])))
         }
 
     },
+    resetBrush:function(){
+        var scope = this;
+
+        var extent = [366,1];
+        scope.setState({extent:extent})
+    },
 	render:function() {
 		var scope = this;
 
@@ -1215,6 +1221,9 @@ console.log((height/(y.domain()[1]-y.domain()[0])))
         var currentRowStyle = {
             width:window.innerWidth
         }
+            var buttonStyle = {
+            margin:'10px'
+        }
 		if(scope.state.loading == false){
             scope.renderGraph();
 			return (
@@ -1225,7 +1234,7 @@ console.log((height/(y.domain()[1]-y.domain()[0])))
 			    		<li id="shareNewList" className="active" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
 			    		<li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
 			    	</ul>
-                    <div id="rankGraph"></div>
+                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush</button></div>
                     <div>
                         <div style = {currentRowStyle}>
                             <div style={lockStyle} id="currentRowLock"></div>
