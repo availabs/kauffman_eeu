@@ -834,9 +834,9 @@ var RankingsGraph = React.createClass({
             }
 
 
-            var margin = {top: 20, right: 40, bottom: 50, left: 75},
+            var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.4 - margin.top - margin.bottom;
+                height = window.innerHeight*.5 - margin.top - margin.bottom;
 
             var voronoi = d3.geom.voronoi()
                 .x(function(d) { return x(d.x); })
@@ -901,8 +901,8 @@ var RankingsGraph = React.createClass({
             .append("text")
               .attr("transform", "rotate(-90)")
               .attr("y", "-5em")
-              .attr("dy", ".71em")
-              .attr("x","-6em")
+              .attr("dy", "2em")
+              .attr("x","2em")
               .style("text-anchor", "end")
               .text("Share of Employment in New Firms");
 
@@ -994,12 +994,6 @@ var RankingsGraph = React.createClass({
                     .selectAll("tr");
 
 
-
-
-
-
-
-
                 // create a cell in each row for each column
                 var cells = rows.select("td")
                     .data(d.city.values)
@@ -1066,6 +1060,64 @@ var RankingsGraph = React.createClass({
 
                 focus.attr("transform", "translate(-100,-100)");
             }
+
+            var startValue = 50;
+            var endValue = 125;
+
+            var brush = d3.svg.brush()
+                .y(y)
+                .extent([startValue, endValue])
+                .on("brushstart", brushstart)
+                .on("brush", brushmove)
+                .on("brushend", brushend);
+
+            var arc = d3.svg.arc()
+                    .outerRadius((width / 128))
+                    .startAngle(0)
+                    .endAngle(function(d, i) { return i ? -Math.PI : Math.PI; });
+
+
+
+
+
+            var brushg = svg.append("g")
+                .attr("class", "brush")
+                .attr("transform", "translate("+(width+20)+",0)")
+                .call(brush);  
+
+            brushg.selectAll(".resize").append("path")
+                .attr("transform", "translate(0," +  (width / 256) + ")")
+                .attr("transform", "rotate(-90)")
+                .attr("d", arc);
+
+
+            brushg.selectAll("rect")
+                .attr("transform","translate(-11,0)")
+                .attr("width",22);
+
+            brushstart();
+            brushmove();
+
+            function brushstart() {
+                svg.classed("selecting", true);
+            }    
+
+            function brushmove() {
+                var s = brush.extent();
+            }            
+
+            function brushend() {
+            var s = brush.extent();
+            if(Math.round(s[1]) - Math.round(s[0]) > 75 ){
+                brush.extent([Math.round(s[1]),Math.round(s[1]-75)]) (d3.select(this));
+            }
+            else{
+                brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
+            }
+
+                svg.classed("selecting", !d3.event.target.empty());
+            }
+
         }
 
     },
