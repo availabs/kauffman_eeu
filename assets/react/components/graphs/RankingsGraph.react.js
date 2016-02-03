@@ -847,7 +847,7 @@ var RankingsGraph = React.createClass({
                 var withinBounds;
                 city.values.forEach(function(yearVal){
                     if(yearVal.x == scope.state.sortYear){
-                        if(yearVal.rank <= scope.state.extent[1] && yearVal.rank >= scope.state.extent[0]){
+                        if(yearVal.rank <= scope.state.extent[0] && yearVal.rank >= scope.state.extent[1]){
                             withinBounds = true;
                         }
                         else{
@@ -881,7 +881,7 @@ var RankingsGraph = React.createClass({
                 .range([0, width]);
 
             var y = d3.scale.linear()
-                .range([height, 0]);
+                .range([0,height]);
 
 
 
@@ -912,10 +912,7 @@ var RankingsGraph = React.createClass({
                 d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
             ]);
 
-            y.domain([
-                d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.rank; }); }),
-                d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.rank; }); })
-            ]);
+            y.domain([scope.state.extent[1],scope.state.extent[0]]);
 
 
 
@@ -1138,17 +1135,13 @@ var RankingsGraph = React.createClass({
                         brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
                     }
                     s = brush.extent();
-                    scope.setState({extent:[Math.round(s[1]),Math.round(s[0])]})
+                    scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})
                 }
                 else{
-                    if(Math.round(s[1]) - Math.round(s[0]) > 75 ){
-                        brush.extent([Math.round(s[1]),Math.round(s[1]-75)]) (d3.select(this));
-                    }
-                    else{
-                        brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
-                    }
+                    brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
+                    
                     s = brush.extent();
-                    scope.setState({extent:[Math.round(s[1]),Math.round(s[0])]})
+                    scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})
                 }
 
 
