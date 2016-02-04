@@ -97,7 +97,7 @@ var NewFirmPer1000Graph = React.createClass({
                     //Creates number of new firms for that year
                     ages.forEach(function(age){
 
-                        if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                        if(data[msaId][year][age] && (age < 6)){
                             var localNewFirm = +data[msaId][year][age];
                             stateData[state][year]["newFirmSum"] = stateData[state][year]["newFirmSum"] + localNewFirm;        
                         }
@@ -167,7 +167,7 @@ var NewFirmPer1000Graph = React.createClass({
                 //Creates number of new firms for that year
                 ages.forEach(function(age){
 
-                    if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                    if(data[msaId][year][age] && (age < 6)){
                         
                         newFirmSum = newFirmSum + +data[msaId][year][age];
                     }
@@ -355,7 +355,7 @@ var NewFirmPer1000Graph = React.createClass({
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.32 - margin.top - margin.bottom;
+                height = window.innerHeight*.6 - margin.top - margin.bottom;
 
 
             var voronoi = d3.geom.voronoi()

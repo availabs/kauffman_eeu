@@ -141,7 +141,7 @@ var RankingsGraph = React.createClass({
                         if(data["share"][msaId][year][age]){
                             stateData[state]["shareData"][year]["totalEmploySum"] =  stateData[state]["shareData"][year]["totalEmploySum"] + data["share"][msaId][year][age];                   
                         }
-                        if(data["share"][msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                        if(data["share"][msaId][year][age] && (age < 6)){
                              stateData[state]["shareData"][year]["newFirmSum"] =  stateData[state]["shareData"][year]["newFirmSum"] + data["share"][msaId][year][age];
                         }
                     })
@@ -152,7 +152,7 @@ var RankingsGraph = React.createClass({
                     //Creates number of new firms for that year
                     ages.forEach(function(age){
                     	if(data["new"][msaId][year]){
-	                        if(data["new"][msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+	                        if(data["new"][msaId][year][age] && (age < 6)){
 	                            var localNewFirm = +data["new"][msaId][year][age];
 	                            stateData[state]["newFirmData"][year]["newFirmSum"] = stateData[state]["newFirmData"][year]["newFirmSum"] + localNewFirm;        
 	                        }
@@ -249,7 +249,7 @@ var RankingsGraph = React.createClass({
                     if(data["share"][msaId][year][age]){
                         msaData[msaId]["shareData"][year]["totalEmploySum"] =  msaData[msaId]["shareData"][year]["totalEmploySum"] + data["share"][msaId][year][age];                   
                     }
-                    if(data["share"][msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                    if(data["share"][msaId][year][age] && (age < 6)){
                          msaData[msaId]["shareData"][year]["newFirmSum"] =  msaData[msaId]["shareData"][year]["newFirmSum"] + data["share"][msaId][year][age];
                     }
                 })
@@ -260,7 +260,7 @@ var RankingsGraph = React.createClass({
                 //Creates number of new firms for that year
                 ages.forEach(function(age){
                 	if(data["new"][msaId][year]){
-                        if(data["new"][msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                        if(data["new"][msaId][year][age] && (age < 6)){
                             var localNewFirm = +data["new"][msaId][year][age];
                             msaData[msaId]["newFirmData"][year]["newFirmSum"] = msaData[msaId]["newFirmData"][year]["newFirmSum"] + localNewFirm;        
                         }

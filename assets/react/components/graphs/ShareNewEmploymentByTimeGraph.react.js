@@ -115,7 +115,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                         if(data[msaId][year][age]){
                             stateData[state][year]["totalEmploySum"] = stateData[state][year]["totalEmploySum"] + data[msaId][year][age];                   
                         }
-                        if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                        if(data[msaId][year][age] && (age < 6)){
                             stateData[state][year]["newFirmSum"] = stateData[state][year]["newFirmSum"] + data[msaId][year][age];
                         }
                     })
@@ -174,7 +174,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
                     if(data[msaId][year][age]){
                         totalEmploySum = totalEmploySum + data[msaId][year][age];                   
                     }
-                    if(data[msaId][year][age] && (age == 0 || age == 1 || age == 2)){
+                    if(data[msaId][year][age] && (age < 6)){
                         newFirmSum = newFirmSum + data[msaId][year][age];
                     }
                 })
@@ -321,7 +321,7 @@ var ShareNewEmploymentByTimeGraph = React.createClass({
 
             var margin = {top: 20, right: 40, bottom: 50, left: 75},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.4 - margin.top - margin.bottom;
+                height = window.innerHeight*.6 - margin.top - margin.bottom;
 
             var voronoi = d3.geom.voronoi()
                 .x(function(d) { return x(d.x); })
