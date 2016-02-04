@@ -328,30 +328,14 @@ var RankingsGraph = React.createClass({
         var scope = this;
 
         if(scope.state.group == "msa"){
-            if(scope.props.color == "population"){
-                var colorGroup = d3.scale.quantize()
-                    .domain([50000,2500000])
-                    .range(colorbrewer.YlOrRd[9]);
-            }
-            if(scope.props.color == "state"){
-                var colorGroup = d3.scale.linear()
-                    .domain([0,350,700])
-                    .range(['red','green','blue']);
-            }            
+            var colorGroup = d3.scale.linear()
+                .domain([1,183,366])
+                .range(['red','blue','green']);
         }
         if(scope.state.group == "state"){
-            if(scope.props.color == "population"){
-                var colorGroup = d3.scale.quantize()
-                    .domain([100000,10000000])
-                    .range(colorbrewer.YlOrRd[9]);            
-            }
-
-            if(scope.props.color == "state"){
-                var colorGroup = d3.scale.linear()
-                    .domain([0,350,700])
-                    .range(['red','green','blue']); 
-            }
-        
+            var colorGroup = d3.scale.linear()
+                .domain([1,25,50])
+                .range(['red','blue','green']);                   
         }
 
 
@@ -362,65 +346,15 @@ var RankingsGraph = React.createClass({
         var scope = this,
             cityColor;
 
-        var color = scope.colorGroup();
-
-        if(scope.state.group == "msa"){
-            if(scope.props.color == "population"){         
-                if(metroPop20002009[params.key]){
-                    var pop = metroPop20002009[params.key][2000].replace(/,/g , "");
-                    cityColor = color(pop)
-                }
-                else{
-                    cityColor = '#FFFFFF'
-                }
-            }
-            if(scope.props.color == "state"){
-                if(msaIdToName[params.key]){
-                    var state = msaIdToName[params.key].substr(msaIdToName[params.key].length - 2);
-                    var fips = abbrToFips[state] * 10;
-                    cityColor = color(fips);
-                }
-                else{
-                    cityColor = '#FFFFFF'                
-                }
-            }            
+        if(params.values){
+            var valueLength = params.values.length;
+            var curRank = params.values[valueLength-1].rank
+            var color = scope.colorGroup();
+                       
+            cityColor = color(curRank);            
         }
 
-
-        if(scope.state.group == "state"){
-
-            if(params.color){
-                cityColor = params.color;
-            }
-            else{
-                if(scope.props.color == "state"){
-                    var fips = abbrToFips[params.key] * 10;
-                    cityColor = color(fips);               
-                }
-                if(scope.props.color == "population"){
-                    var totalPop = 0;
-
-                    if(params["msaArray"]){
-                        params["msaArray"].forEach(function(msaId){
-                            
-                            if(metroPop20002009[msaId]){
-                                totalPop = totalPop + +metroPop20002009[msaId][2000].replace(/,/g , "");        
-                            }
-                                                
-                        })                    
-                    }
-
-                    if(totalPop > 0){
-                        cityColor = color(totalPop)                    
-                    }
-                    else{
-                        cityColor = '#FFFFFF'
-                    }
-                }
-            }
-        }
-
-
+                
         return cityColor;
 
     },
@@ -840,21 +774,21 @@ var RankingsGraph = React.createClass({
             if(scope.state.metric == "composite"){
                 var cities = scope.compositeGraph(data);
             }
-            var filterMargin = (scope.state.extent[0] - scope.state.extent[1])/20
-            console.log(filterMargin);
+
+
 
             var filteredData = [];
             filteredData = cities.filter(function(city){
-                var withinBounds = true;
+                var withinBounds;
                 city.values.forEach(function(yearVal){
-
-                        if(yearVal.rank <= scope.state.extent[0]+filterMargin && yearVal.rank >= scope.state.extent[1]-filterMargin){
-                            
+                    if(yearVal.x == scope.state.sortYear){
+                        if(yearVal.rank <= scope.state.extent[0] && yearVal.rank >= scope.state.extent[1]){
+                            withinBounds = true;
                         }
                         else{
-                            withinBounds =  false;
+                            withinBounds = false;
                         }
-                    
+                    }
                 })
 
                 if(withinBounds){
@@ -865,13 +799,12 @@ var RankingsGraph = React.createClass({
 
             var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
-                height = window.innerHeight*.8 - margin.top - margin.bottom;
+                height = window.innerHeight*.9 - margin.top - margin.bottom;
 
             var voronoi = d3.geom.voronoi()
                 .x(function(d) { return x(d.x); })
                 .y(function(d) { return y(d.rank); })
                 .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
-
 
             var x = d3.scale.linear()
                 .range([0, width]);
@@ -879,8 +812,25 @@ var RankingsGraph = React.createClass({
             var y = d3.scale.linear()
                 .range([0,height]);
 
+            y.domain([scope.state.extent[1],scope.state.extent[0]]);
+
+            d3.scale.linear().domain([0,366])
+
+            x.domain([
+                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
+                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.x }); })
+            ]);
 
 
+
+            // var x = d3.scale.ordinal()
+            //     .domain(d3.range(
+            //         [d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.x }); })],
+            //         [d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })]
+            //         ))
+            //     .rangeRoundBands([0,width]);
+
+                
             var xAxis = d3.svg.axis()
                 .scale(x)
                 .orient("bottom");
@@ -889,10 +839,39 @@ var RankingsGraph = React.createClass({
                 .scale(y)
                 .orient("left");
 
+            var xTangent = 40, // Length of Bézier tangents to control curve.
+                yPadding = .3; // Fraction of height for vertical spacing between lines.
+
+
             var line = d3.svg.line()
                 .x(function(d) { return x(d.x); })
                 .y(function(d) { return y(d.rank); });
-  
+
+            // var line = function line(d) {
+            //   var path = [];
+            //     var once = 0;
+            //   x.domain().slice(1).forEach(function(b, i) {
+            //     var a = x.domain()[i];
+
+            //     if(once < 2){
+            //         console.log(curve(a, b, i, d))
+            //         once++;
+            //     }
+            //     path.push("L", x(a), ",", y(d[i].rank), "h", x.rangeBand(), curve(a, b, i, d));
+            //   });
+            //   path[0] = "M";
+            //   path.push("h", x.rangeBand());
+            //   return path.join("");
+            // }
+
+            // var curve = function curve(a, b, i, d) {
+            //   return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].rank)+ " "
+            //       + (x(b) - xTangent) + "," + y(d[i+1].rank) + " "
+            //       + x(b) + "," + y(d[i+1].rank);
+            // }
+
+
+
 
             var svg = d3.select("#rankGraph").append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -901,20 +880,8 @@ var RankingsGraph = React.createClass({
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-            
 
-            x.domain([
-                d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
-                d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
-            ]);
-
-            y.domain([scope.state.extent[1],scope.state.extent[0]]);
-
-
-
-
-
-            svg.append("g")
+           svg.append("g")
                   .attr("class", "cities")
                 .selectAll("path")
                   .data(filteredData)
@@ -922,7 +889,7 @@ var RankingsGraph = React.createClass({
                   .append("path")
                     .attr("d", function(d) { d.line = this; return line(d.values); })
                     .style("stroke", function(d) {return scope.colorFunction(d);})
-                    .style("stroke-width",(height/(y.domain()[1]-y.domain()[0])))
+                    .style("stroke-width",function(d){return (height-74)/(y.domain()[1]-y.domain()[0]) })
                     .style("fill","none");
 
 
@@ -957,7 +924,7 @@ var RankingsGraph = React.createClass({
 
 
             function mouseover(d) {
-                d3.select(d.city.line).style("stroke-width",(height/(y.domain()[1]-y.domain()[0])+2))
+                d3.select(d.city.line).style("stroke-width",( (height/(y.domain()[1]-y.domain()[0])-.5 )+2))
                 d3.select(d.city.line).style("stroke","#000000")
 
                 var popText = "",
@@ -1060,8 +1027,9 @@ var RankingsGraph = React.createClass({
 
 
             function mouseout(d) {                              
+                //console.log(d3.select(d.city.line).style());
 
-                d3.select(d.city.line).style("stroke-width",(height/(y.domain()[1]-y.domain()[0])))
+                d3.select(d.city.line).style("stroke-width",( ((height-74)/(y.domain()[1]-y.domain()[0]) )))
                 d3.select(d.city.line).style("stroke",function(d){return scope.colorFunction(d)})
 
                 focus.attr("transform", "translate(-100,-100)");

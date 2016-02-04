@@ -8,7 +8,7 @@ var React = require("react"),
 var GraphPage = React.createClass({
 	getInitialState:function(){
 		return({
-			graph:"share",
+			graph:"rankings",
 			data:[],
 			loading:true,
 			color:"population",
@@ -101,9 +101,9 @@ var GraphPage = React.createClass({
 
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
-	    		<li id="shareList" className="active" onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
+	    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
 	    		<li id="newList" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
-	    		<li id="rankings" onClick={scope.toggleGraph}><a id="rank" >Rankings</a></li>
+	    		<li id="rankings" className="active" onClick={scope.toggleGraph}><a id="rank" >Rankings</a></li>
 	    		<li id="color">{colorHeader}</li>
 	    		<li id="group">{groupHeader}</li>
 	    	</ul>
