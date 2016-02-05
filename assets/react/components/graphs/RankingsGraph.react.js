@@ -329,7 +329,7 @@ var RankingsGraph = React.createClass({
 
         if(scope.state.group == "msa"){
             var colorGroup = d3.scale.linear()
-                .domain([1,183,366])
+                .domain([1,40,366])
                 .range(['red','blue','green']);
         }
         if(scope.state.group == "state"){
@@ -898,7 +898,7 @@ var RankingsGraph = React.createClass({
                       .append("path")
                         .attr("d", function(d) { d.line = this; if(d.values[0].rank == b){return line(d.values);} })
                         .style("stroke", function(d) {return 'black';})
-                        .style("stroke-width",function(d){return ((height-74)/(y.domain()[1]-y.domain()[0])+2) })
+                        .style("stroke-width",function(d){return ((height-85)/(y.domain()[1]-y.domain()[0])+2) })
                         .style("fill","none");
 
                svg.append("g")
@@ -909,7 +909,7 @@ var RankingsGraph = React.createClass({
                       .append("path")
                         .attr("d", function(d) { d.line = this; if(d.values[0].rank == b){return line(d.values);} })
                         .style("stroke", function(d) {return scope.colorFunction(d);})
-                        .style("stroke-width",function(d){return (height-74)/(y.domain()[1]-y.domain()[0]) })
+                        .style("stroke-width",function(d){return (height-85)/(y.domain()[1]-y.domain()[0]) })
                         .style("fill","none");
 
 
