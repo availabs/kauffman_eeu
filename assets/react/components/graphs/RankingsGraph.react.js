@@ -14,7 +14,7 @@ var RankingsGraph = React.createClass({
             group:"msa",
             sortYear:2002,
             metric:"share",
-            extent:[366,0],
+            extent:[363,0],
             loading:true
         }
     },
@@ -329,7 +329,7 @@ var RankingsGraph = React.createClass({
 
         if(scope.state.group == "msa"){
             var colorGroup = d3.scale.linear()
-                .domain([1,40,366])
+                .domain([1,40,363])
                 .range(['red','blue','green']);
         }
         if(scope.state.group == "state"){
@@ -815,7 +815,7 @@ var RankingsGraph = React.createClass({
             var yBrush = d3.scale.linear()
                 .range([0,height]);
 
-            yBrush.domain([0,366]);
+            yBrush.domain([0,363]);
 
             y.domain([scope.state.extent[1],scope.state.extent[0]]);
 
@@ -839,7 +839,7 @@ var RankingsGraph = React.createClass({
                     ))
                 .rangeRoundBands([0,width]);
 
-            var xTangent = 15; // Length of Bézier tangents to control curve.
+            var xTangent = 40; // Length of Bézier tangents to control curve.
 
             var line = function line(d) {
               var path = [];
@@ -887,35 +887,66 @@ var RankingsGraph = React.createClass({
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-            d3.range([y.domain()[0]],[y.domain()[1]]).reverse().slice(1).forEach(function(b,i){
-                console.log(b,i)
 
-               svg.append("g")
-                      .attr("class", "border")
-                    .selectAll("path")
-                      .data(filteredData)
-                    .enter()
-                      .append("path")
-                        .attr("d", function(d) { d.line = this; if(d.values[0].rank == b){return line(d.values);} })
-                        .style("stroke", function(d) {return 'black';})
-                        .style("stroke-width",function(d){return ((height-85)/(y.domain()[1]-y.domain()[0])+2) })
-                        .style("fill","none");
+            filteredData.sort(function(a,b){
 
-               svg.append("g")
-                      .attr("class", "cities")
-                    .selectAll("path")
-                      .data(filteredData)
-                    .enter()
-                      .append("path")
-                        .attr("d", function(d) { d.line = this; if(d.values[0].rank == b){return line(d.values);} })
-                        .style("stroke", function(d) {return scope.colorFunction(d);})
-                        .style("stroke-width",function(d){return (height-85)/(y.domain()[1]-y.domain()[0]) })
-                        .style("fill","none");
+                return b.values[0].rank - a.values[0].rank
+            })
+   
 
 
+            //For each city
+            //Draw a path from (x1,y1) to (x2,y2)
+            //Where x goes from year[0] to year[end]
+
+
+            filteredData.forEach(function(b,i){
+                console.log(b,i);
+                //console.log(line(b.values));
+
+                    svg.append("g")
+                        .append("path")
+                        .attr("d",line(b.values))
+                        .style("stroke","black")
+                        .style("stroke-width",((height)/(y.domain()[1]-y.domain()[0])))
+                        .style("fill","none");     
+
+                    svg.append("g")
+                        .append("path")
+                        .attr("d",line(b.values))
+                        .style("stroke",scope.colorFunction(b))
+                        .style("stroke-width",((height-85)/(y.domain()[1]-y.domain()[0]))-1)
+                        .style("fill","none");                    
+                
 
 
             })
+
+
+
+            // d3.range([y.domain()[0]],[y.domain()[1]]).reverse().slice(1).forEach(function(b,i){
+            //    svg.append("g")
+            //           .attr("class", "border")
+            //         .selectAll("path")
+            //           .data(filteredData)
+            //         .enter()
+            //           .append("path")
+            //             .attr("d", function(d) { d.line = this; return line(filteredData[i].values); })
+            //             .style("stroke", function(d) {return 'black';})
+            //             .style("stroke-width",function(d){return ((height-85)/(y.domain()[1]-y.domain()[0])+1.5) })
+            //             .style("fill","none");
+
+            //    svg.append("g")
+            //           .attr("class", "cities")
+            //         .selectAll("path")
+            //           .data(filteredData)
+            //         .enter()
+            //           .append("path")
+            //             .attr("d", function(d) { d.line = this; return line(filteredData[i].values); })
+            //             .style("stroke", function(d) {return scope.colorFunction(filteredData[i]);})
+            //             .style("stroke-width",function(d){return (height-85)/(y.domain()[1]-y.domain()[0]) })
+            //             .style("fill","none");
+            // })
 
 
 
@@ -1158,9 +1189,9 @@ var RankingsGraph = React.createClass({
               .attr("transform", "rotate(-90)")
               .attr("y", "-5em")
               .attr("dy", "2em")
-              .attr("x","2em")
+              .attr("x","-15em")
               .style("text-anchor", "end")
-              .text("Share of Employment in New Firms");            
+              .text("Rank");            
 
         }
 
@@ -1169,7 +1200,7 @@ var RankingsGraph = React.createClass({
         var scope = this;
 
         if(scope.state.group == "msa"){
-        var extent = [366,1];            
+        var extent = [363,0];            
         }
         else{
             var extent = [49,0];
