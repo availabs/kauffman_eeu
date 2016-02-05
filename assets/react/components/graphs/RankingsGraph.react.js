@@ -801,13 +801,12 @@ var RankingsGraph = React.createClass({
                 width = window.innerWidth*.98 - margin.left - margin.right,
                 height = window.innerHeight*.9 - margin.top - margin.bottom;
 
-            var voronoi = d3.geom.voronoi()
-                .x(function(d) { return x(d.x); })
-                .y(function(d) { return y(d.rank); })
-                .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
+            // var voronoi = d3.geom.voronoi()
+            //     .x(function(d) { return x(d.x); })
+            //     .y(function(d) { return y(d.rank); })
+            //     .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
 
-            var x = d3.scale.linear()
-                .range([0, width]);
+
 
             var y = d3.scale.linear()
                 .range([0,height]);
@@ -816,25 +815,55 @@ var RankingsGraph = React.createClass({
             var yBrush = d3.scale.linear()
                 .range([0,height]);
 
-            yBrush.domain([1,366]);
+            yBrush.domain([0,366]);
 
             y.domain([scope.state.extent[1],scope.state.extent[0]]);
 
-            d3.scale.linear().domain([0,366])
 
-            x.domain([
-                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
-                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.x }); })
-            ]);
+            // var x = d3.scale.linear()
+            //     .range([0, width]);
 
+            // x.domain([
+            //     d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
+            //     d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
+            // ]);
 
+            // var line = d3.svg.line()
+            //     .x(function(d) { return x(d.x); })
+            //     .y(function(d) { return y(d.rank); });
 
-            // var x = d3.scale.ordinal()
-            //     .domain(d3.range(
-            //         [d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.x }); })],
-            //         [d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })]
-            //         ))
-            //     .rangeRoundBands([0,width]);
+            var x = d3.scale.ordinal()
+                .domain(d3.range(
+                    [d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.x }); })],
+                    [d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })]
+                    ))
+                .rangeRoundBands([0,width]);
+
+            var xTangent = 15; // Length of Bézier tangents to control curve.
+
+            var line = function line(d) {
+              var path = [];
+                var once = 0;
+              x.domain().slice(1).forEach(function(b, i) {
+                var a = x.domain()[i];
+
+                if(once < 2){
+                    //console.log(curve(a, b, i, d))
+                    once++;
+                }
+                path.push("L", x(a), ",", y(d[i].rank), "h", x.rangeBand(), curve(a, b, i, d));
+              });
+              path[0] = "M";
+              path.push("h", x.rangeBand());
+              return path.join("");
+            }
+
+            var curve = function curve(a, b, i, d) {
+              return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].rank)+ " "
+                  + (x(b) - xTangent) + "," + y(d[i+1].rank) + " "
+                  + x(b) + "," + y(d[i+1].rank);
+            }
+
 
                 
             var xAxis = d3.svg.axis()
@@ -845,36 +874,8 @@ var RankingsGraph = React.createClass({
                 .scale(y)
                 .orient("left");
 
-            var xTangent = 40, // Length of Bézier tangents to control curve.
-                yPadding = .3; // Fraction of height for vertical spacing between lines.
 
 
-            var line = d3.svg.line()
-                .x(function(d) { return x(d.x); })
-                .y(function(d) { return y(d.rank); });
-
-            // var line = function line(d) {
-            //   var path = [];
-            //     var once = 0;
-            //   x.domain().slice(1).forEach(function(b, i) {
-            //     var a = x.domain()[i];
-
-            //     if(once < 2){
-            //         console.log(curve(a, b, i, d))
-            //         once++;
-            //     }
-            //     path.push("L", x(a), ",", y(d[i].rank), "h", x.rangeBand(), curve(a, b, i, d));
-            //   });
-            //   path[0] = "M";
-            //   path.push("h", x.rangeBand());
-            //   return path.join("");
-            // }
-
-            // var curve = function curve(a, b, i, d) {
-            //   return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].rank)+ " "
-            //       + (x(b) - xTangent) + "," + y(d[i+1].rank) + " "
-            //       + x(b) + "," + y(d[i+1].rank);
-            // }
 
 
 
@@ -886,17 +887,35 @@ var RankingsGraph = React.createClass({
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
+            d3.range([y.domain()[0]],[y.domain()[1]]).reverse().slice(1).forEach(function(b,i){
+                console.log(b,i)
 
-           svg.append("g")
-                  .attr("class", "cities")
-                .selectAll("path")
-                  .data(filteredData)
-                .enter()
-                  .append("path")
-                    .attr("d", function(d) { d.line = this; return line(d.values); })
-                    .style("stroke", function(d) {return scope.colorFunction(d);})
-                    .style("stroke-width",function(d){return (height-74)/(y.domain()[1]-y.domain()[0]) })
-                    .style("fill","none");
+               svg.append("g")
+                      .attr("class", "border")
+                    .selectAll("path")
+                      .data(filteredData)
+                    .enter()
+                      .append("path")
+                        .attr("d", function(d) { d.line = this; if(d.values[0].rank == b){return line(d.values);} })
+                        .style("stroke", function(d) {return 'black';})
+                        .style("stroke-width",function(d){return ((height-74)/(y.domain()[1]-y.domain()[0])+2) })
+                        .style("fill","none");
+
+               svg.append("g")
+                      .attr("class", "cities")
+                    .selectAll("path")
+                      .data(filteredData)
+                    .enter()
+                      .append("path")
+                        .attr("d", function(d) { d.line = this; if(d.values[0].rank == b){return line(d.values);} })
+                        .style("stroke", function(d) {return scope.colorFunction(d);})
+                        .style("stroke-width",function(d){return (height-74)/(y.domain()[1]-y.domain()[0]) })
+                        .style("fill","none");
+
+
+
+
+            })
 
 
 
@@ -909,24 +928,24 @@ var RankingsGraph = React.createClass({
                   .attr("y", -10)
                   .style("font-weight","bold");
 
-            var voronoiGroup = svg.append("g")
-                  .attr("class", "voronoi")
-                  .style("fill","#FFFFFF")
-                  .style("stroke","#000000")
-                  .style("opacity","0")
+            // var voronoiGroup = svg.append("g")
+            //       .attr("class", "voronoi")
+            //       .style("fill","#FFFFFF")
+            //       .style("stroke","#000000")
+            //       .style("opacity","0")
 
-            voronoiGroup.selectAll("path")
-                    .data(voronoi(d3.nest()
-                        .key(function(d) {return x(d.x) + "," + y(d.y); })
-                        .rollup(function(v) { return v[0]; })
-                        .entries(d3.merge(filteredData.map(function(d) { return d.values; })) )
-                        .map(function(d) { return d.values; })))
-                .enter().append("path")
-                    .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
-                    .datum(function(d) { return d.point; })
-                    .on("mouseover", mouseover)
-                    .on("mouseout", mouseout)
-                    .on("click",click);
+            // voronoiGroup.selectAll("path")
+            //         .data(voronoi(d3.nest()
+            //             .key(function(d) {return x(d.x) + "," + y(d.y); })
+            //             .rollup(function(v) { return v[0]; })
+            //             .entries(d3.merge(filteredData.map(function(d) { return d.values; })) )
+            //             .map(function(d) { return d.values; })))
+            //     .enter().append("path")
+            //         .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
+            //         .datum(function(d) { return d.point; })
+            //         .on("mouseover", mouseover)
+            //         .on("mouseout", mouseout)
+            //         .on("click",click);
 
 
             function mouseover(d) {
