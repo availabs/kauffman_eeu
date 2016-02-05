@@ -812,6 +812,12 @@ var RankingsGraph = React.createClass({
             var y = d3.scale.linear()
                 .range([0,height]);
 
+
+            var yBrush = d3.scale.linear()
+                .range([0,height]);
+
+            yBrush.domain([1,366]);
+
             y.domain([scope.state.extent[1],scope.state.extent[0]]);
 
             d3.scale.linear().domain([0,366])
@@ -1048,7 +1054,7 @@ var RankingsGraph = React.createClass({
 
 
             var brush = d3.svg.brush()
-                .y(y)
+                .y(yBrush)
                 .extent([startValue, endValue])
                 .on("brushstart", brushstart)
                 .on("brush", brushmove)
