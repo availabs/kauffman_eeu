@@ -329,13 +329,13 @@ var RankingsGraph = React.createClass({
 
         if(scope.state.group == "msa"){
             var colorGroup = d3.scale.linear()
-                .domain([1,182,363])
-                .range(['red','blue','green']);
+                .domain(d3.range(1,366,(366/9)))
+                .range(colorbrewer.Spectral[9]);
         }
         if(scope.state.group == "state"){
             var colorGroup = d3.scale.linear()
-                .domain([1,25,50])
-                .range(['red','blue','green']);                   
+                .domain(d3.range(1,51,(51/9)))
+                .range(colorbrewer.Spectral[9]);                  
         }
 
 
@@ -893,7 +893,7 @@ var RankingsGraph = React.createClass({
                         .style("stroke","black")
                         .style("stroke-width",((height)/(y.domain()[1]-y.domain()[0]))-1)
                         .style("fill","none")
-                        .style("opacity",".2");     
+                        .style("opacity",".4");     
 
                 svg.append("g")
                         .append("path")
@@ -902,7 +902,7 @@ var RankingsGraph = React.createClass({
                         .style("stroke",scope.colorFunction(b))
                         .style("stroke-width",((height-85)/(y.domain()[1]-y.domain()[0]))-2)
                         .style("fill","none")
-                        .style("opacity",".4");                    
+                        .style("opacity",".6");                    
                 
 
 
@@ -1045,7 +1045,7 @@ var RankingsGraph = React.createClass({
             function mouseout(d) {                              
                 d3.select(d.city.line).style("stroke-width",( ((height-74)/(y.domain()[1]-y.domain()[0])-2 )))
                 d3.select(d.city.line).style("stroke",function(){return scope.colorFunction(d.city);})
-                d3.select(d.city.line).style("opacity",".4")
+                d3.select(d.city.line).style("opacity",".6")
                 focus.attr("transform", "translate(-100,-100)");
             }
 
@@ -1161,7 +1161,7 @@ var RankingsGraph = React.createClass({
         var extent = [363,0];            
         }
         else{
-            var extent = [49,0];
+            var extent = [51,0];
         }
         scope.setState({extent:extent})
     },
