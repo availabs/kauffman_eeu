@@ -86,7 +86,7 @@ var DataStore = React.createClass({
 		var scope = this,
 			cities=[];
 
-		console.log("sharegraph",scope.state);
+
         if(scope.state.loading){
             console.log('reloading')
             setTimeout(function(){ scope.shareGraph(filters) }, 1500);
@@ -99,12 +99,16 @@ var DataStore = React.createClass({
 				scope.processShareRanks();
 			}
 			if(scope.state.shareRanks.length != 0 && scope.state.shareValues.length != 0){
-				//Apply Filters
-				//merge rank and share into cities
+				//Apply filters
+
+				//Add colors and Names
+				//Nest itself
+				var graphData = scope.polishData(scope.state.shareRanks);
+				console.log(graphData);
 			}        	
         }
 
-		console.log("end",scope.state);
+
 		return cities;
 
 	},
@@ -112,35 +116,59 @@ var DataStore = React.createClass({
 		var scope = this,
 			cities=[];
 
-		console.log(scope.state);
-		if(scope.state.newValues.length == 0){
-			scope.processNewValues();
-		}
-		if(scope.state.newRanks.length == 0){
-			scope.processNewRanks();
-		}
-		if(scope.state.newRanks.length != 0 && scope.state.newValues.length != 0){
-			//Apply Filters
-			//merge rank and share into cities
-		}
+		console.log("newGraph",scope.state);
+        if(scope.state.loading){
+            console.log('reloading')
+            setTimeout(function(){ scope.newGraph(filters) }, 1500);
+        }
+        else{
+			if(scope.state.newValues.length == 0){
+				scope.processNewValues();
+			}
+			if(scope.state.newRanks.length == 0){
+				scope.processNewRanks();
+			}
+			if(scope.state.newRanks.length != 0 && scope.state.newValues.length != 0){
+				//Apply filters
 
+				//Add colors and Names
+				//Nest itself
+				var graphData = scope.polishData(scope.state.newRanks);
+				console.log("final",graphData);
+			}
+		}
+		console.log("end",scope.state);
 		return cities;
 
 	},
 	compGraph:function(filters){
 		var scope = this,
 			cities=[];
+        if(scope.state.loading){
+            console.log('reloading')
+            setTimeout(function(){ scope.compGraph(filters) }, 1500);
+        }
+        else{
+			if(scope.state.shareRanks.length == 0){
+				scope.processShareRanks();
+			}
+			if(scope.state.newRanks.length == 0){
+				scope.processNewRanks();
+			}
+        	if(scope.state.compRanks.length == 0){
+        		scope.processCompRanks();
+        	}
+			if(scope.state.compRanks.length != 0){
+				//Apply filters
 
-		if(scope.state.shareRanks.length == 0){
-			scope.processShareRanks();
-		}
-		if(scope.state.newRanks.length == 0){
-			scope.processNewRanks();
-		}
-		if(scope.state.newRanks.length != 0 && scope.state.shareRanks.length != 0){
-			//Apply Filters
-			//merge rank and share into cities
-		}		
+				//Add colors and Names
+				//Nest itself
+				var graphData = scope.polishData(scope.state.compRanks);
+				console.log("final",graphData);
+			}       
+        }
+        console.log(scope.state);
+		
 
 		return cities;
 	},
@@ -183,7 +211,7 @@ var DataStore = React.createClass({
 			scope.processNewRanks();
 		}
 
-		if(scope.state.shareRanks.length != 0 &&  scope.state.snewRanks.length != 0){
+		if(scope.state.shareRanks.length != 0 &&  scope.state.newRanks.length != 0){
 			rankedCities = scope.rankComposite();
 		}
 		scope.setState({compRanks:rankedCities});		
@@ -382,8 +410,8 @@ var DataStore = React.createClass({
 		var scope = this,
 			years = d3.range(2000,2010);
 
-		var newFirms = scope.rankNewFirm(scope.props.data["newFirms"]),
-			share = scope.rankShare(scope.props.data["share"]);
+		var newFirms = scope.state.newRanks,
+			share = scope.state.shareRanks;
 		console.log(newFirms,share);
 
 		var compositeCityRanks = [];
@@ -402,7 +430,7 @@ var DataStore = React.createClass({
 						}
 					})
 
-					compositeCityRanks.push({name:item.name,color:item.color,values:resultValues})
+					compositeCityRanks.push({key:item.key,values:resultValues})
 				}
 			}
 		})
@@ -434,6 +462,63 @@ var DataStore = React.createClass({
 
 		return compositeCityRanks;
 	},
+    colorGroup:function(){
+        var scope = this;
+
+
+        var colorGroup = d3.scale.linear()
+            .domain(d3.range(1,366,(366/9)))
+            .range(colorbrewer.Spectral[9]);
+        
+
+
+        return colorGroup;
+
+    },
+    colorFunction:function(params){
+        var scope = this,
+            cityColor;
+
+        if(params.values){
+            var valueLength = params.values.length;
+            var curRank = params.values[valueLength-1].rank
+            var color = scope.colorGroup();
+                       
+            cityColor = color(curRank);            
+        }
+
+                
+        return cityColor;
+
+    },
+    polishData:function(data){
+    	var scope = this;
+
+        var newData = [];
+        Object.keys(data).forEach(function(metroArea){
+        	if(data[metroArea].length != 0){
+        		
+        			var city = {
+        				values:null,
+        				name: msaIdToName[data[metroArea].key],
+        				key:data[metroArea].key,
+        				color:scope.colorFunction(data[metroArea])
+        			}
+
+
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y,
+                            rank:i.rank
+                        }
+                    })	 
+                newData.push(city);           
+			}
+        });
+        return newData;
+    },
 
 
 	render:function(){

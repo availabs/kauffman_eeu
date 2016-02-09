@@ -21,7 +21,7 @@ var GraphPage = React.createClass({
 
         var filters = "none";
 
-scope.refs.store.shareGraph(filters);
+scope.refs.store.compGraph(filters);
 // 		var Child = React.createClass({DataStore});
 // 		var myChild = React.renderComponent(Child);
 
