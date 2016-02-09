@@ -10,11 +10,9 @@ var React = require("react"),
 var GraphPage = React.createClass({
 	getInitialState:function(){
 		return({
-			graph:"rankings",
+			graph:"new",
 			data:[],
 			loading:true,
-			color:"population",
-			group:"msa"
 			});
 	},
     componentDidMount:function(){
@@ -30,7 +28,21 @@ var GraphPage = React.createClass({
 
         var filters = "none"
 
-        var data = scope.refs.store.compGraph(filters);
+        var data;
+
+
+        if(scope.state.graph == 'composite'){
+
+        	data = scope.refs.store.compGraph(filters);
+        }
+        if(scope.state.graph == 'share'){
+
+        	data = scope.refs.store.shareGraph(filters);
+        }
+        if(scope.state.graph == 'new'){
+
+        	data = scope.refs.store.newGraph(filters);
+        }
 
         if(!data){
             console.log('reloading')
@@ -68,7 +80,7 @@ var GraphPage = React.createClass({
 				.attr('class',"active");
 		}
 		else{
-			scope.setState({graph:"rankings"});
+			scope.setState({graph:"composite"});
 			d3.select('#rankings')
 				.attr('class',"active");
 		}
@@ -90,14 +102,14 @@ var GraphPage = React.createClass({
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
 	    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
-	    		<li id="newList" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
-	    		<li id="rankings" className="active" onClick={scope.toggleGraph}><a id="rank" >Rankings</a></li>
+	    		<li id="newList" className="active" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
+	    		<li id="rankings"  onClick={scope.toggleGraph}><a id="rank" >Rankings</a></li>
 	    	</ul>
 	    	);
 
 
 	    var store = (<DataStore ref='store' />);
-	    var graph = (<LineGraph data={scope.state.data} />)
+	    var graph = (<LineGraph data={scope.state.data} graph={scope.state.graph} />)
 	    var filters = "none"
 	    console.log("page render",scope.state);
 	    if(!scope.state.loading){

@@ -8,12 +8,14 @@ var React = require("react"),
 var LineGraph = React.createClass({
     getInitialState:function(){
         return {
-            extent:[363,0]
+            extent:[363,0],
+            plot:"rank"
         }
     },
     getDefaultProps:function(){
         return({
-            data:[]
+            data:[],
+            graph:"composite"
         })
     },
     renderGraph:function(){
@@ -64,12 +66,30 @@ var LineGraph = React.createClass({
                 width = window.innerWidth*.98 - margin.left - margin.right,
                 height = window.innerHeight - margin.top - margin.bottom;
 
-            var voronoi = d3.geom.voronoi()
-                .x(function(d) { return x(d.x); })
-                .y(function(d) { return y(d.rank); })
-                .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
+
+            if(scope.state.plot == "rank"){
+                var voronoi = d3.geom.voronoi()
+                    .x(function(d) { return x(d.x); })
+                    .y(function(d) { return y(d.rank); })
+                    .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
+
+                var y = d3.scale.linear()
+                    .range([0,height]);
 
 
+                var yBrush = d3.scale.linear()
+                    .range([0,height]);
+
+                yBrush.domain([0,363]);
+
+                y.domain([scope.state.extent[1],scope.state.extent[0]]);
+
+            }
+            else{
+                var voronoi = d3.geom.voronoi()
+                    .x(function(d) { return x(d.x); })
+                    .y(function(d) { return y(d.y); })
+                    .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
 
             var y = d3.scale.linear()
                 .range([0,height]);
@@ -81,6 +101,13 @@ var LineGraph = React.createClass({
             yBrush.domain([0,363]);
 
             y.domain([scope.state.extent[1],scope.state.extent[0]]);
+            }
+
+
+
+
+
+
 
 
             var x = d3.scale.ordinal()
@@ -92,28 +119,57 @@ var LineGraph = React.createClass({
 
             var xTangent = 40; // Length of Bézier tangents to control curve.
 
-            var line = function line(d) {
-              var path = [];
-                var once = 0;
-              x.domain().slice(1).forEach(function(b, i) {
-                var a = x.domain()[i];
+            if(scope.state.plot == "rank"){
+                var line = function line(d) {
+                  var path = [];
+                    var once = 0;
+                  x.domain().slice(1).forEach(function(b, i) {
+                    var a = x.domain()[i];
 
-                if(once < 2){
-                    //console.log(curve(a, b, i, d))
-                    once++;
+                    if(once < 2){
+                        //console.log(curve(a, b, i, d))
+                        once++;
+                    }
+                    path.push("L", x(a), ",", y(d[i].rank), "h", x.rangeBand(), curve(a, b, i, d));
+                  });
+                  path[0] = "M";
+                  path.push("h", x.rangeBand());
+                  return path.join("");
                 }
-                path.push("L", x(a), ",", y(d[i].rank), "h", x.rangeBand(), curve(a, b, i, d));
-              });
-              path[0] = "M";
-              path.push("h", x.rangeBand());
-              return path.join("");
+
+                var curve = function curve(a, b, i, d) {
+                  return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].rank)+ " "
+                      + (x(b) - xTangent) + "," + y(d[i+1].rank) + " "
+                      + x(b) + "," + y(d[i+1].rank);
+                }            
+            }
+            else{
+                var line = function line(d) {
+                  var path = [];
+                    var once = 0;
+                  x.domain().slice(1).forEach(function(b, i) {
+                    var a = x.domain()[i];
+
+                    if(once < 2){
+                        //console.log(curve(a, b, i, d))
+                        once++;
+                    }
+                    path.push("L", x(a), ",", y(d[i].y), "h", x.rangeBand(), curve(a, b, i, d));
+                  });
+                  path[0] = "M";
+                  path.push("h", x.rangeBand());
+                  return path.join("");
+                }
+
+                var curve = function curve(a, b, i, d) {
+                  return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].y)+ " "
+                      + (x(b) - xTangent) + "," + y(d[i+1].y) + " "
+                      + x(b) + "," + y(d[i+1].y);
+                }                 
             }
 
-            var curve = function curve(a, b, i, d) {
-              return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].rank)+ " "
-                  + (x(b) - xTangent) + "," + y(d[i+1].rank) + " "
-                  + x(b) + "," + y(d[i+1].rank);
-            }
+
+
 
 
                 
@@ -212,8 +268,13 @@ var LineGraph = React.createClass({
                     name = d.city.name;
                
 
+                if(scope.state.plot == "rank"){
+                    popText += name + ' | ' + d.x +':  '+ d.rank;                    
+                }
+                else{
+                    popText += name + ' | ' + d.x +':  '+ d.y;
+                }
 
-                popText += name + ' | ' + d.x +':  '+ d.rank;
 
                 d.city.line.parentNode.appendChild(d.city.line);
                 focus.attr("transform", "translate(100,-25)");
@@ -455,11 +516,6 @@ var LineGraph = React.createClass({
             return (
                 <div>
                     <h3>Rankings</h3>
-                    <ul className="nav nav-tabs">
-                        <li id="newFirmsList"  onClick={scope.toggleChart}><a id="newFirms" >New Firms Per 1000 People</a></li>
-                        <li id="shareNewList" className="active" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
-                        <li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
-                    </ul>
                     <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button></div>
                     <div>
                         <div style = {currentRowStyle}>
@@ -474,12 +530,6 @@ var LineGraph = React.createClass({
         else{
             return (
                 <div>
-                    <h3>Rankings</h3>
-                    <ul className="nav nav-tabs">
-                        <li id="newFirmsList" className="active" onClick={scope.toggleChart}><a id="newFirms" >New Firms Per 1000 People</a></li>
-                        <li id="shareNewList" onClick={scope.toggleChart} ><a id="share" >Share of Employment in New Firms</a></li>
-                        <li id="compositeList" onClick={scope.toggleChart} ><a id="composite" >Composite Rankings</a></li>
-                    </ul>
                 </div>
             );          
         }

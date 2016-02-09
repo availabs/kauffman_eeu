@@ -104,12 +104,11 @@ var DataStore = React.createClass({
 				//Add colors and Names
 				//Nest itself
 				var graphData = scope.polishData(scope.state.shareRanks);
+								return graphData;
 
 			}        	
         }
 
-
-		return cities;
 
 	},
 	newGraph:function(filters){
@@ -134,10 +133,11 @@ var DataStore = React.createClass({
 				//Add colors and Names
 				//Nest itself
 				var graphData = scope.polishData(scope.state.newRanks);
+								return graphData;
 			}
 		}
 
-		return cities;
+
 
 	},
 	compGraph:function(filters){
@@ -163,7 +163,7 @@ var DataStore = React.createClass({
 				//Add colors and Names
 				//Nest itself
 				var graphData = scope.polishData(scope.state.compRanks);
-				return graphData;
+
 			}       
         }
 
