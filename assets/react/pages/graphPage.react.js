@@ -2,7 +2,8 @@ var React = require("react"),
 	ShareNewEmploymentByTimeGraph = require("../components/graphs/ShareNewEmploymentByTimeGraph.react"),
 	NewFirmPer1000Graph = require("../components/graphs/NewFirmPer1000Graph.react"),
 	RankingsGraph = require("../components/graphs/RankingsGraph.react"),
-	Loading = require("../components/layout/Loading.react");	
+	Loading = require("../components/layout/Loading.react"),
+	DataStore = require("../components/utils/DataStore.react");
 
 
 var GraphPage = React.createClass({
@@ -18,9 +19,18 @@ var GraphPage = React.createClass({
     componentDidMount:function(){
         var scope = this;
 
-        scope.getData(function(data){
-            scope.setState({data:data,loading:false});
-        })
+        var filters = "none";
+
+scope.refs.store.shareGraph(filters);
+// 		var Child = React.createClass({DataStore});
+// 		var myChild = React.renderComponent(Child);
+
+
+
+// var Inputs = React.createClass({DataStore});
+// var myInputs = React.renderComponent(Inputs);
+// myInputs.shareGraph(filters);
+        
     },
 	toggleGraph:function(e){
 		var scope = this;
@@ -51,16 +61,6 @@ var GraphPage = React.createClass({
 				.attr('class',"active");
 		}
 	},
-    getData:function(cb){
-    	//Get data should get the raw data from every MSA
-    	//Should make a new route and function
-        var scope = this;
-
-        d3.json("/allMsa",function(err,data){
-            return cb(data);  
-        })
-
-    },
     toggleColor:function(e){
     	var scope = this;
     	scope.setState({color:e.target.id});
@@ -110,54 +110,14 @@ var GraphPage = React.createClass({
 	    	);
 
 
-	    if(scope.state.graph == "share"){
-	    	graph=(
-	    		<div>
-	    			<ShareNewEmploymentByTimeGraph data={scope.state.data} color={scope.state.color} group={scope.state.group}/>
-	    		</div>
-	    		);
 
-	    	divs=(
-	    		<div>
-	    			<h5 style={{fontWeight:'bold'}}>Share of Employment in new firms <br/>Colored by {scope.state.color}, grouped by {scope.state.group}</h5>
-	                <div id="ShareNewEmploymentByTimeGraph"></div>
-	    		</div>
-	    		);
-	    }
-	    else if(scope.state.graph == "new"){
-	    	graph=(
-	    		<div>
-	    			<NewFirmPer1000Graph data={scope.state.data} color={scope.state.color} group={scope.state.group}/>
-	    		</div>);
-
-
-	    	divs=(
-	    		<div>
-	    		    <h5 style={{fontWeight:"bold"}}>New Firms per 1000 people <br/>Colored by {scope.state.color}, grouped by {scope.state.group}</h5>
-	                <div id="NewFirmPer1000Graph"></div>
-	    		</div>
-	    		);
-	    }
-	    else{
-	    	graph=(
-	    		<div>
-	    			<RankingsGraph data={scope.state.data} color={scope.state.color} group={scope.state.group}/>
-	    		</div>
-	    		)
-	    	divs=(
-	    		<div>
-	    		    <h5 style={{fontWeight:"bold"}}>Density Metric Rankings <br/>Colored by {scope.state.color}, grouped by {scope.state.group}</h5>
-	                <div id="RankingsGraph"></div>
-	    		</div>
-	    		);
-
-	    }
 		
 		if(scope.state.loading == true){
 	        return (
 	        	<div>
 	        		{graphHeader}
 		        	<div>
+		        		<DataStore ref='store'/>
 		        		<Loading />
 						{divs}
 		        	</div>
@@ -167,6 +127,7 @@ var GraphPage = React.createClass({
 		else{
 			return (
 				<div>
+
 					{graphHeader}
 					{divs}
 					{graph}

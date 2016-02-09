@@ -6,7 +6,7 @@ var React = require("react"),
     RankTable = require('../graphs/RankTable.react'),
     abbrToFips = require('../utils/abbrToFips.json');
 
-var RankingsGraph = React.createClass({
+var LineGraph = React.createClass({
     getInitialState:function(){
         return {
             data:[],
@@ -102,7 +102,7 @@ var RankingsGraph = React.createClass({
 
 		trimmedData['share'] = shareData;
 		trimmedData['new'] = newFirmData;
-console.log("trimmed",trimmedData);
+
         return trimmedData;
     },
     chartStateData:function(data){
@@ -1247,4 +1247,4 @@ console.log("trimmed",trimmedData);
 
 
 
-module.exports = RankingsGraph;
+module.exports = LineGraph;
