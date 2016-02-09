@@ -104,7 +104,7 @@ var DataStore = React.createClass({
 				//Add colors and Names
 				//Nest itself
 				var graphData = scope.polishData(scope.state.shareRanks);
-				console.log(graphData);
+
 			}        	
         }
 
@@ -116,7 +116,7 @@ var DataStore = React.createClass({
 		var scope = this,
 			cities=[];
 
-		console.log("newGraph",scope.state);
+
         if(scope.state.loading){
             console.log('reloading')
             setTimeout(function(){ scope.newGraph(filters) }, 1500);
@@ -134,10 +134,9 @@ var DataStore = React.createClass({
 				//Add colors and Names
 				//Nest itself
 				var graphData = scope.polishData(scope.state.newRanks);
-				console.log("final",graphData);
 			}
 		}
-		console.log("end",scope.state);
+
 		return cities;
 
 	},
@@ -164,13 +163,13 @@ var DataStore = React.createClass({
 				//Add colors and Names
 				//Nest itself
 				var graphData = scope.polishData(scope.state.compRanks);
-				console.log("final",graphData);
+				return graphData;
 			}       
         }
-        console.log(scope.state);
+
 		
 
-		return cities;
+
 	},
 	processNewRanks:function(){
 		var scope = this,

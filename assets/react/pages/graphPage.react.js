@@ -3,6 +3,7 @@ var React = require("react"),
 	NewFirmPer1000Graph = require("../components/graphs/NewFirmPer1000Graph.react"),
 	RankingsGraph = require("../components/graphs/RankingsGraph.react"),
 	Loading = require("../components/layout/Loading.react"),
+	LineGraph = require("../components/graphs/LineGraph.react"),
 	DataStore = require("../components/utils/DataStore.react");
 
 
@@ -19,18 +20,29 @@ var GraphPage = React.createClass({
     componentDidMount:function(){
         var scope = this;
 
-        var filters = "none";
-
-scope.refs.store.compGraph(filters);
-// 		var Child = React.createClass({DataStore});
-// 		var myChild = React.renderComponent(Child);
 
 
 
-// var Inputs = React.createClass({DataStore});
-// var myInputs = React.renderComponent(Inputs);
-// myInputs.shareGraph(filters);
+        scope.processData();
+    },
+    processData:function(){
+    	var scope = this;
+
+        var filters = "none"
+
+        var data = scope.refs.store.compGraph(filters);
+
+        if(!data){
+            console.log('reloading')
+            setTimeout(function(){ scope.processData() }, 1500);
         
+        }
+        else{
+			scope.setState({data:data,loading:false});        	
+        }
+
+
+    			
     },
 	toggleGraph:function(e){
 		var scope = this;
@@ -75,65 +87,55 @@ scope.refs.store.compGraph(filters);
 	    var graph,
 	    	divs;
 
-
-
-	    var colorHeader = (                
-	    		<div className="dropdown">
-                  <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Color
-                  <span className="caret"></span></button>
-                  <ul className="dropdown-menu">
-                    <li><a id="population" onClick={scope.toggleColor}>Population</a></li>
-                    <li><a id="state" onClick={scope.toggleColor}>State</a></li>
-                  </ul>
-                </div>
-                );
-
-	    var groupHeader = (                
-	    		<div className="dropdown">
-                  <button className="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Grouping
-                  <span className="caret"></span></button>
-                  <ul className="dropdown-menu">
-                    <li><a id="msa" onClick={scope.toggleGroup}>Metro Area</a></li>
-                    <li><a id="state" onClick={scope.toggleGroup}>State</a></li>
-                  </ul>
-                </div>
-                );
-
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
 	    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
 	    		<li id="newList" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
 	    		<li id="rankings" className="active" onClick={scope.toggleGraph}><a id="rank" >Rankings</a></li>
-	    		<li id="color">{colorHeader}</li>
-	    		<li id="group">{groupHeader}</li>
 	    	</ul>
 	    	);
 
 
+	    var store = (<DataStore ref='store' />);
+	    var graph = (<LineGraph data={scope.state.data} />)
+	    var filters = "none"
+	    console.log("page render",scope.state);
+	    if(!scope.state.loading){
+		    return (
+		    	<div>
+		    		<div>
+		    			{graphHeader}
+		    		</div>
+		    			{store}
+		    		<div>
+		    			{graph}
+		    		</div>
 
-		
-		if(scope.state.loading == true){
-	        return (
-	        	<div>
-	        		{graphHeader}
-		        	<div>
-		        		<DataStore ref='store'/>
-		        		<Loading />
-						{divs}
-		        	</div>
-	        	</div>
-	        )
-		}
-		else{
-			return (
-				<div>
+		    	</div>
 
-					{graphHeader}
-					{divs}
-					{graph}
-				</div>
-			);			
-		}
+
+		    	)
+	    }
+	    else{
+		    return (
+		    	<div>
+		    		<div>
+		    			{graphHeader}
+		    		</div>
+		    			{store}
+		    		<div>
+		    			<Loading />
+		    		</div>
+
+		    	</div>
+
+
+		    	)
+	    }
+
+
+
+
 
 	}
 });
