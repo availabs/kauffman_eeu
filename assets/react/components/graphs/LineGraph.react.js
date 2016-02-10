@@ -416,7 +416,7 @@ var LineGraph = React.createClass({
                 .on("brushend", brushend);
 
             var arc = d3.svg.arc()
-                    .outerRadius(15)
+                    .outerRadius(20)
                     .startAngle(0)
                     .endAngle(function(d, i) { return i ? -Math.PI : Math.PI; });
 
@@ -426,7 +426,7 @@ var LineGraph = React.createClass({
 
             var brushg = svg.append("g")
                 .attr("class", "brush")
-                .attr("transform", "translate("+(width+23)+",0)")
+                .attr("transform", "translate("+(width+20)+",0)")
                 .call(brush)
                 .style("opacity",".4");  
 
@@ -436,8 +436,8 @@ var LineGraph = React.createClass({
 
 
             brushg.selectAll("rect")
-                .attr("transform","translate(-15,0)")
-                .attr("width",30);
+                .attr("transform","translate(-20,0)")
+                .attr("width",40);
 
             brushstart();
 

@@ -10,7 +10,7 @@ var React = require("react"),
 var GraphPage = React.createClass({
 	getInitialState:function(){
 		return({
-			graph:"share",
+			graph:"new",
 			data:[],
 			loading:true,
 			});
@@ -86,7 +86,7 @@ var GraphPage = React.createClass({
 		}
 		else{
 			scope.setState({graph:"composite",loading:true});
-			d3.select('#rankings')
+			d3.select('#composite')
 				.attr('class',"active");
 		}
 	},
@@ -108,7 +108,7 @@ var GraphPage = React.createClass({
 	    	<ul className="nav nav-tabs">
 	    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
 	    		<li id="newList" className="active" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
-	    		<li id="rankings"  onClick={scope.toggleGraph}><a id="rank" >Rankings</a></li>
+	    		<li id="composite"  onClick={scope.toggleGraph}><a id="composite" >Composite Rank</a></li>
 	    	</ul>
 	    	);
             var buttonStyle = {
