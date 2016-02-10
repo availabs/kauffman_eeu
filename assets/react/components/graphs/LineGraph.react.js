@@ -18,6 +18,14 @@ var LineGraph = React.createClass({
             graph:"composite"
         })
     },
+    componentWillRecieveProps:function(nextProps){
+        var scope = this;
+
+        if(nextProps.graph == 'composite'){
+            scope.state.plot = "rank"
+        }
+
+    },
     renderGraph:function(){
 
         //1 - Share of employmment in new firms OVER TIME
@@ -40,25 +48,7 @@ var LineGraph = React.createClass({
 
 
             var filteredData = [];
-            filteredData = data.filter(function(city){
-                var withinBounds;
 
-                city.values.forEach(function(yearVal){
-                    if(yearVal.x == 2009){
-                        if(yearVal.rank <= scope.state.extent[0] && yearVal.rank >= scope.state.extent[1]){
-                            withinBounds = true;
-                        }
-                        else{
-                            withinBounds = false;
-                        }
-                    }
-                })
-
-                if(withinBounds){
-                    return city;
-                }
-
-            })
 
             console.log(data);
 
@@ -68,6 +58,27 @@ var LineGraph = React.createClass({
 
 
             if(scope.state.plot == "rank"){
+
+                filteredData = data.filter(function(city){
+                    var withinBounds;
+
+                    city.values.forEach(function(yearVal){
+                        if(yearVal.x == 2009){
+                            if(yearVal.rank <= scope.state.extent[0] && yearVal.rank >= scope.state.extent[1]){
+                                withinBounds = true;
+                            }
+                            else{
+                                withinBounds = false;
+                            }
+                        }
+                    })
+
+                    if(withinBounds){
+                        return city;
+                    }
+
+                })
+
                 var voronoi = d3.geom.voronoi()
                     .x(function(d) { return x(d.x); })
                     .y(function(d) { return y(d.rank); })
@@ -86,40 +97,61 @@ var LineGraph = React.createClass({
 
             }
             else{
+                console.log("filter extent",scope.state.extent);
+                filteredData = data.filter(function(city){
+                    var withinBounds;
+
+                    city.values.forEach(function(yearVal){
+                        if(yearVal.x == 2009){
+                            if(yearVal.y >= scope.state.extent[0] && yearVal.y <= scope.state.extent[1]){
+                                withinBounds = true;
+                            }
+                            else{
+                                withinBounds = false;
+                            }
+                        }
+                    })
+
+                    if(withinBounds){
+                        return city;
+                    }
+
+                })
+
                 var voronoi = d3.geom.voronoi()
                     .x(function(d) { return x(d.x); })
                     .y(function(d) { return y(d.y); })
                     .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
 
-            var y = d3.scale.linear()
-                .range([0,height]);
+                var y = d3.scale.linear()
+                .range([height,0]);
 
 
-            var yBrush = d3.scale.linear()
-                .range([0,height]);
+                var yBrush = d3.scale.linear()
+                .range([height,0]);
 
-            yBrush.domain([0,363]);
 
-            y.domain([scope.state.extent[1],scope.state.extent[0]]);
+
+                yBrush.domain([0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]);
+
+                y.domain([scope.state.extent[0],scope.state.extent[1]]);
             }
 
 
 
 
 
-
-
-
-            var x = d3.scale.ordinal()
-                .domain(d3.range(
-                    [d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.x }); })],
-                    [d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })+1]
-                    ))
-                .rangeRoundBands([0,width]);
-
-            var xTangent = 40; // Length of Bézier tangents to control curve.
-
             if(scope.state.plot == "rank"){
+
+                var x = d3.scale.ordinal()
+                    .domain(d3.range(
+                        [d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.x }); })],
+                        [d3.max(filteredData, function(c) { return d3.max(c.values, function(v) { return v.x }); })+1]
+                        ))
+                    .rangeRoundBands([0,width]);
+
+                var xTangent = 40; // Length of Bézier tangents to control curve.
+
                 var line = function line(d) {
                   var path = [];
                     var once = 0;
@@ -141,35 +173,34 @@ var LineGraph = React.createClass({
                   return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].rank)+ " "
                       + (x(b) - xTangent) + "," + y(d[i+1].rank) + " "
                       + x(b) + "," + y(d[i+1].rank);
-                }            
+                }  
+
+
+
+                var heightVal = y.domain()[1]-y.domain()[0];
+
+
             }
             else{
-                var line = function line(d) {
-                  var path = [];
-                    var once = 0;
-                  x.domain().slice(1).forEach(function(b, i) {
-                    var a = x.domain()[i];
+                var x = d3.scale.linear()
+                    .range([0, width]);
 
-                    if(once < 2){
-                        //console.log(curve(a, b, i, d))
-                        once++;
-                    }
-                    path.push("L", x(a), ",", y(d[i].y), "h", x.rangeBand(), curve(a, b, i, d));
-                  });
-                  path[0] = "M";
-                  path.push("h", x.rangeBand());
-                  return path.join("");
-                }
+                x.domain([
+                    d3.min(data, function(c) { return d3.min(c.values, function(v) { return v.x }); }),
+                    d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.x }); })
+                ]);
 
-                var curve = function curve(a, b, i, d) {
-                  return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].y)+ " "
-                      + (x(b) - xTangent) + "," + y(d[i+1].y) + " "
-                      + x(b) + "," + y(d[i+1].y);
-                }                 
+                var line = d3.svg.line()
+                    .interpolate("cardinal")
+                    .x(function(d) { return x(d.x); })
+                    .y(function(d) { return y(d.y); });
+
+                console.log(filteredData.length)
+                heightVal = filteredData.length              
             }
 
 
-
+console.log(heightVal)
 
 
                 
@@ -210,7 +241,7 @@ var LineGraph = React.createClass({
                         .append("path")
                         .attr("d",function(){b.border = this; return line(b.values)})
                         .style("stroke","black")
-                        .style("stroke-width",((height)/(y.domain()[1]-y.domain()[0]))-1)
+                        .style("stroke-width",((height)/(heightVal))-1)
                         .style("fill","none")
                         .style("opacity",".4");     
 
@@ -219,7 +250,7 @@ var LineGraph = React.createClass({
                         .attr("class","cities")
                         .attr("d",function(){b.line = this; return line(b.values)})
                         .style("stroke",b.color)
-                        .style("stroke-width",((height-85)/(y.domain()[1]-y.domain()[0]))-2)
+                        .style("stroke-width",((height-85)/(heightVal))-2)
                         .style("fill","none")
                         .style("opacity",".6");                    
                 
@@ -258,7 +289,7 @@ var LineGraph = React.createClass({
 
 
             function mouseover(d) {
-                d3.select(d.city.line).style("stroke-width",( (height/(y.domain()[1]-y.domain()[0]) )+1))
+                d3.select(d.city.line).style("stroke-width",( (height/(heightVal) )+1))
                 d3.select(d.city.line).style("stroke","#000000")
                 d3.select(d.city.line).style("opacity","1")
 
@@ -365,21 +396,14 @@ var LineGraph = React.createClass({
 
 
             function mouseout(d) {                              
-                d3.select(d.city.line).style("stroke-width",( ((height-74)/(y.domain()[1]-y.domain()[0])-2 )))
+                d3.select(d.city.line).style("stroke-width",( ((height-74)/(heightVal)-2 )))
                 d3.select(d.city.line).style("stroke",function(){return d.city.color})
                 d3.select(d.city.line).style("opacity",".6")
                 focus.attr("transform", "translate(-100,-100)");
             }
 
-
-            if(scope.props.group == "state"){
                 var startValue = scope.state.extent[1];
                 var endValue = scope.state.extent[0];             
-            }
-            else{
-                var startValue = scope.state.extent[1];
-                var endValue = scope.state.extent[0];                
-            }
 
 
 
@@ -428,11 +452,25 @@ var LineGraph = React.createClass({
                 var s = brush.extent();
 
 
-               
-                brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
+
                 
+                
+
+                if(scope.state.plot == "rank"){
+
+brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
                 s = brush.extent();
-                scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})
+                scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})                      
+                }
+                else{
+                    console.log("sdsdsad",s)
+brush.extent([s[1],s[0]])(d3.select(this));
+                s = brush.extent();
+                console.log("sdsd",s)
+                scope.setState({extent:[s[1],s[0]]})                            
+                }              
+
+
                 
 
 
@@ -466,21 +504,30 @@ var LineGraph = React.createClass({
     resetBrush:function(){
         var scope = this;
 
-        var extent = [363,0];            
-        
 
+        if(scope.state.plot == "rank"){
+            var extent = [363,0];               
+        }
+        else{
+            var extent = [0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]            
+        }
+         
+        
+        console.log("reset",extent)
         scope.setState({extent:extent})
     },
     toggleRankValue:function(e){
         console.log("toggle rank/val");
         var scope = this;
-
+        console.log(scope.props.data);
 
         var valButton = d3.select('#valueButton');
         var rankButton = d3.select('#rankButton')
+        var activeButton;
 
         if(valButton.attr("class") == "btn btn-danger"){
             valButton.attr("class","btn btn-success") 
+            var active = valButton.attr('id');
         }
         else{
             valButton.attr("class","btn btn-danger"); 
@@ -488,22 +535,26 @@ var LineGraph = React.createClass({
 
         if(rankButton.attr("class") == "btn btn-danger"){
             rankButton.attr("class","btn btn-success");
+            var active = rankButton.attr('id');
         }
         else{
             rankButton.attr("class","btn btn-danger");
         }
 
+        if(active == 'rankButton'){
+            //scope.setState({plot:'rank',extent:[363,0]});
+            var extent = [366,1]
+            scope.setState({plot:'rank',extent:extent})
 
-        // if(e.target.className == "btn btn-danger"){
-        //     e.target.className = "btn btn-success"
+        }
+        else{
 
-        //     //scope.setState({filter:false});
-        // }
-        // else{
-        //     e.target.className = "btn btn-danger"
+            var extent = [0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]
 
-        //     //scope.setState({filter:true});
-        // }
+            scope.setState({plot:'value',extent:extent})
+
+        }
+
 
 
     },
@@ -548,13 +599,24 @@ var LineGraph = React.createClass({
             marginLeft:'10px'
         }
 
-        var valueButton = (
-            <button id="valueButton" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRankValue}>Value</button>
-            )
+        var rankButton;
+        var valueButton;
 
-        var rankButton = (
-            <button id="rankButton" style={buttonStyle} className="btn btn-success" onClick={scope.toggleRankValue}>Rank</button>
-            )
+        if(scope.props.graph != "composite"){
+            valueButton = (
+                <button id="valueButton" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRankValue}>Value</button>
+                )
+
+            rankButton = (
+                <button id="rankButton" style={buttonStyle} className="btn btn-success" onClick={scope.toggleRankValue}>Rank</button>
+                )            
+        }
+
+
+
+
+
+
         if(scope.props.data.length != 0){
             scope.renderGraph();
             return (
