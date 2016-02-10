@@ -477,7 +477,7 @@ var LineGraph = React.createClass({
         d3.selectAll("svg").remove();
 
         var tables;
-        console.log("render setstate",scope.state);
+        console.log("linegraph render state",scope.state);
         var rowStyle = {
             overflow:'hidden'
         }

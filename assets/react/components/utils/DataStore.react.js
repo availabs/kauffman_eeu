@@ -92,10 +92,11 @@ var DataStore = React.createClass({
             setTimeout(function(){ scope.shareGraph(filters) }, 1500);
         }
         else{
+        	console.log("sharegraphstate",scope.state);
 			if(scope.state.shareValues.length == 0){
 				scope.processShareValues();
 			}
-			if(scope.state.shareRanks.length == 0){
+			if(scope.state.shareRanks == undefined || scope.state.shareRanks.length == 0){
 				scope.processShareRanks();
 			}
 			if(scope.state.shareRanks.length != 0 && scope.state.shareValues.length != 0){
@@ -163,7 +164,7 @@ var DataStore = React.createClass({
 				//Add colors and Names
 				//Nest itself
 				var graphData = scope.polishData(scope.state.compRanks);
-
+				return graphData;
 			}       
         }
 

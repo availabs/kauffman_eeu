@@ -19,11 +19,15 @@ var GraphPage = React.createClass({
         var scope = this;
 
 
-
-
-        scope.processData();
+        scope.setState({data:scope.processData(scope.state.graph),loading:false});
     },
-    processData:function(){
+    componentWillUpdate:function(nextProps,nextState){
+    	var scope = this;
+
+    	nextState.data = scope.processData(nextState.graph);
+    	nextState.loading = false;
+    },
+    processData:function(graph){
     	var scope = this;
 
         var filters = "none"
@@ -31,26 +35,26 @@ var GraphPage = React.createClass({
         var data;
 
 
-        if(scope.state.graph == 'composite'){
+        if(graph == 'composite'){
 
         	data = scope.refs.store.compGraph(filters);
         }
-        if(scope.state.graph == 'share'){
+        if(graph == 'share'){
 
         	data = scope.refs.store.shareGraph(filters);
         }
-        if(scope.state.graph == 'new'){
+        if(graph == 'new'){
 
         	data = scope.refs.store.newGraph(filters);
         }
 
         if(!data){
             console.log('reloading')
-            setTimeout(function(){ scope.processData() }, 1500);
+            setTimeout(function(){ scope.processData(graph) }, 1500);
         
         }
         else{
-			scope.setState({data:data,loading:false});        	
+			return(data)      	
         }
 
 
@@ -69,18 +73,19 @@ var GraphPage = React.createClass({
 		})
 
 		if(e.target.id == "new"){
-			scope.setState({graph:"new"});
+			scope.setState({graph:"new",loading:true});
+
 			d3.select('#newList')
 				.attr('class',"active");
 
 		}
 		else if(e.target.id == "share"){
-			scope.setState({graph:"share"});
+			scope.setState({graph:"share",loading:true});
 			d3.select('#shareList')
 				.attr('class',"active");
 		}
 		else{
-			scope.setState({graph:"composite"});
+			scope.setState({graph:"composite",loading:true});
 			d3.select('#rankings')
 				.attr('class',"active");
 		}
@@ -111,7 +116,7 @@ var GraphPage = React.createClass({
 	    var store = (<DataStore ref='store' />);
 	    var graph = (<LineGraph data={scope.state.data} graph={scope.state.graph} />)
 	    var filters = "none"
-	    console.log("page render",scope.state);
+	    console.log("graphapge render state",scope.state);
 	    if(!scope.state.loading){
 		    return (
 		    	<div>
