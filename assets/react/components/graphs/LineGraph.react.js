@@ -471,6 +471,42 @@ var LineGraph = React.createClass({
 
         scope.setState({extent:extent})
     },
+    toggleRankValue:function(e){
+        console.log("toggle rank/val");
+        var scope = this;
+
+
+        var valButton = d3.select('#valueButton');
+        var rankButton = d3.select('#rankButton')
+
+        if(valButton.attr("class") == "btn btn-danger"){
+            valButton.attr("class","btn btn-success") 
+        }
+        else{
+            valButton.attr("class","btn btn-danger"); 
+        }
+
+        if(rankButton.attr("class") == "btn btn-danger"){
+            rankButton.attr("class","btn btn-success");
+        }
+        else{
+            rankButton.attr("class","btn btn-danger");
+        }
+
+
+        // if(e.target.className == "btn btn-danger"){
+        //     e.target.className = "btn btn-success"
+
+        //     //scope.setState({filter:false});
+        // }
+        // else{
+        //     e.target.className = "btn btn-danger"
+
+        //     //scope.setState({filter:true});
+        // }
+
+
+    },
     render:function() {
         var scope = this;
 
@@ -511,12 +547,20 @@ var LineGraph = React.createClass({
             marginTop:'10px',
             marginLeft:'10px'
         }
+
+        var valueButton = (
+            <button id="valueButton" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRankValue}>Value</button>
+            )
+
+        var rankButton = (
+            <button id="rankButton" style={buttonStyle} className="btn btn-success" onClick={scope.toggleRankValue}>Rank</button>
+            )
         if(scope.props.data.length != 0){
             scope.renderGraph();
             return (
                 <div>
                     <h3>Rankings</h3>
-                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button></div>
+                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}</div>
                     <div>
                         <div style = {currentRowStyle}>
                             <div style={lockStyle} id="currentRowLock"></div>

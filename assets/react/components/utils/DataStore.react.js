@@ -92,7 +92,6 @@ var DataStore = React.createClass({
             setTimeout(function(){ scope.shareGraph(filters) }, 1500);
         }
         else{
-        	console.log("sharegraphstate",scope.state);
 			if(scope.state.shareValues.length == 0){
 				scope.processShareValues();
 			}
@@ -106,7 +105,6 @@ var DataStore = React.createClass({
 				//Nest itself
 				var graphData = scope.polishData(scope.state.shareRanks);
 								return graphData;
-
 			}        	
         }
 
@@ -125,7 +123,7 @@ var DataStore = React.createClass({
 			if(scope.state.newValues.length == 0){
 				scope.processNewValues();
 			}
-			if(scope.state.newRanks.length == 0){
+			if(scope.state.newRanks == undefined || scope.state.newRanks.length == 0){
 				scope.processNewRanks();
 			}
 			if(scope.state.newRanks.length != 0 && scope.state.newValues.length != 0){

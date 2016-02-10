@@ -10,7 +10,7 @@ var React = require("react"),
 var GraphPage = React.createClass({
 	getInitialState:function(){
 		return({
-			graph:"new",
+			graph:"share",
 			data:[],
 			loading:true,
 			});
@@ -111,6 +111,11 @@ var GraphPage = React.createClass({
 	    		<li id="rankings"  onClick={scope.toggleGraph}><a id="rank" >Rankings</a></li>
 	    	</ul>
 	    	);
+            var buttonStyle = {
+            marginTop:'30px',
+            marginLeft:'10px'
+        }
+
 
 
 	    var store = (<DataStore ref='store' />);
