@@ -196,11 +196,10 @@ var LineGraph = React.createClass({
                     .y(function(d) { return y(d.y); });
 
                 console.log(filteredData.length)
-                heightVal = filteredData.length              
+                heightVal = 150             
             }
 
 
-console.log(heightVal)
 
 
                 
@@ -212,7 +211,9 @@ console.log(heightVal)
                 .scale(y)
                 .orient("left");
 
-
+            var yAxisBrush = d3.svg.axis()
+                .scale(yBrush)
+                .orient("right");
 
 
             var svg = d3.select("#rankGraph").append("svg")
@@ -415,7 +416,7 @@ console.log(heightVal)
                 .on("brushend", brushend);
 
             var arc = d3.svg.arc()
-                    .outerRadius((width / 128))
+                    .outerRadius(15)
                     .startAngle(0)
                     .endAngle(function(d, i) { return i ? -Math.PI : Math.PI; });
 
@@ -425,18 +426,18 @@ console.log(heightVal)
 
             var brushg = svg.append("g")
                 .attr("class", "brush")
-                .attr("transform", "translate("+(width+20)+",0)")
-                .call(brush);  
+                .attr("transform", "translate("+(width+23)+",0)")
+                .call(brush)
+                .style("opacity",".4");  
 
             brushg.selectAll(".resize").append("path")
-                .attr("transform", "translate(0," +  (width / 256) + ")")
                 .attr("transform", "rotate(-90)")
                 .attr("d", arc);
 
 
             brushg.selectAll("rect")
-                .attr("transform","translate(-11,0)")
-                .attr("width",22);
+                .attr("transform","translate(-15,0)")
+                .attr("width",30);
 
             brushstart();
 
@@ -496,7 +497,17 @@ brush.extent([s[1],s[0]])(d3.select(this));
               .attr("dy", "2em")
               .attr("x","-15em")
               .style("text-anchor", "end")
-              .text("Rank");            
+              .text("Rank");   
+
+            svg.append("g")
+              .attr("class", "y axis")
+              .attr("transform","translate("+width+",0)")
+              .call(yAxisBrush)
+            .append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("y", "-5em")
+              .attr("dy", "2em")
+              .attr("x","-15em")          
 
         }
 
