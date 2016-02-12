@@ -196,7 +196,7 @@ var LineGraph = React.createClass({
                     .y(function(d) { return y(d.y); });
 
                 console.log(filteredData.length)
-                heightVal = 150             
+                heightVal = 200             
             }
 
 
@@ -603,7 +603,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
         }
 
         var currentRowStyle = {
-            width:window.innerWidth
+            width:window.innerWidth*.8-50
         }
             var buttonStyle = {
             marginTop:'10px',
@@ -634,13 +634,6 @@ brush.extent([s[1],s[0]])(d3.select(this));
                 <div>
                     <h3>Rankings</h3>
                     <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}</div>
-                    <div>
-                        <div style = {currentRowStyle}>
-                            <div style={lockStyle} id="currentRowLock"></div>
-                            <div style={scrollStyle} id="currentRowScroll" style={rowStyle}></div>
-                        </div>
-                        
-                    </div>
                 </div>
             );          
         }

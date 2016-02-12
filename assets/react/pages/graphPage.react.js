@@ -104,6 +104,10 @@ var GraphPage = React.createClass({
 	    var graph,
 	    	divs;
 
+
+
+
+
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
 	    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>

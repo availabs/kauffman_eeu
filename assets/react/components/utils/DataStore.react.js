@@ -10,6 +10,7 @@ var DataStore = React.createClass({
 		return {
 			loading:true,
 			fullData:{},
+			immData:[],
 			shareValues:[],
 			newValues:[],
 			shareRanks:[],
@@ -31,6 +32,54 @@ var DataStore = React.createClass({
         d3.json("/allMsa",function(err,data){
             return cb(data);  
         })
+
+    },
+    processImmData:function(data){
+    	var scope = this;
+
+    	var reducedData = {}
+
+    	data.forEach(function(row){
+
+    		if(!reducedData[row["Id2"]]){
+    			reducedData[row["Id2"]] = {};
+    		}
+
+    		if(!reducedData[row["Id2"]][row["Year"]]){
+    			reducedData[row["Id2"]][row["Year"]] = {};
+    		}
+
+
+    		if(row["Population Group"] == "Native"){
+    			reducedData[row["Id2"]][row["Year"]]["native"] = row["Estimate; Total population"];	
+    		}
+    		else{
+    			reducedData[row["Id2"]][row["Year"]]["foreign"] = row["Estimate; Total population"];	
+    		}
+    		
+
+
+
+
+    	})
+
+
+
+
+    	var finalData = data;
+
+    	console.log("imm data",reducedData);
+    	return finalData;
+    },
+    getImmData:function(cb){
+    	var scope = this;
+
+	    d3.csv("../../cache/immPopData/ACS_07_3YR_S0201_with_ann.csv",function(data){  
+	    	return cb(data);
+	    })
+
+
+
 
     },
     processData:function(data){
@@ -82,6 +131,16 @@ var DataStore = React.createClass({
         return trimmedData;    	
 
     },
+    immGraph:function(filters){
+		var scope = this;
+    	if(scope.state.immData.length == 0){
+    		scope.getImmData(function(data){
+    			scope.setState({immData:scope.processImmData(data)})    			
+    		})
+    	}
+    	
+
+    },
 	shareGraph:function(filters){
 		var scope = this,
 			cities=[];
@@ -120,6 +179,7 @@ var DataStore = React.createClass({
             setTimeout(function(){ scope.newGraph(filters) }, 1500);
         }
         else{
+        	scope.immGraph(filters);
 			if(scope.state.newValues.length == 0){
 				scope.processNewValues();
 			}
