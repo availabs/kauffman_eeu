@@ -47,6 +47,10 @@ var GraphPage = React.createClass({
 
         	data = scope.refs.store.newGraph(filters);
         }
+        if(graph == 'immigrant'){
+
+        	data = scope.refs.store.immGraph(filters);
+        }
 
         if(!data){
             console.log('reloading')
@@ -84,6 +88,11 @@ var GraphPage = React.createClass({
 			d3.select('#shareList')
 				.attr('class',"active");
 		}
+		else if(e.target.id == "immigrant"){
+			scope.setState({graph:"immigrant",loading:true});
+			d3.select('#immigrant')
+				.attr('class',"active");
+		}		
 		else{
 			scope.setState({graph:"composite",loading:true});
 			d3.select('#composite')
@@ -112,6 +121,7 @@ var GraphPage = React.createClass({
 	    	<ul className="nav nav-tabs">
 	    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
 	    		<li id="newList" className="active" onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
+	    		<li id="immigrant" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>	
 	    		<li id="composite"  onClick={scope.toggleGraph}><a id="composite" >Composite Rank</a></li>
 	    	</ul>
 	    	);

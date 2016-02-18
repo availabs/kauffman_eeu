@@ -91,7 +91,7 @@ var LineGraph = React.createClass({
                 var yBrush = d3.scale.linear()
                     .range([0,height]);
 
-                yBrush.domain([0,363]);
+                yBrush.domain([0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.rank }); })]);
 
                 y.domain([scope.state.extent[1],scope.state.extent[0]]);
 
@@ -155,6 +155,7 @@ var LineGraph = React.createClass({
                 var line = function line(d) {
                   var path = [];
                     var once = 0;
+                    console.log(d);
                   x.domain().slice(1).forEach(function(b, i) {
                     var a = x.domain()[i];
 
@@ -162,14 +163,19 @@ var LineGraph = React.createClass({
                         //console.log(curve(a, b, i, d))
                         once++;
                     }
-                    path.push("L", x(a), ",", y(d[i].rank), "h", x.rangeBand(), curve(a, b, i, d));
+                    if(d[i+1] != undefined){
+                        path.push("L", x(a), ",", y(d[i].rank), "h", x.rangeBand(), curve(a, b, i, d));    
+                    }
+                    
                   });
                   path[0] = "M";
                   path.push("h", x.rangeBand());
                   return path.join("");
                 }
 
+
                 var curve = function curve(a, b, i, d) {
+                
                   return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].rank)+ " "
                       + (x(b) - xTangent) + "," + y(d[i+1].rank) + " "
                       + x(b) + "," + y(d[i+1].rank);
@@ -517,7 +523,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
 
 
         if(scope.state.plot == "rank"){
-            var extent = [363,0];               
+            var extent = [d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]              
         }
         else{
             var extent = [0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]            
@@ -554,7 +560,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
 
         if(active == 'rankButton'){
             //scope.setState({plot:'rank',extent:[363,0]});
-            var extent = [366,1]
+            var extent = [d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]
             scope.setState({plot:'rank',extent:extent})
 
         }

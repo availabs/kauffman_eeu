@@ -19,7 +19,7 @@ var DataStore = React.createClass({
 		}
 
 	},
-    componentDidMount:function(){
+    componentWillMount:function(){
         var scope = this;
 
         scope.getData(function(data){
@@ -41,45 +41,56 @@ var DataStore = React.createClass({
 
     	data.forEach(function(row){
 
-    		if(!reducedData[row["Id2"]]){
-    			reducedData[row["Id2"]] = {};
-    		}
 
-    		if(!reducedData[row["Id2"]][row["Year"]]){
-    			reducedData[row["Id2"]][row["Year"]] = {};
-    		}
+			if(!reducedData[row["Id2"]]){
+				reducedData[row["Id2"]] = {};
+			}
 
-
-    		if(row["Population Group"] == "Native"){
-    			reducedData[row["Id2"]][row["Year"]]["native"] = row["Estimate; Total population"];	
-    		}
-    		else{
-    			reducedData[row["Id2"]][row["Year"]]["foreign"] = row["Estimate; Total population"];	
-    		}
-    		
+			if(!reducedData[row["Id2"]][row["Year"]]){
+				reducedData[row["Id2"]][row["Year"]] = {};
+			}
 
 
+			if(row["Population Group"] == "Native"){
+				reducedData[row["Id2"]][row["Year"]]["native"] = row["Estimate; Total population"];	
+			}
+			else{
+				reducedData[row["Id2"]][row["Year"]]["foreign"] = row["Estimate; Total population"];	
+			}
+
+		
 
 
     	})
 
+    	var finalData = Object.keys(reducedData).map(function(msaId){
+
+    		var valueArray = Object.keys(reducedData[msaId]).map(function(year){
+
+    			var percentImm = reducedData[msaId][year]["foreign"]/reducedData[msaId][year]["native"];
 
 
+    			return {x:+year,y:percentImm};
+    			
+    		})
 
-    	var finalData = data;
+    		 return {key:msaId,values:valueArray,area:false};
+    	})
 
-    	console.log("imm data",reducedData);
-    	return finalData;
+    	var rankedData = scope.rankImm(finalData);
+    	var polishedData = scope.polishImmData(rankedData);
+
+
+    	console.log("final imm data",polishedData);
+    	scope.setState({immData:polishedData,loading:false});
     },
-    getImmData:function(cb){
+    getImmData:function(){
     	var scope = this;
 
 	    d3.csv("../../cache/immPopData/ACS_07_3YR_S0201_with_ann.csv",function(data){  
-	    	return cb(data);
+	    	scope.processImmData(data);
+	    
 	    })
-
-
-
 
     },
     processData:function(data){
@@ -133,12 +144,21 @@ var DataStore = React.createClass({
     },
     immGraph:function(filters){
 		var scope = this;
-    	if(scope.state.immData.length == 0){
-    		scope.getImmData(function(data){
-    			scope.setState({immData:scope.processImmData(data)})    			
-    		})
-    	}
-    	
+		var graphData;
+
+
+
+		if(scope.state.immData.length == 0){
+			scope.getImmData();		
+			setTimeout(function(){ scope.immGraph(filters) }, 3000);	
+		}
+		else{
+			graphData = scope.state.immData;
+			return graphData;    	
+        }
+
+
+ 	
 
     },
 	shareGraph:function(filters){
@@ -179,7 +199,6 @@ var DataStore = React.createClass({
             setTimeout(function(){ scope.newGraph(filters) }, 1500);
         }
         else{
-        	scope.immGraph(filters);
 			if(scope.state.newValues.length == 0){
 				scope.processNewValues();
 			}
@@ -207,13 +226,13 @@ var DataStore = React.createClass({
             setTimeout(function(){ scope.compGraph(filters) }, 1500);
         }
         else{
-			if(scope.state.shareRanks.length == 0){
+			if(scope.state.shareRanks == undefined || scope.state.shareRanks.length == 0){
 				scope.processShareRanks();
 			}
-			if(scope.state.newRanks.length == 0){
+			if(scope.state.newRanks == undefined || scope.state.newRanks.length == 0){
 				scope.processNewRanks();
 			}
-        	if(scope.state.compRanks.length == 0){
+        	if(scope.state.compRanks == undefined || scope.state.compRanks.length == 0){
         		scope.processCompRanks();
         	}
 			if(scope.state.compRanks.length != 0){
@@ -414,6 +433,30 @@ var DataStore = React.createClass({
 
     	}
     },
+	rankImm:function(cities){
+		var scope=this,
+            years = d3.range(2007,2014);
+
+        years.forEach(function(year){
+        	var rank = 1;
+        	//Sort cities according to each year
+        	cities.sort(scope.sortCities(year));
+
+        	//Go through and assign ranks for current year
+        	cities.forEach(function(city){
+
+        		city.values.forEach(function(yearValues){
+        			if(yearValues.x == year){
+        				yearValues.rank = rank;
+        			}
+        		})
+
+        		rank++;
+        	})
+        })			
+
+		return cities; 
+	},
 	rankShare:function(cities){
 		var scope=this,
             years = d3.range(1977,2013);
@@ -548,6 +591,63 @@ var DataStore = React.createClass({
                 
         return cityColor;
 
+    },
+    colorImmGroup:function(){
+        var scope = this;
+
+
+        var colorGroup = d3.scale.linear()
+            .domain(d3.range(1,110,(110/9)))
+            .range(colorbrewer.Spectral[9]);
+        
+
+
+        return colorGroup;
+
+    },
+    colorImmFunction:function(params){
+        var scope = this,
+            cityColor;
+
+        if(params.values){
+            var valueLength = params.values.length;
+            var curRank = params.values[valueLength-1].rank
+            var color = scope.colorImmGroup();
+                       
+            cityColor = color(curRank);            
+        }
+
+                
+        return cityColor;
+
+    },
+    polishImmData:function(data){
+    	var scope = this;
+
+        var newData = [];
+        Object.keys(data).forEach(function(metroArea){
+        	if(data[metroArea].length != 0){
+        		
+        			var city = {
+        				values:null,
+        				name: msaIdToName[data[metroArea].key],
+        				key:data[metroArea].key,
+        				color:scope.colorImmFunction(data[metroArea])
+        			}
+
+
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            x:i.x,
+                            y:i.y,
+                            rank:i.rank
+                        }
+                    })	 
+                newData.push(city);           
+			}
+        });
+        return newData;
     },
     polishData:function(data){
     	var scope = this;
