@@ -4,7 +4,8 @@ var React = require("react"),
 	RankingsGraph = require("../components/graphs/RankingsGraph.react"),
 	Loading = require("../components/layout/Loading.react"),
 	LineGraph = require("../components/graphs/LineGraph.react"),
-	DataStore = require("../components/utils/DataStore.react");
+	DataStore = require("../components/utils/DataStore.react"),
+	MsaToCounty = require("../utils/data/msatocounty.js");
 
 
 var GraphPage = React.createClass({
@@ -130,7 +131,7 @@ var GraphPage = React.createClass({
             marginLeft:'10px'
         }
 
-
+        console.log(MsaToCounty);
 
 	    var store = (<DataStore ref='store' />);
 	    var graph = (<LineGraph data={scope.state.data} graph={scope.state.graph} />)
