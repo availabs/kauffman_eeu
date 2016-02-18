@@ -18,12 +18,14 @@ var LineGraph = React.createClass({
             graph:"composite"
         })
     },
-    componentWillRecieveProps:function(nextProps){
+    componentWillUpdate:function(nextProps,nextState){
         var scope = this;
 
-        if(nextProps.graph == 'composite'){
-            scope.state.plot = "rank"
+
+        if(nextProps.graph == "composite"){
+            nextState.plot = "rank";
         }
+
 
     },
     renderGraph:function(){
@@ -79,6 +81,7 @@ var LineGraph = React.createClass({
 
                 })
 
+                console.log("filtered ryan",filteredData);
                 var voronoi = d3.geom.voronoi()
                     .x(function(d) { return x(d.x); })
                     .y(function(d) { return y(d.rank); })
@@ -155,7 +158,7 @@ var LineGraph = React.createClass({
                 var line = function line(d) {
                   var path = [];
                     var once = 0;
-                    console.log(d);
+
                   x.domain().slice(1).forEach(function(b, i) {
                     var a = x.domain()[i];
 
