@@ -2,7 +2,8 @@ var React = require("react"),
 	d3 = require("d3"),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
     colorbrewer = require('colorbrewer'),
-    msaIdToName = require('../utils/msaIdToName.json');
+    msaIdToName = require('../utils/msaIdToName.json'),
+    CountyPop1990 = require("../../utils/data/countypop1990.js");
 
 var DataStore = React.createClass({
 
@@ -32,6 +33,25 @@ var DataStore = React.createClass({
         d3.json("/allMsa",function(err,data){
             return cb(data);  
         })
+
+        //console.log("1990pop",CountyPop1990);
+
+        // CountyPop1990.forEach(function(county){
+        // 	console.log(county);
+        // })
+
+        d3.csv("../../react/utils/data/countypop2000.csv",function(err,data2000){
+
+
+	        d3.csv("../../react/utils/data/countypop2010.csv",function(err,data2010){
+				console.log("2000pop",data2000);
+	        	console.log("2010pop",data2010);
+	        })
+
+        })
+
+
+
 
     },
     processImmData:function(data){
