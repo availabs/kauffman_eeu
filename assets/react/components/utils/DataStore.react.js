@@ -44,8 +44,25 @@ var DataStore = React.createClass({
 
 
 	        d3.csv("../../react/utils/data/countypop2010.csv",function(err,data2010){
-				console.log("2000pop",data2000);
-	        	console.log("2010pop",data2010);
+
+	        	var agg = [];
+
+	        	CountyPop1990.forEach(function(county,i){
+
+	        		if(!(CountyPop1990[i].fips == data2000[i].fips && data2000[i].fips == data2010[i].fips)){
+	        			console.log(CountyPop1990[i].fips,data2000[i].fips,data2010[i].fips);
+
+	        		}
+
+
+	        	})
+
+
+
+
+	   //      	console.log("1990pop",CountyPop1990);
+				// console.log("2000pop",data2000);
+	   //      	console.log("2010pop",data2010);
 	        })
 
         })
