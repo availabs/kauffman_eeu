@@ -29,23 +29,29 @@ var DataStore = React.createClass({
     getData:function(cb){
         var scope = this;
 
-        d3.json("/allMsa",function(err,msaData){
 
-            d3.json("/countyPop",function(err,popData){
+        // d3.json("/allMsa",function(err,msaData){
+
+        //     d3.json("/countyPop",function(err,popData){
                
-                var data = {};
-                data['fullData'] = msaData;
-                data['msaPop'] = popData;
-                cb(data);
+        //         var data = {};
+        //         data['fullData'] = msaData;
+        //         data['msaPop'] = popData;
+        //         cb(data);
 
-            })
+        //     })
 
 
+        // })
+
+
+        d3.json("/shareImm",function(err,data){
+            console.log(data);
         })
 
 
-
-
+        // console.log(aggImmShare);
+        // console.log(countyPop);
 
 
 

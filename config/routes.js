@@ -28,6 +28,8 @@ module.exports.routes = {
 
   '/allMsa' : 'MsaController.allMsa',
 
-  '/countyPop' : 'MsaController.countyPop'
+  '/countyPop' : 'MsaController.countyPop',
+
+  '/shareImm' : 'MsaController.shareImm'
 
   };

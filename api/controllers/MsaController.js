@@ -3,6 +3,7 @@ var	fs = require('fs'),
 	http = require('http'),
     msaIdToName = require("../../assets/react/components/utils/msaIdToName.json"),
     msatocounty = require("../../assets/react/utils/data/msatocounty.js"),
+	aggImmShare = require('../../assets/react/utils/data/ACS_5_Year_Immigration_Percentage/aggImmShare.json'),    
     countypopagg = require("../../assets/cache/countyPop/countypopagg.json");
 
 module.exports = {
@@ -82,6 +83,87 @@ module.exports = {
         	}
         })
 
+    },
+    shareImm:function(req,res){
+    	var years = [2009,2010,2011,2012,2013,2014];
+
+    	var numImmCounties = {};
+    	var msaCounties = {};
+
+    	var msaImmPop = {}
+        Object.keys(aggImmShare).forEach(function(countyFips){
+
+            if(countyFips > 999){
+            
+                numImmCounties[countyFips] = {};
+                years.forEach(function(year){
+                    var numImm =(aggImmShare[countyFips][year])/100 * countypopagg[countyFips][year]
+                    numImmCounties[countyFips][year] = numImm;
+                })
+
+            }
+
+
+        })
+
+
+	    msatocounty.forEach(function(countyMap){
+
+	        msaImmPop[Object.keys(countyMap)] = {};
+	        
+	        if(!msaCounties[Object.keys(countyMap)]){
+	            msaCounties[Object.keys(countyMap)] = [];    
+	        }
+	        
+	        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
+
+	    })
+
+		Object.keys(msaImmPop).forEach(function(msaId){
+	        var curPop = 0;
+	        var curImmPop = 0;
+	        msaCounties[msaId].forEach(function(county){
+
+	            //console.log(countypopagg[county]);
+
+	            if(countypopagg[county]){
+	                years.forEach(function(year){
+	                    if(!msaImmPop[msaId][year]){
+	                        msaImmPop[msaId][year] = {};
+	                        msaImmPop[msaId][year]['imm']=0;
+							msaImmPop[msaId][year]['tot']=0;
+	                    }
+
+	                    msaImmPop[msaId][year]['imm'] += numImmCounties[county][year];
+	                    msaImmPop[msaId][year]['tot'] += countypopagg[county][year];
+	                })                    
+	            }
+	        })
+	    })
+
+		var msaImmShare = {};
+
+		Object.keys(msaImmPop).forEach(function(msaId){
+			msaImmShare[msaId] = {};
+
+
+			years.forEach(function(year){
+				msaImmShare[msaId][year] = 0;
+				if(msaImmPop[msaId][year] != undefined){
+					msaImmShare[msaId][year] = msaImmPop[msaId][year]['imm'] / msaImmPop[msaId][year]['tot'];
+				}
+				
+			})
+
+
+
+
+		})
+
+
+        res.json(msaImmShare)
+
+       
     }
     
 };
