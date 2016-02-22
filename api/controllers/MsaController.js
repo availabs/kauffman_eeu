@@ -1,7 +1,10 @@
 var	fs = require('fs'),
 	d3 = require('d3'),
 	http = require('http'),
-    msaIdToName = require("../../assets/react/components/utils/msaIdToName.json");
+    msaIdToName = require("../../assets/react/components/utils/msaIdToName.json"),
+    countypop2010 = require("../../assets/cache/countyPop/countypop2010"),
+    countypop2011 = require("../../assets/cache/countyPop/countypop2011"),
+    countypopagg = require("../../assets/cache/countyPop/countypopagg.json");
 
 module.exports = {
     index: function (req, res) {
@@ -58,6 +61,54 @@ module.exports = {
  				})
  			}
 	   	})
+    },
+    countyPop:function(req,res){
+
+    	console.log(countypopagg);
+
+        // d3.csv("../../assets/cache/countyPop/countypop2000.csv",function(err,data2000){
+
+
+	       //  d3.csv("../../assets/cache/countyPop/countypop2010.csv",function(err,data2010){
+
+	       //  	var agg = {};
+
+	       //  	CountyPop1990.forEach(function(county,i){
+	       //  		agg[county.fips] = {};
+
+	       //  		if(!(CountyPop1990[i].fips == data2000[i].fips && data2000[i].fips == data2010[i].fips)){
+	       //  			console.log(CountyPop1990[i].fips,data2000[i].fips,data2010[i].fips);
+	       //  		}
+
+	       //  		if(once){
+	       //  			console.log(county,data2000[i],data2010[i]);
+	       //  			once = 0;
+	       //  		}
+
+	       //  		Object.keys(county).forEach(function(year){
+	       //  			agg[county.fips][year] = county[year];
+	       //  		})
+
+	       //  		Object.keys(data2000[i]).forEach(function(year){
+	       //  			agg[county.fips][year] = data2000[i][year];
+	       //  		})
+
+	       //  		Object.keys(data2010[i]).forEach(function(year){
+	       //  			agg[county.fips][year] = data2010[i][year];
+	       //  		})
+
+	        		
+
+
+	       //  	})
+
+	       //  })
+
+        // })
+
+
+//res.json(agg);
+
     }
     
 };

@@ -26,6 +26,8 @@ module.exports.routes = {
 
   '/getMsa/:msaId' : 'MsaController.getMsa',
 
-  '/allMsa' : 'MsaController.allMsa'
+  '/allMsa' : 'MsaController.allMsa',
+
+  '/countyPop' : 'MsaController.countyPop'
 
   };

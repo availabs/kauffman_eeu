@@ -2,8 +2,7 @@ var React = require("react"),
 	d3 = require("d3"),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
     colorbrewer = require('colorbrewer'),
-    msaIdToName = require('../utils/msaIdToName.json'),
-    CountyPop1990 = require("../../utils/data/countypop1990.js");
+    msaIdToName = require('../utils/msaIdToName.json');
 
 var DataStore = React.createClass({
 
@@ -34,56 +33,11 @@ var DataStore = React.createClass({
             return cb(data);  
         })
 
-        //console.log("1990pop",CountyPop1990);
 
-        // CountyPop1990.forEach(function(county){
-        // 	console.log(county);
-        // })
-	        		var once = 1;
-        d3.csv("../../react/utils/data/countypop2000.csv",function(err,data2000){
+	    d3.json("/countyPop",function(err,data){
+	    	console.log(data);
+	    })
 
-
-	        d3.csv("../../react/utils/data/countypop2010.csv",function(err,data2010){
-
-	        	var agg = {};
-
-	        	CountyPop1990.forEach(function(county,i){
-	        		agg[county.fips] = {};
-
-	        		if(!(CountyPop1990[i].fips == data2000[i].fips && data2000[i].fips == data2010[i].fips)){
-	        			console.log(CountyPop1990[i].fips,data2000[i].fips,data2010[i].fips);
-	        		}
-
-	        		if(once){
-	        			console.log(county,data2000[i],data2010[i]);
-	        			once = 0;
-	        		}
-
-	        		Object.keys(county).forEach(function(year){
-	        			agg[county.fips][year] = county[year];
-	        		})
-
-	        		Object.keys(data2000[i]).forEach(function(year){
-	        			agg[county.fips][year] = data2000[i][year];
-	        		})
-
-	        		Object.keys(data2010[i]).forEach(function(year){
-	        			agg[county.fips][year] = data2010[i][year];
-	        		})
-
-
-	        	})
-
-	        	console.log(agg);
-
-
-
-	   //      	console.log("1990pop",CountyPop1990);
-				// console.log("2000pop",data2000);
-	   //      	console.log("2010pop",data2010);
-	        })
-
-        })
 
 
 

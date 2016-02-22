@@ -139,6 +139,7 @@ var GraphPage = React.createClass({
 		    return (
 		    	<div>
 		    		<div>
+		    		<a id="downloadAnchorElem"></a>
 		    			{graphHeader}
 		    		</div>
 		    			{store}
@@ -155,6 +156,7 @@ var GraphPage = React.createClass({
 		    return (
 		    	<div>
 		    		<div>
+		    		<a id="downloadAnchorElem"></a>
 		    			{graphHeader}
 		    		</div>
 		    			{store}
