@@ -23,36 +23,32 @@ var DataStore = React.createClass({
         var scope = this;
 
         scope.getData(function(data){
-            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],loading:false});
+            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),loading:false});
         })
     },
     getData:function(cb){
         var scope = this;
 
 
-        // d3.json("/allMsa",function(err,msaData){
+        d3.json("/allMsa",function(err,msaData){
 
-        //     d3.json("/countyPop",function(err,popData){
+            d3.json("/countyPop",function(err,popData){
                
-        //         var data = {};
-        //         data['fullData'] = msaData;
-        //         data['msaPop'] = popData;
-        //         cb(data);
+                d3.json("/shareImm",function(err,immData){
+                    var data = {};
+                    data['fullData'] = msaData;
+                    data['msaPop'] = popData;
+                    data['immData'] = immData;
+                    cb(data);
 
-        //     })
+                })
 
 
-        // })
+
+            })
 
 
-        d3.json("/shareImm",function(err,data){
-            console.log(data);
         })
-
-
-        // console.log(aggImmShare);
-        // console.log(countyPop);
-
 
 
     },
@@ -61,59 +57,29 @@ var DataStore = React.createClass({
 
     	var reducedData = {}
 
-    	data.forEach(function(row){
 
+    	var finalData = Object.keys(data).map(function(msaId){
 
-			if(!reducedData[row["Id2"]]){
-				reducedData[row["Id2"]] = {};
-			}
+    		var valueArray = Object.keys(data[msaId]).map(function(year){
+                if(data[msaId][year] != 0){
+                    return {x:+year,y:+data[msaId][year]};                    
+                }
+                else{
+                return {x:+year,y:.0001};   
+                }
 
-			if(!reducedData[row["Id2"]][row["Year"]]){
-				reducedData[row["Id2"]][row["Year"]] = {};
-			}
-
-
-			if(row["Population Group"] == "Native"){
-				reducedData[row["Id2"]][row["Year"]]["native"] = row["Estimate; Total population"];	
-			}
-			else{
-				reducedData[row["Id2"]][row["Year"]]["foreign"] = row["Estimate; Total population"];	
-			}
-
-		
-
-
-    	})
-
-    	var finalData = Object.keys(reducedData).map(function(msaId){
-
-    		var valueArray = Object.keys(reducedData[msaId]).map(function(year){
-
-    			var percentImm = reducedData[msaId][year]["foreign"]/reducedData[msaId][year]["native"];
-
-
-    			return {x:+year,y:percentImm};
     			
     		})
 
     		 return {key:msaId,values:valueArray,area:false};
     	})
 
+
     	var rankedData = scope.rankImm(finalData);
+
     	var polishedData = scope.polishImmData(rankedData);
-
-
-    	console.log("final imm data",polishedData);
-    	scope.setState({immData:polishedData,loading:false});
-    },
-    getImmData:function(){
-    	var scope = this;
-
-	    d3.csv("../../cache/immPopData/ACS_07_3YR_S0201_with_ann.csv",function(data){  
-	    	scope.processImmData(data);
-	    
-	    })
-
+        console.log(polishedData);
+    	return polishedData;
     },
     processData:function(data){
     	var scope = this;
@@ -170,14 +136,10 @@ var DataStore = React.createClass({
 
 
 
-		if(scope.state.immData.length == 0){
-			scope.getImmData();		
-			setTimeout(function(){ scope.immGraph(filters) }, 3000);	
-		}
-		else{
-			graphData = scope.state.immData;
-			return graphData;    	
-        }
+
+		graphData = scope.state.immData;
+		return graphData;    	
+        
 
 
  	
@@ -456,7 +418,7 @@ var DataStore = React.createClass({
     },
 	rankImm:function(cities){
 		var scope=this,
-            years = d3.range(2007,2014);
+            years = d3.range(2009,2015);
 
         years.forEach(function(year){
         	var rank = 1;
@@ -618,7 +580,7 @@ var DataStore = React.createClass({
 
 
         var colorGroup = d3.scale.linear()
-            .domain(d3.range(1,110,(110/9)))
+            .domain(d3.range(1,366,(366/9)))
             .range(colorbrewer.Spectral[9]);
         
 

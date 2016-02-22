@@ -48,11 +48,6 @@ var LineGraph = React.createClass({
 
             console.log(data);
 
-            data.forEach(function(line){
-                if(line.name == "Boston-Cambridge-Newton, MA-NH"){
-                    console.log(line);
-                }
-            })
 
 
             var filteredData = [];
