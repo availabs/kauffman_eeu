@@ -1,6 +1,5 @@
 var React = require("react"),
 	d3 = require("d3"),
-    metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
     colorbrewer = require('colorbrewer'),
     msaIdToName = require('../utils/msaIdToName.json');
 
@@ -13,6 +12,7 @@ var DataStore = React.createClass({
 			immData:[],
 			shareValues:[],
 			newValues:[],
+            msaPop:{},
 			shareRanks:[],
 			newRanks:[],
 			compRanks:[]			
@@ -23,20 +23,28 @@ var DataStore = React.createClass({
         var scope = this;
 
         scope.getData(function(data){
-            scope.setState({fullData:scope.processData(data),loading:false});
+            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],loading:false});
         })
     },
     getData:function(cb){
         var scope = this;
 
-        d3.json("/allMsa",function(err,data){
-            return cb(data);  
+        d3.json("/allMsa",function(err,msaData){
+
+            d3.json("/countyPop",function(err,popData){
+               
+                var data = {};
+                data['fullData'] = msaData;
+                data['msaPop'] = popData;
+                cb(data);
+
+            })
+
+
         })
 
 
-	    d3.json("/countyPop",function(err,data){
-	    	console.log(data);
-	    })
+
 
 
 
@@ -133,7 +141,7 @@ var DataStore = React.createClass({
                     }
                     shareData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
 
-                    if(rowData["year2"]>= 2000 && rowData["year2"]<= 2009){
+                    if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
                         if(!newFirmData[metroAreaId][rowData["year2"]]){
                             newFirmData[metroAreaId][rowData["year2"]] = {};
                         }
@@ -329,9 +337,8 @@ var DataStore = React.createClass({
                 })
                 //Instead of share, want newFirmSum/(pop/1000)
 
-                if(metroPop20002009[msaId] && metroPop20002009[msaId][year]){
-                    pop = metroPop20002009[msaId][year].replace(/,/g , "");
-                    pop = +pop;
+                if(scope.state.msaPop[msaId] && scope.state.msaPop[msaId][year]){
+                    pop = scope.state.msaPop[msaId][year];
                     pop1000 = (pop/1000);                   
                
                 }
@@ -491,7 +498,7 @@ var DataStore = React.createClass({
 	},
 	rankNewFirm:function(cities){
 		var scope=this,
-            years = d3.range(2000,2010);
+            years = d3.range(1990,2010);
 
 
         years.forEach(function(year){
@@ -517,7 +524,7 @@ var DataStore = React.createClass({
 	},
 	rankComposite:function(){
 		var scope = this,
-			years = d3.range(2000,2010);
+			years = d3.range(1990,2010);
 
 		var newFirms = scope.state.newRanks,
 			share = scope.state.shareRanks;
@@ -546,7 +553,7 @@ var DataStore = React.createClass({
 
 		//console.log(compositeCityRanks);
 
-		var years = d3.range(2000,2010);
+		var years = d3.range(1990,2010);
 
 		//Rank them
         years.forEach(function(year){

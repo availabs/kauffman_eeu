@@ -46,13 +46,18 @@ var LineGraph = React.createClass({
             d3.selectAll("svg").remove();
             var data = scope.props.data;
 
-            console.log("render graph",data);
+            console.log(data);
+
+            data.forEach(function(line){
+                if(line.name == "Boston-Cambridge-Newton, MA-NH"){
+                    console.log(line);
+                }
+            })
 
 
             var filteredData = [];
 
 
-            console.log(data);
 
             var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
@@ -81,7 +86,7 @@ var LineGraph = React.createClass({
 
                 })
 
-                console.log("filtered ryan",filteredData);
+
                 var voronoi = d3.geom.voronoi()
                     .x(function(d) { return x(d.x); })
                     .y(function(d) { return y(d.rank); })
@@ -100,7 +105,7 @@ var LineGraph = React.createClass({
 
             }
             else{
-                console.log("filter extent",scope.state.extent);
+
                 filteredData = data.filter(function(city){
                     var withinBounds;
 
@@ -204,7 +209,7 @@ var LineGraph = React.createClass({
                     .x(function(d) { return x(d.x); })
                     .y(function(d) { return y(d.y); });
 
-                console.log(filteredData.length)
+
                 heightVal = 200             
             }
 
@@ -355,7 +360,7 @@ var LineGraph = React.createClass({
                         .style("min-width",'150px')
                         .style("height",'60px');
                 
-                console.log(d3.select("#hoverRow")[0][0]);
+
 
 
 
@@ -473,10 +478,10 @@ brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
                 scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})                      
                 }
                 else{
-                    console.log("sdsdsad",s)
+
 brush.extent([s[1],s[0]])(d3.select(this));
                 s = brush.extent();
-                console.log("sdsd",s)
+
                 scope.setState({extent:[s[1],s[0]]})                            
                 }              
 
@@ -539,7 +544,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
     toggleRankValue:function(e){
         console.log("toggle rank/val");
         var scope = this;
-        console.log(scope.props.data);
+
 
         var valButton = d3.select('#valueButton');
         var rankButton = d3.select('#rankButton')
