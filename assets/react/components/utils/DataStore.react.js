@@ -70,12 +70,27 @@ var DataStore = React.createClass({
             
             msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
 
+        })
 
+        Object.keys(msaPop).forEach(function(msaId){
+            var curPop = 0;
+            msaCounties[msaId].forEach(function(county){
 
+                //console.log(countypopagg[county]);
+
+                if(countypopagg[county]){
+                    years.forEach(function(year){
+                        if(!msaPop[msaId][year]){
+                            msaPop[msaId][year] = 0;
+                        }
+
+                        msaPop[msaId][year] += countypopagg[county][year];
+                    })                    
+                }
+            })
         })
 
         console.log(msaPop);
-        console.log(msaCounties);
 
 
     },
