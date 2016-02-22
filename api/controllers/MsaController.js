@@ -101,40 +101,87 @@ function aggregateMsaPop(cb){
     var msaCounties = {};
 
 
-    msatocounty.forEach(function(countyMap){
+    fileCache.checkCache({type:"aggregate",id:"msaCounties"},function(data){
+    	if(data){
+    		msaCounties = data;
 
-        msaPop[Object.keys(countyMap)] = {};
-        
-        if(!msaCounties[Object.keys(countyMap)]){
-            msaCounties[Object.keys(countyMap)] = [];    
-        }
-        
-        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
+		    msatocounty.forEach(function(countyMap){
 
+		        msaPop[Object.keys(countyMap)] = {};
+
+		    })
+
+		    Object.keys(msaPop).forEach(function(msaId){
+		        var curPop = 0;
+		        msaCounties[msaId].forEach(function(county){
+
+		            //console.log(countypopagg[county]);
+
+		            if(countypopagg[county]){
+		                years.forEach(function(year){
+		                    if(!msaPop[msaId][year]){
+		                        msaPop[msaId][year] = 0;
+		                    }
+
+		                    msaPop[msaId][year] += countypopagg[county][year];
+		                })                    
+		            }
+		        })
+		    })
+
+
+			fileCache.addData({type:"aggregate",id:"msaPop"},msaPop);
+		    cb(msaPop);
+
+
+    	}
+    	else{
+    		//If not there, call function that makes/gets it
+		    msatocounty.forEach(function(countyMap){
+
+		        msaPop[Object.keys(countyMap)] = {};
+		        
+		        if(!msaCounties[Object.keys(countyMap)]){
+		            msaCounties[Object.keys(countyMap)] = [];    
+		        }
+		        
+		        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
+
+		    })
+
+   			fileCache.addData({type:"aggregate",id:"msaCounties"},msaCounties);
+
+    		Object.keys(msaPop).forEach(function(msaId){
+		        var curPop = 0;
+		        msaCounties[msaId].forEach(function(county){
+
+		            //console.log(countypopagg[county]);
+
+		            if(countypopagg[county]){
+		                years.forEach(function(year){
+		                    if(!msaPop[msaId][year]){
+		                        msaPop[msaId][year] = 0;
+		                    }
+
+		                    msaPop[msaId][year] += countypopagg[county][year];
+		                })                    
+		            }
+		        })
+		    })
+
+
+			fileCache.addData({type:"aggregate",id:"msaPop"},msaPop);
+
+		    cb(msaPop);
+
+    	}
     })
 
-    Object.keys(msaPop).forEach(function(msaId){
-        var curPop = 0;
-        msaCounties[msaId].forEach(function(county){
-
-            //console.log(countypopagg[county]);
-
-            if(countypopagg[county]){
-                years.forEach(function(year){
-                    if(!msaPop[msaId][year]){
-                        msaPop[msaId][year] = 0;
-                    }
-
-                    msaPop[msaId][year] += countypopagg[county][year];
-                })                    
-            }
-        })
-    })
 
 
-	fileCache.addData({type:"aggregate",id:"msaPop"},msaPop);
+ 
 
-    cb(msaPop);
+
 
 }
 
