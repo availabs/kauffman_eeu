@@ -2,6 +2,7 @@ var	fs = require('fs'),
 	d3 = require('d3'),
 	http = require('http'),
     msaIdToName = require("../../assets/react/components/utils/msaIdToName.json"),
+    msatocounty = require("../../assets/react/utils/data/msatocounty.js"),
     countypopagg = require("../../assets/cache/countyPop/countypopagg.json");
 
 module.exports = {
@@ -62,54 +63,80 @@ module.exports = {
     },
     countyPop:function(req,res){
 
-    	//console.log(countypopagg);
-
-        // d3.csv("../../assets/cache/countyPop/countypop2000.csv",function(err,data2000){
 
 
-	       //  d3.csv("../../assets/cache/countyPop/countypop2010.csv",function(err,data2010){
-
-	       //  	var agg = {};
-
-	       //  	CountyPop1990.forEach(function(county,i){
-	       //  		agg[county.fips] = {};
-
-	       //  		if(!(CountyPop1990[i].fips == data2000[i].fips && data2000[i].fips == data2010[i].fips)){
-	       //  			console.log(CountyPop1990[i].fips,data2000[i].fips,data2010[i].fips);
-	       //  		}
-
-	       //  		if(once){
-	       //  			console.log(county,data2000[i],data2010[i]);
-	       //  			once = 0;
-	       //  		}
-
-	       //  		Object.keys(county).forEach(function(year){
-	       //  			agg[county.fips][year] = county[year];
-	       //  		})
-
-	       //  		Object.keys(data2000[i]).forEach(function(year){
-	       //  			agg[county.fips][year] = data2000[i][year];
-	       //  		})
-
-	       //  		Object.keys(data2010[i]).forEach(function(year){
-	       //  			agg[county.fips][year] = data2010[i][year];
-	       //  		})
-
-	        		
-
-
-	       //  	})
-
-	       //  })
-
-        // })
-
-
-//res.json(agg);
+        fileCache.checkCache({type:"aggregate",id:"msaPop"},function(data){
+        	if(data){
+        		console.log('cache sucess');
+        		console.time('send cache');
+        		res.json(data);
+        		console.timeEnd('send cache');
+        	}
+        	else{
+        		//If not there, call function that makes/gets it
+        		aggregateMsaPop(function(data){
+        			console.time('send data');
+        			res.json(data);
+        			console.timeEnd('send data');
+        		})
+        	}
+        })
 
     }
     
 };
+
+
+function aggregateMsaPop(cb){
+
+    var years = [];
+    
+    for(var i = 1990;i<2015;i++){
+    	years.push(i);
+    }
+
+    //console.log(msatocounty);
+
+    var msaPop = {};
+    var msaCounties = {};
+
+
+    msatocounty.forEach(function(countyMap){
+
+        msaPop[Object.keys(countyMap)] = {};
+        
+        if(!msaCounties[Object.keys(countyMap)]){
+            msaCounties[Object.keys(countyMap)] = [];    
+        }
+        
+        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
+
+    })
+
+    Object.keys(msaPop).forEach(function(msaId){
+        var curPop = 0;
+        msaCounties[msaId].forEach(function(county){
+
+            //console.log(countypopagg[county]);
+
+            if(countypopagg[county]){
+                years.forEach(function(year){
+                    if(!msaPop[msaId][year]){
+                        msaPop[msaId][year] = 0;
+                    }
+
+                    msaPop[msaId][year] += countypopagg[county][year];
+                })                    
+            }
+        })
+    })
+
+
+	fileCache.addData({type:"aggregate",id:"msaPop"},msaPop);
+
+    cb(msaPop);
+
+}
 
 function msaData(msaId,cb){
 	if(!msaId){

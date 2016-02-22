@@ -2,9 +2,7 @@ var React = require("react"),
 	d3 = require("d3"),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
     colorbrewer = require('colorbrewer'),
-    msaIdToName = require('../utils/msaIdToName.json'),
-    msatocounty = require("../../utils/data/msatocounty.js"),
-    countypopagg = require("../../../cache/countyPop/countypopagg.json");
+    msaIdToName = require('../utils/msaIdToName.json');
 
 var DataStore = React.createClass({
 
@@ -29,68 +27,18 @@ var DataStore = React.createClass({
         })
     },
     getData:function(cb){
-        var scope = this,
-            years = d3.range(1990,2015);
+        var scope = this;
 
         d3.json("/allMsa",function(err,data){
             return cb(data);  
         })
 
-        console.log(years);
 
-	    // d3.json("/countyPop",function(err,data){
-	    // 	console.log(data);
-	    // })
-
-        //console.log(msatocounty);
-
-        var msaPop = {};
-        var msaCounties = {};
-
-        // Object.keys(countypopagg).forEach(function(county){
-        //     //console.log(county);
-        //     msaPop[county] = {};
-
-        //     years.forEach(function(year){
-        //         msaPop[county][year] = 0;
-        //     })
-
-        // })
+	    d3.json("/countyPop",function(err,data){
+	    	console.log(data);
+	    })
 
 
-
-
-        msatocounty.forEach(function(countyMap){
-
-            msaPop[Object.keys(countyMap)] = {};
-            
-            if(!msaCounties[Object.keys(countyMap)]){
-                msaCounties[Object.keys(countyMap)] = [];    
-            }
-            
-            msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
-
-        })
-
-        Object.keys(msaPop).forEach(function(msaId){
-            var curPop = 0;
-            msaCounties[msaId].forEach(function(county){
-
-                //console.log(countypopagg[county]);
-
-                if(countypopagg[county]){
-                    years.forEach(function(year){
-                        if(!msaPop[msaId][year]){
-                            msaPop[msaId][year] = 0;
-                        }
-
-                        msaPop[msaId][year] += countypopagg[county][year];
-                    })                    
-                }
-            })
-        })
-
-        console.log(msaPop);
 
 
     },
