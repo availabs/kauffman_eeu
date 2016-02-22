@@ -2,8 +2,6 @@ var	fs = require('fs'),
 	d3 = require('d3'),
 	http = require('http'),
     msaIdToName = require("../../assets/react/components/utils/msaIdToName.json"),
-    countypop2010 = require("../../assets/cache/countyPop/countypop2010"),
-    countypop2011 = require("../../assets/cache/countyPop/countypop2011"),
     countypopagg = require("../../assets/cache/countyPop/countypopagg.json");
 
 module.exports = {
@@ -64,7 +62,7 @@ module.exports = {
     },
     countyPop:function(req,res){
 
-    	console.log(countypopagg);
+    	//console.log(countypopagg);
 
         // d3.csv("../../assets/cache/countyPop/countypop2000.csv",function(err,data2000){
 
