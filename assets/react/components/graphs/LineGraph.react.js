@@ -250,7 +250,7 @@ var LineGraph = React.createClass({
                         .append("path")
                         .attr("d",function(){b.border = this; return line(b.values)})
                         .style("stroke","black")
-                        .style("stroke-width",((height)/(heightVal))-1)
+                        .style("stroke-width",((height)/(heightVal))-1.5)
                         .style("fill","none")
                         .style("opacity",".4");     
 
