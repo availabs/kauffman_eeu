@@ -56,22 +56,24 @@ var DataStore = React.createClass({
     	var scope = this;
 
     	var reducedData = {}
-
-
-    	var finalData = Object.keys(data).map(function(msaId){
-
-    		var valueArray = Object.keys(data[msaId]).map(function(year){
+        
+        var finalData = [];
+    	Object.keys(data).forEach(function(msaId){
+            var valueArray = [];
+    		Object.keys(data[msaId]).forEach(function(year){
                 if(data[msaId][year] != 0){
-                    return {x:+year,y:+data[msaId][year]};                    
+                    valueArray.push( {x:+year,y:+data[msaId][year]});                    
                 }
-                else{
-                return {x:+year,y:.0001};   
-                }
+
 
     			
     		})
 
-    		 return {key:msaId,values:valueArray,area:false};
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
+
+
     	})
 
 
@@ -591,7 +593,7 @@ var DataStore = React.createClass({
     colorImmFunction:function(params){
         var scope = this,
             cityColor;
-
+        console.log(params)
         if(params.values){
             var valueLength = params.values.length;
             var curRank = params.values[valueLength-1].rank

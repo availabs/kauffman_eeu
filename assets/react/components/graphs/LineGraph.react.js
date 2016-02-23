@@ -239,7 +239,6 @@ var LineGraph = React.createClass({
             })
    
 
-
             //For each city
             //Draw a path from (x1,y1) to (x2,y2)
             //Where x goes from year[0] to year[end]
@@ -284,6 +283,8 @@ var LineGraph = React.createClass({
                   .style("stroke","#000000")
                   .style("opacity","0")
 
+
+
             voronoiGroup.selectAll("path")
                     .data(voronoi(d3.nest()
                         .key(function(d) { return x(d.x) + "," + y(d.y); })
@@ -291,8 +292,8 @@ var LineGraph = React.createClass({
                         .entries(d3.merge(filteredData.map(function(d) { return d.values; })) )
                         .map(function(d) { return d.values; })))
                 .enter().append("path")
-                    .attr("d", function(d) { return "M" + d.join("L") + "Z"; })
-                    .datum(function(d) { return d.point; })
+                    .attr("d", function(d) { if(d!=undefined){return "M" + d.join("L") + "Z"}; })
+                    .datum(function(d) { if(d!=undefined){return d.point}; })
                     .on("mouseover", mouseover)
                     .on("mouseout", mouseout)
                     .on("click",click);
