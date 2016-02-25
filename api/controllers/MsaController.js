@@ -89,10 +89,11 @@ module.exports = {
     	
     	var migration1990data = migration1990();
     	var migration2000data = migration2000();
+    	var migration2010data = migration2010();
 
 
 
-    	res.json(migration2000data);
+    	res.json(migration2010data);
 
 
     },
@@ -234,63 +235,87 @@ function migration1990(){
 }
 
 
-	function migration2000(){
+function migration2000(){
 
-		var fileContents = fs.readFileSync("assets/react/utils/data/ACS_Migration/migration2000_2009.csv");
+	var fileContents = fs.readFileSync("assets/react/utils/data/ACS_Migration/migration2000_2009.csv");
 
-    	var lines = fileContents.toString().split('\n');
+	var lines = fileContents.toString().split('\n');
 
-    	var header = [];
+	var header = [];
 
-    	header =(lines[0].toString().split(','));
+	header =(lines[0].toString().split(','));
 
 
-    	smallHeader = [];
+	var rows = [];
 
-    	header.forEach(function(colName){
-    		if(colName == "STATE" || colName == "COUNTY" || colName == "NETMIG2000" ||
-    			colName == "NETMIG2001" || colName == "NETMIG2002" || colName == "NETMIG2003" ||
-    			colName == "NETMIG2004" || colName == "NETMIG2005" || colName == "NETMIG2006" ||
-    			colName == "NETMIG2007" || colName == "NETMIG2008" || colName == "NETMIG2009"){
-    			smallHeader.push(colName);
-    		}
-    	})
+
+	var jsonData = {};
 
 
 
-
-    	var rows = [];
-
-
-    	var jsonData = {};
-
-
-
-    	for(i=1;i<lines.length;i++){
-    		rows.push(lines[i].toString().split(','));
-    	}
-
-
-    	rows.forEach(function(countyRow){
-    			var key = countyRow[3] + countyRow[4]
-    			jsonData[key] = {};
-
-     			header.forEach(function(colName,i){
-					if(colName == "STATE" || colName == "COUNTY" || colName == "NETMIG2000" ||
-					    			colName == "NETMIG2001" || colName == "NETMIG2002" || colName == "NETMIG2003" ||
-					    			colName == "NETMIG2004" || colName == "NETMIG2005" || colName == "NETMIG2006" ||
-					    			colName == "NETMIG2007" || colName == "NETMIG2008" || colName == "NETMIG2009"){
-					    jsonData[key][colName] = +countyRow[i];
-					}
-    			})
-    	})	
-
-
-    	return jsonData;
-
-
-
+	for(i=1;i<lines.length;i++){
+		rows.push(lines[i].toString().split(','));
 	}
+
+
+	rows.forEach(function(countyRow){
+		var key = countyRow[3] + countyRow[4]
+		jsonData[key] = {};
+
+			header.forEach(function(colName,i){
+			if(colName == "STATE" || colName == "COUNTY" || colName == "NETMIG2000" ||
+			    			colName == "NETMIG2001" || colName == "NETMIG2002" || colName == "NETMIG2003" ||
+			    			colName == "NETMIG2004" || colName == "NETMIG2005" || colName == "NETMIG2006" ||
+			    			colName == "NETMIG2007" || colName == "NETMIG2008" || colName == "NETMIG2009"){
+			    jsonData[key][colName] = +countyRow[i];
+			}
+		})
+	})	
+
+
+	return jsonData;
+}
+
+function migration2010(){
+
+	var fileContents = fs.readFileSync("assets/react/utils/data/ACS_Migration/migration2010_2014.csv");
+
+	var lines = fileContents.toString().split('\n');
+
+	var header = [];
+
+	header =(lines[0].toString().split(','));
+
+
+	var rows = [];
+
+
+	var jsonData = {};
+
+
+
+	for(i=1;i<lines.length;i++){
+		rows.push(lines[i].toString().split(','));
+	}
+
+
+	rows.forEach(function(countyRow){
+		var key = countyRow[3] + countyRow[4]
+		jsonData[key] = {};
+
+			header.forEach(function(colName,i){
+				if(colName == "STATE" || colName == "COUNTY" || colName == "NETMIG2010" ||
+				colName == "NETMIG2011" || colName == "NETMIG2012" || colName == "NETMIG2013" ||
+				colName == "NETMIG2014"){
+				jsonData[key][colName] = +countyRow[i];
+			}
+
+		})
+ 	})
+
+
+	return jsonData;
+}
 
 
 function aggregateMsaPop(cb){
