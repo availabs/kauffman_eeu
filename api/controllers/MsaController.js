@@ -86,59 +86,13 @@ module.exports = {
     },
     migration:function(req,res){
 
-    	var fileContents = fs.readFileSync("assets/react/utils/data/ACS_Migration/migration19902000.csv");
-
-    	var lines = fileContents.toString().split('\n');
-
-    	var header = [];
-
-    	header =(lines[0].toString().split('\t'));
-
-    	header.shift();
-
-    	var rows = [];
-
-
-    	var jsonData = {};
+    	
+    	var migration1990data = migration1990();
+    	var migration2000data = migration2000();
 
 
 
-    	for(i=1;i<lines.length;i++){
-    		rows.push(lines[i].toString().split('\t'));
-    	}
-
-
-    	rows.forEach(function(countyRow){
-
-    		if(!jsonData[countyRow[1]]){
-    			jsonData[countyRow[1]] = {};
-
-    			header.forEach(function(colName,i){
-    				jsonData[countyRow[1]][colName] = +countyRow[i];
-    			})
-    		}
-    		else{
-
-    			header.forEach(function(colName,i){
-    				if(colName != 'fips'){
-  						jsonData[countyRow[1]][colName] += +countyRow[i];  					
-    				}
-    				
-    			})				    			
-
-
-    		}
-
-
-
-
-
-    	})
-
-
-
-
-    	res.json(jsonData);
+    	res.json(migration2000data);
 
 
     },
@@ -227,6 +181,116 @@ module.exports = {
     }
     
 };
+
+
+function migration1990(){
+
+		var fileContents = fs.readFileSync("assets/react/utils/data/ACS_Migration/migration19902000.csv");
+
+    	var lines = fileContents.toString().split('\n');
+
+    	var header = [];
+
+    	header =(lines[0].toString().split('\t'));
+
+    	header.shift();
+
+    	var rows = [];
+
+
+    	var jsonData = {};
+
+
+
+    	for(i=1;i<lines.length;i++){
+    		rows.push(lines[i].toString().split('\t'));
+    	}
+
+
+    	rows.forEach(function(countyRow){
+
+    		if(!jsonData[countyRow[1]]){
+    			jsonData[countyRow[1]] = {};
+
+    			header.forEach(function(colName,i){
+    				jsonData[countyRow[1]][colName] = +countyRow[i];
+    			})
+    		}
+    		else{
+
+    			header.forEach(function(colName,i){
+    				if(colName != 'fips'){
+  						jsonData[countyRow[1]][colName] += +countyRow[i];  					
+    				}
+    				
+    			})				    			
+
+
+    		}
+    	})	
+
+
+    	return jsonData;
+}
+
+
+	function migration2000(){
+
+		var fileContents = fs.readFileSync("assets/react/utils/data/ACS_Migration/migration2000_2009.csv");
+
+    	var lines = fileContents.toString().split('\n');
+
+    	var header = [];
+
+    	header =(lines[0].toString().split(','));
+
+
+    	smallHeader = [];
+
+    	header.forEach(function(colName){
+    		if(colName == "STATE" || colName == "COUNTY" || colName == "NETMIG2000" ||
+    			colName == "NETMIG2001" || colName == "NETMIG2002" || colName == "NETMIG2003" ||
+    			colName == "NETMIG2004" || colName == "NETMIG2005" || colName == "NETMIG2006" ||
+    			colName == "NETMIG2007" || colName == "NETMIG2008" || colName == "NETMIG2009"){
+    			smallHeader.push(colName);
+    		}
+    	})
+
+
+
+
+    	var rows = [];
+
+
+    	var jsonData = {};
+
+
+
+    	for(i=1;i<lines.length;i++){
+    		rows.push(lines[i].toString().split(','));
+    	}
+
+
+    	rows.forEach(function(countyRow){
+    			var key = countyRow[3] + countyRow[4]
+    			jsonData[key] = {};
+
+     			header.forEach(function(colName,i){
+					if(colName == "STATE" || colName == "COUNTY" || colName == "NETMIG2000" ||
+					    			colName == "NETMIG2001" || colName == "NETMIG2002" || colName == "NETMIG2003" ||
+					    			colName == "NETMIG2004" || colName == "NETMIG2005" || colName == "NETMIG2006" ||
+					    			colName == "NETMIG2007" || colName == "NETMIG2008" || colName == "NETMIG2009"){
+					    jsonData[key][colName] = +countyRow[i];
+					}
+    			})
+    	})	
+
+
+    	return jsonData;
+
+
+
+	}
 
 
 function aggregateMsaPop(cb){
