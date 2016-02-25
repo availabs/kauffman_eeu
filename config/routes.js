@@ -30,6 +30,8 @@ module.exports.routes = {
 
   '/countyPop' : 'MsaController.countyPop',
 
-  '/shareImm' : 'MsaController.shareImm'
+  '/shareImm' : 'MsaController.shareImm',
+
+  '/migration' : 'MsaController.migration'
 
   };

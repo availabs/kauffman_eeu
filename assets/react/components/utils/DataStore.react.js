@@ -30,25 +30,29 @@ var DataStore = React.createClass({
         var scope = this;
 
 
-        d3.json("/allMsa",function(err,msaData){
+        // d3.json("/allMsa",function(err,msaData){
 
-            d3.json("/countyPop",function(err,popData){
+        //     d3.json("/countyPop",function(err,popData){
                
-                d3.json("/shareImm",function(err,immData){
-                    var data = {};
-                    data['fullData'] = msaData;
-                    data['msaPop'] = popData;
-                    data['immData'] = immData;
-                    cb(data);
+        //         d3.json("/shareImm",function(err,immData){
+        //             var data = {};
+        //             data['fullData'] = msaData;
+        //             data['msaPop'] = popData;
+        //             data['immData'] = immData;
+        //             cb(data);
 
-                })
-
-
-
-            })
+        //         })
 
 
-        })
+
+        //     })
+
+
+        // })
+
+    d3.json("/migration",function(err,migrationData){
+        console.log(migrationData);
+    })
 
 
     },

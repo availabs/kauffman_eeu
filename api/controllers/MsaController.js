@@ -6,6 +6,9 @@ var	fs = require('fs'),
 	aggImmShare = require('../../assets/react/utils/data/ACS_5_Year_Immigration_Percentage/aggImmShare.json'),    
     countypopagg = require("../../assets/cache/countyPop/countypopagg.json");
 
+
+
+
 module.exports = {
     index: function (req, res) {
         res.view({ devEnv : (process.env.NODE_ENV === 'development') });
@@ -63,9 +66,6 @@ module.exports = {
 	   	})
     },
     countyPop:function(req,res){
-
-
-
         fileCache.checkCache({type:"aggregate",id:"msaPop"},function(data){
         	if(data){
         		console.log('cache sucess');
@@ -84,7 +84,67 @@ module.exports = {
         })
 
     },
+    migration:function(req,res){
+
+    	var fileContents = fs.readFileSync("assets/react/utils/data/ACS_Migration/migration19902000.csv");
+
+    	var lines = fileContents.toString().split('\n');
+
+    	var header = [];
+
+    	header =(lines[0].toString().split('\t'));
+
+    	header.shift();
+
+    	var rows = [];
+
+
+    	var jsonData = {};
+
+
+
+    	for(i=1;i<lines.length;i++){
+    		rows.push(lines[i].toString().split('\t'));
+    	}
+
+
+    	rows.forEach(function(countyRow){
+
+    		if(!jsonData[countyRow[1]]){
+    			jsonData[countyRow[1]] = {};
+
+    			header.forEach(function(colName,i){
+    				jsonData[countyRow[1]][colName] = +countyRow[i];
+    			})
+    		}
+    		else{
+
+    			header.forEach(function(colName,i){
+    				if(colName != 'fips'){
+  						jsonData[countyRow[1]][colName] += +countyRow[i];  					
+    				}
+    				
+    			})				    			
+
+
+    		}
+
+
+
+
+
+    	})
+
+
+
+
+    	res.json(jsonData);
+
+
+    },
     shareImm:function(req,res){
+    	//NEEDS TO BE BROKE DOWN INTO SEPARATE FUNCTIONS
+    	//FOR CACHING
     	var years = [2009,2010,2011,2012,2013,2014];
 
     	var numImmCounties = {};
@@ -259,13 +319,12 @@ function aggregateMsaPop(cb){
     	}
     })
 
-
-
- 
-
-
-
 }
+
+
+
+
+
 
 function msaData(msaId,cb){
 	if(!msaId){
