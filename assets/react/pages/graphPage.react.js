@@ -35,9 +35,9 @@ var GraphPage = React.createClass({
         var data;
 
 
-        if(graph == 'composite'){
+        if(graph == 'densComposite'){
 
-        	data = scope.refs.store.compGraph(filters);
+        	data = scope.refs.store.densCompGraph(filters);
         }
         if(graph == 'share'){
 
@@ -105,8 +105,8 @@ var GraphPage = React.createClass({
 				.attr('class',"active");
 		}				
 		else{
-			scope.setState({graph:"composite",loading:true});
-			d3.select('#composite')
+			scope.setState({graph:"densComposite",loading:true});
+			d3.select('#densComposite')
 				.attr('class',"active");
 		}
 	},
@@ -130,14 +130,25 @@ var GraphPage = React.createClass({
 
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
-	    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
-	    		<li id="newList"  onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
-	    		<li id="immigrant" className="active" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>	
-	    		<li id="migration"  onClick={scope.toggleGraph}><a id="migration" >Net Migration</a></li>	
-	    		<li id="composite"  onClick={scope.toggleGraph}><a id="composite" >Composite Rank</a></li>
+	    		<li className="dropdown">
+	    			<a className="dropdown-toggle" data-toggle="dropdown">Density Metrics<span className="caret"></span></a>
+	    			<ul className="dropdown-menu">
+			    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
+			    		<li id="newList"  onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
+	    				<li id="densComposite"  onClick={scope.toggleGraph}><a id="densComposite" >densComposite Rank</a></li>
+	    			</ul>
+	    		</li>
+	    		<li className="dropdown">
+	    			<a className="dropdown-toggle" data-toggle="dropdown">Diversity Metrics<span className="caret"></span></a>
+	    			<ul className="dropdown-menu">
+			    		<li id="immigrant" className="active" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>	
+			    		<li id="migration"  onClick={scope.toggleGraph}><a id="migration" >Net Migration</a></li>	
+	    				<li id="divComposite"  onClick={scope.toggleGraph}><a id="densComposite" >densComposite Rank</a></li>
+	    			</ul>
+	    		</li>
 	    	</ul>
 	    	);
-            var buttonStyle = {
+        var buttonStyle = {
             marginTop:'30px',
             marginLeft:'10px'
         }

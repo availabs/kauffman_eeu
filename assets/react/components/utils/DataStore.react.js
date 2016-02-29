@@ -238,7 +238,7 @@ var DataStore = React.createClass({
 
 
 	},
-	compGraph:function(filters){
+	densCompGraph:function(filters){
 		var scope = this,
 			cities=[];
         if(scope.state.loading){
