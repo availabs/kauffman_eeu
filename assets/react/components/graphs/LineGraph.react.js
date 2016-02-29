@@ -135,7 +135,7 @@ var LineGraph = React.createClass({
 
 
 
-                yBrush.domain([0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]);
+                yBrush.domain([d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]);
 
                 y.domain([scope.state.extent[0],scope.state.extent[1]]);
             }
@@ -530,7 +530,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
             var extent = [d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]              
         }
         else{
-            var extent = [0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]            
+            var extent = [d3.min(scope.props.data, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]            
         }
          
         

@@ -10,6 +10,7 @@ var DataStore = React.createClass({
 			loading:true,
 			fullData:{},
 			immData:[],
+            migrationData:{},
 			shareValues:[],
 			newValues:[],
             msaPop:{},
@@ -23,37 +24,61 @@ var DataStore = React.createClass({
         var scope = this;
 
         scope.getData(function(data){
-            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),loading:false});
+            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),loading:false});
         })
     },
     getData:function(cb){
         var scope = this;
 
 
-        // d3.json("/allMsa",function(err,msaData){
+        d3.json("/allMsa",function(err,msaData){
 
-        //     d3.json("/countyPop",function(err,popData){
+            d3.json("/countyPop",function(err,popData){
                
-        //         d3.json("/shareImm",function(err,immData){
-        //             var data = {};
-        //             data['fullData'] = msaData;
-        //             data['msaPop'] = popData;
-        //             data['immData'] = immData;
-        //             cb(data);
+                d3.json("/shareImm",function(err,immData){
 
-        //         })
+                    d3.json("/migration",function(err,migrationData){
+                        var data = {};
+                        data['fullData'] = msaData;
+                        data['msaPop'] = popData;
+                        data['immData'] = immData;
+                        data['migrationData'] = migrationData;
+                        cb(data);
+                    })
+                })
+            })
+        })
+    },
+    processMigrationData:function(data){
+        var scope = this;
+
+        var reducedData = {}
+        
+        var finalData = [];
+        Object.keys(data).forEach(function(msaId){
+            var valueArray = [];
+            Object.keys(data[msaId]).forEach(function(year){
+                if(data[msaId][year] != 0){
+                    valueArray.push( {x:+year,y:+data[msaId][year]});                    
+                }
 
 
+                
+            })
 
-        //     })
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
 
 
-        // })
+        })
 
-    d3.json("/migration",function(err,migrationData){
-        console.log(migrationData);
-    })
 
+        var rankedData = scope.rankMigration(finalData);
+
+        var polishedData = scope.polishData(rankedData);
+        console.log(polishedData);
+        return polishedData;
 
     },
     processImmData:function(data){
@@ -145,11 +170,16 @@ var DataStore = React.createClass({
 
 		graphData = scope.state.immData;
 		return graphData;    	
-        
+    },
+    migrationGraph:function(filters){
+        var scope = this;
+        var graphData;
 
 
- 	
 
+
+        graphData = scope.state.migrationData;
+        return graphData;               
     },
 	shareGraph:function(filters){
 		var scope = this,
@@ -470,6 +500,30 @@ var DataStore = React.createClass({
 
 		return cities; 
 	},
+    rankMigration:function(cities){
+        var scope=this,
+            years = d3.range(1990,2015);
+
+        years.forEach(function(year){
+            var rank = 1;
+            //Sort cities according to each year
+            cities.sort(scope.sortCities(year));
+
+            //Go through and assign ranks for current year
+            cities.forEach(function(city){
+
+                city.values.forEach(function(yearValues){
+                    if(yearValues.x == year){
+                        yearValues.rank = rank;
+                    }
+                })
+
+                rank++;
+            })
+        })          
+
+        return cities; 
+    },    
 	rankNewFirm:function(cities){
 		var scope=this,
             years = d3.range(1990,2010);
