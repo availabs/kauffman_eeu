@@ -22,7 +22,7 @@ var LineGraph = React.createClass({
         var scope = this;
 
 
-        if(nextProps.graph == "composite"){
+        if(nextProps.graph.slice(-9) == "Composite"){
             nextState.plot = "rank";
         }
 
@@ -46,7 +46,7 @@ var LineGraph = React.createClass({
             d3.selectAll("svg").remove();
             var data = scope.props.data;
 
-            console.log(data);
+
 
 
 
@@ -623,7 +623,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
         var rankButton;
         var valueButton;
 
-        if(scope.props.graph != "composite"){
+        if(scope.props.graph.slice(-9) != "Composite"){
             valueButton = (
                 <button id="valueButton" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRankValue}>Value</button>
                 )

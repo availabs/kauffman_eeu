@@ -55,7 +55,10 @@ var GraphPage = React.createClass({
 
         	data = scope.refs.store.migrationGraph(filters);
         }
+        if(graph == 'divComposite'){
 
+        	data = scope.refs.store.divCompGraph(filters);
+        }
 
 
         if(!data){
@@ -84,8 +87,9 @@ var GraphPage = React.createClass({
 
 		if(e.target.id == "new"){
 			scope.setState({graph:"new",loading:true});
-
 			d3.select('#newList')
+				.attr('class',"active");
+			d3.select('#density')
 				.attr('class',"active");
 
 		}
@@ -93,22 +97,38 @@ var GraphPage = React.createClass({
 			scope.setState({graph:"share",loading:true});
 			d3.select('#shareList')
 				.attr('class',"active");
+			d3.select('#density')
+				.attr('class',"active");
 		}
 		else if(e.target.id == "immigrant"){
 			scope.setState({graph:"immigrant",loading:true});
 			d3.select('#immigrant')
+				.attr('class',"active");
+			d3.select('#diversity')
 				.attr('class',"active");
 		}	
 		else if(e.target.id == "migration"){
 			scope.setState({graph:"migration",loading:true});
 			d3.select('#migration')
 				.attr('class',"active");
+			d3.select('#diversity')
+				.attr('class',"active");
+		}
+		else if(e.target.id == "divComposite"){
+			scope.setState({graph:"divComposite",loading:true});
+			d3.select('#divComposite')
+				.attr('class',"active");
+			d3.select('#diversity')
+				.attr('class',"active");
 		}				
 		else{
 			scope.setState({graph:"densComposite",loading:true});
 			d3.select('#densComposite')
 				.attr('class',"active");
+			d3.select('#density')
+				.attr('class',"active");
 		}
+
 	},
     toggleColor:function(e){
     	var scope = this;
@@ -130,20 +150,20 @@ var GraphPage = React.createClass({
 
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
-	    		<li className="dropdown">
+	    		<li className="dropdown" id="density">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Density Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
 			    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
 			    		<li id="newList"  onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
-	    				<li id="densComposite"  onClick={scope.toggleGraph}><a id="densComposite" >densComposite Rank</a></li>
+	    				<li id="densComposite"  onClick={scope.toggleGraph}><a id="densComposite" >Density Composite Rank</a></li>
 	    			</ul>
 	    		</li>
-	    		<li className="dropdown">
+	    		<li className="dropdown active" id="diversity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Diversity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
 			    		<li id="immigrant" className="active" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>	
 			    		<li id="migration"  onClick={scope.toggleGraph}><a id="migration" >Net Migration</a></li>	
-	    				<li id="divComposite"  onClick={scope.toggleGraph}><a id="densComposite" >densComposite Rank</a></li>
+	    				<li id="divComposite"  onClick={scope.toggleGraph}><a id="divComposite" >Diversity Composite Rank</a></li>
 	    			</ul>
 	    		</li>
 	    	</ul>
