@@ -86,16 +86,104 @@ module.exports = {
     },
     migration:function(req,res){
 
-    	
+    	var years = [];
+    	for(var i = 1990; i<2015;i++){
+    		years.push(i);
+    	}
+
     	var migration1990data = migration1990();
     	var migration2000data = migration2000();
     	var migration2010data = migration2010();
 
+    	var countyMigration = combineMigration(migration1990data,migration2000data,migration2010data);
 
 
-    	res.json(migration2010data);
+
+    	var msaMigration = {};
 
 
+    	fileCache.checkCache({type:"aggregate",id:"msaMigration"},function(data){
+    		if(data){
+        		console.log('cache sucess');
+        		console.time('send cache');
+        		res.json(data);
+        		console.timeEnd('send cache');
+    		}
+    		else{
+			    fileCache.checkCache({type:"aggregate",id:"msaCounties"},function(data){
+			    	if(data){
+			    		var msaCounties = data;
+
+					    msatocounty.forEach(function(countyMap){
+
+					        msaMigration[Object.keys(countyMap)] = {};
+
+					    })
+
+					    Object.keys(msaMigration).forEach(function(msaId){
+					        var curMigration = 0;
+					        msaCounties[msaId].forEach(function(county){
+
+					            //console.log(countypopagg[county]);
+
+					            if(countyMigration[county]){
+					                years.forEach(function(year){
+					                    if(!msaMigration[msaId][year]){
+					                        msaMigration[msaId][year] = 0;
+					                    }
+
+					                    msaMigration[msaId][year] += countyMigration[county][year];
+					                })                    
+					            }
+					        })
+					    })
+
+
+						fileCache.addData({type:"aggregate",id:"msaMigration"},msaMigration);
+					    res.json(msaMigration);
+
+
+			    	}
+			    	else{
+			    		//If not there, call function that makes/gets it
+					    msatocounty.forEach(function(countyMap){
+
+					        msaMigration[Object.keys(countyMap)] = {};
+					        
+					        if(!msaCounties[Object.keys(countyMap)]){
+					            msaCounties[Object.keys(countyMap)] = [];    
+					        }
+					        
+					        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
+
+					    })
+
+			   			fileCache.addData({type:"aggregate",id:"msaCounties"},msaCounties);
+
+
+					    Object.keys(msaMigration).forEach(function(msaId){
+					        var curMigration = 0;
+					        msaCounties[msaId].forEach(function(county){
+
+					            //console.log(countypopagg[county]);
+
+					            if(countyMigration[county]){
+					                years.forEach(function(year){
+					                    if(!msaMigration[msaId][year]){
+					                        msaMigration[msaId][year] = 0;
+					                    }
+
+					                    msaMigration[msaId][year] += countyMigration[county][year];
+					                })                    
+					            }
+					        })
+					    })
+						fileCache.addData({type:"aggregate",id:"msaMigration"},msaMigration);
+					    res.json(msaMigration);
+			    	}
+			    })
+    		}
+    	})
     },
     shareImm:function(req,res){
     	//NEEDS TO BE BROKE DOWN INTO SEPARATE FUNCTIONS
@@ -184,6 +272,55 @@ module.exports = {
 };
 
 
+function combineMigration(data1990,data2000,data2010){
+
+
+		var combinedData = {};
+
+
+
+
+
+
+
+		Object.keys(data1990).forEach(function(item){
+			if(!combinedData[item]){
+				combinedData[item] = {};	
+			}
+			Object.keys(data1990[item]).forEach(function(year){
+				combinedData[item][year] = data1990[item][year];
+			})
+		})
+
+		Object.keys(data2000).forEach(function(item){
+			
+			if(!combinedData[item]){
+				combinedData[item] = {};	
+			}
+			Object.keys(data2000[item]).forEach(function(year){
+				var yearName = year.substring(6);
+				combinedData[item][yearName] = data2000[item][year];
+			})
+		})
+
+		Object.keys(data2010).forEach(function(item){
+			
+			if(!combinedData[item]){
+				combinedData[item] = {};	
+			}
+			Object.keys(data2010[item]).forEach(function(year){
+				var yearName = year.substring(6);
+				combinedData[item][yearName] = data2010[item][year];
+			})
+		})
+
+
+		return combinedData;
+
+}
+
+
+
 function migration1990(){
 
 		var fileContents = fs.readFileSync("assets/react/utils/data/ACS_Migration/migration19902000.csv");
@@ -193,8 +330,6 @@ function migration1990(){
     	var header = [];
 
     	header =(lines[0].toString().split('\t'));
-
-    	header.shift();
 
     	var rows = [];
 
@@ -210,18 +345,24 @@ function migration1990(){
 
     	rows.forEach(function(countyRow){
 
-    		if(!jsonData[countyRow[1]]){
-    			jsonData[countyRow[1]] = {};
+    		var countyFips = countyRow[1];
+
+    		if(countyFips < 10000){
+    			countyFips = '0' + countyFips
+    		}
+
+    		if(!jsonData[countyFips]){
+    			jsonData[countyFips] = {};
 
     			header.forEach(function(colName,i){
-    				jsonData[countyRow[1]][colName] = +countyRow[i];
+    				jsonData[countyFips][colName] = +countyRow[i];
     			})
     		}
     		else{
 
     			header.forEach(function(colName,i){
     				if(colName != 'fips'){
-  						jsonData[countyRow[1]][colName] += +countyRow[i];  					
+  						jsonData[countyFips][colName] += +countyRow[i];  					
     				}
     				
     			})				    			
