@@ -161,9 +161,13 @@ var GraphPage = React.createClass({
 	    		<li className="dropdown active" id="diversity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Diversity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
-			    		<li id="immigrant" className="active" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>	
-			    		<li id="migration"  onClick={scope.toggleGraph}><a id="migration" >Net Migration</a></li>	
-	    				<li id="divComposite"  onClick={scope.toggleGraph}><a id="divComposite" >Diversity Composite Rank</a></li>
+			    		<li id="immigrant" className="active" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>		
+	    			</ul>
+	    		</li>
+	    		<li className="dropdown" id="Fluidity">
+	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
+	    			<ul className="dropdown-menu">
+			    		<li id="migration"  onClick={scope.toggleGraph}><a id="migration" >Net Migration</a></li>
 	    			</ul>
 	    		</li>
 	    	</ul>
