@@ -111,7 +111,7 @@ var GraphPage = React.createClass({
 			scope.setState({graph:"migration",loading:true});
 			d3.select('#migration')
 				.attr('class',"active");
-			d3.select('#diversity')
+			d3.select('#fluidity')
 				.attr('class',"active");
 		}
 		else if(e.target.id == "divComposite"){
@@ -164,7 +164,7 @@ var GraphPage = React.createClass({
 			    		<li id="immigrant" className="active" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>		
 	    			</ul>
 	    		</li>
-	    		<li className="dropdown" id="Fluidity">
+	    		<li className="dropdown" id="fluidity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
 			    		<li id="migration"  onClick={scope.toggleGraph}><a id="migration" >Net Migration</a></li>
