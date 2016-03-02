@@ -258,21 +258,26 @@ module.exports = {
         res.json(msaImmShare)
     },
 
-    detailMigration:function(req,res){
+   detailMigration:function(req,res){
 
     	//1990 and 1991 are txt, individual states
-    	//1992 to 2003 are csv, individual states
+    	//1992 to 1994 are csv, indivudual states, no US data
+    		//'00' in 3rd column
+    	//1995 to 2003 are csv, individual states, with US data
+    		//'96' in 3rd column
     	//2004 to 2010 are DAT, aggregate
-    	//2011 to 2014 are DAT or CSV, aggergate
+    		//'96' in 3rd column
+    	//2011 and 20122 are CSV aggregate
+    		//96 in 3rd
 
 		//var fileContents = fs.readFileSync("assets/cache/countyMigration/1990to1991CountyMigration/C9091aki.txt");
 
-    	
-    	console.log("Directories");
-    	var dirNames = fs.readdirSync('assets/cache/countyMigration');
-    	console.log(dirNames);
 
-    	var dirNames = ['1990to1991CountyMigration','1991to1992CountyMigration']
+
+
+
+    	var dirNames = ['1112','1213'];
+
 
 
     	dirNames.forEach(function(dirName){
@@ -288,10 +293,13 @@ module.exports = {
 					var lines = fileContents.toString().split('\n');
 
 			    	for(i=0;i<lines.length;i++){
-			    		if(lines[i][0] != ' '){
-			    			data += lines[i] + '\n';			
+
+			    		var curLine = lines[i].split(',');
+
+			    		if(curLine[2] == '96'){		    			
+			    			data += lines[i] + '\n';
 			    		}
-			    	}					
+			    	}				
 
 			    	var trimmedName = 'trimmed_' + name;
 			    	var trimmedPath = directoryPath + '/' + trimmedName;
@@ -305,15 +313,8 @@ module.exports = {
     	})
 
 
-
-
-
-
-
-
-
-
     }
+
 
 
     
