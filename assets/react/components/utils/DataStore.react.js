@@ -31,23 +31,30 @@ var DataStore = React.createClass({
         var scope = this;
 
 
-        d3.json("/allMsa",function(err,msaData){
+        // d3.json("/allMsa",function(err,msaData){
 
-            d3.json("/countyPop",function(err,popData){
+        //     d3.json("/countyPop",function(err,popData){
                
-                d3.json("/shareImm",function(err,immData){
+        //         d3.json("/shareImm",function(err,immData){
 
-                    d3.json("/migration",function(err,migrationData){
-                        var data = {};
-                        data['fullData'] = msaData;
-                        data['msaPop'] = popData;
-                        data['immData'] = immData;
-                        data['migrationData'] = migrationData;
-                        cb(data);
-                    })
-                })
-            })
+        //             d3.json("/migration",function(err,migrationData){
+        //                 var data = {};
+        //                 data['fullData'] = msaData;
+        //                 data['msaPop'] = popData;
+        //                 data['immData'] = immData;
+        //                 data['migrationData'] = migrationData;
+        //                 cb(data);
+        //             })
+        //         })
+        //     })
+        // })
+
+
+        d3.json("/detailMigration",function(err,detailMigrationData){
+            console.log(detailMigrationData);
         })
+    
+
     },
     processMigrationData:function(data){
         var scope = this;

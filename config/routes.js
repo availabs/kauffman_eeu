@@ -32,6 +32,8 @@ module.exports.routes = {
 
   '/shareImm' : 'MsaController.shareImm',
 
-  '/migration' : 'MsaController.migration'
+  '/migration' : 'MsaController.migration',
+
+  '/detailMigration' : 'MsaController.detailMigration'
 
   };

@@ -248,26 +248,74 @@ module.exports = {
 
 		Object.keys(msaImmPop).forEach(function(msaId){
 			msaImmShare[msaId] = {};
-
-
 			years.forEach(function(year){
 				msaImmShare[msaId][year] = 0;
 				if(msaImmPop[msaId][year] != undefined){
 					msaImmShare[msaId][year] = msaImmPop[msaId][year]['imm'] / msaImmPop[msaId][year]['tot'];
-				}
-				
+				}	
 			})
-
-
-
-
 		})
-
-
         res.json(msaImmShare)
+    },
 
-       
+    detailMigration:function(req,res){
+
+    	//1990 and 1991 are txt, individual states
+    	//1992 to 2003 are csv, individual states
+    	//2004 to 2010 are DAT, aggregate
+    	//2011 to 2014 are DAT or CSV, aggergate
+
+		//var fileContents = fs.readFileSync("assets/cache/countyMigration/1990to1991CountyMigration/C9091aki.txt");
+
+    	
+    	console.log("Directories");
+    	var dirNames = fs.readdirSync('assets/cache/countyMigration');
+    	console.log(dirNames);
+
+    	var dirNames = ['1990to1991CountyMigration','1991to1992CountyMigration']
+
+
+    	dirNames.forEach(function(dirName){
+    		var directoryPath = 'assets/cache/countyMigration/'+dirName;
+
+    		fs.readdir(directoryPath, function(err,fileNames){
+    			fileNames.forEach(function(name){
+    				var filePath = directoryPath + '/'+ name;
+    				console.log(filePath);
+    				var data = "";
+
+					var fileContents = fs.readFileSync(filePath);
+					var lines = fileContents.toString().split('\n');
+
+			    	for(i=0;i<lines.length;i++){
+			    		if(lines[i][0] != ' '){
+			    			data += lines[i] + '\n';			
+			    		}
+			    	}					
+
+			    	var trimmedName = 'trimmed_' + name;
+			    	var trimmedPath = directoryPath + '/' + trimmedName;
+
+			    	fs.writeFileSync(trimmedPath,data);
+			    	console.log(trimmedName + "written");
+
+    			})
+
+    		})
+    	})
+
+
+
+
+
+
+
+
+
+
     }
+
+
     
 };
 
