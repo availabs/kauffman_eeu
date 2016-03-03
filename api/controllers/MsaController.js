@@ -277,8 +277,8 @@ module.exports = {
 
 
 //    	var dirNames = ['1991to1992CountyMigration','1992to1993CountyMigration','1993to1994CountyMigration','1994to1995CountyMigration','1995to1996CountyMigration','1996to1997CountyMigration','1997to1998CountyMigration','1998to1999CountyMigration','1999to2000CountyMigration','2000to2001CountyMigration','2001to2002CountyMigration','2002to2003CountyMigration','2003to2004CountyMigration','0506'];
-
-    	var dirNames = ['1993to1994CountyMigration'];
+	//'0809','0910','1011','1112','1213'
+    	var dirNames = ['0809','0910','1011','1112','1213'];
 
 
     	dirNames.forEach(function(dirName){
@@ -288,7 +288,7 @@ module.exports = {
     		fs.readdir(directoryPath, function(err,fileNames){
     			fileNames.forEach(function(name){
     				//inflow or outflow from filename
-    				key = name.substr(name.length-5,1)
+    				key = name.substr(name.length-14,1)
     				var filePath = directoryPath + '/'+ name;
     				console.log(filePath);
 
