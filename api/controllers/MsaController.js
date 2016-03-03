@@ -270,42 +270,112 @@ module.exports = {
     	//2011 and 20122 are CSV aggregate
     		//96 in 3rd
 
+
+//1990 and 1991 is space
+//1992 thru 2003 is CSV
+//2004 is space
+//2005 is CSV
+//2006 is space, n = in, t = out
+//2007 thru 2010 is CSV
+//2011 and 2012 is CSV
+
+
+
+
 		//var fileContents = fs.readFileSync("assets/cache/countyMigration/1990to1991CountyMigration/C9091aki.txt");
 
-
-		//19931994 need to be trim and redone
-
-
-//    	var dirNames = ['1991to1992CountyMigration','1992to1993CountyMigration','1993to1994CountyMigration','1994to1995CountyMigration','1995to1996CountyMigration','1996to1997CountyMigration','1997to1998CountyMigration','1998to1999CountyMigration','1999to2000CountyMigration','2000to2001CountyMigration','2001to2002CountyMigration','2002to2003CountyMigration','2003to2004CountyMigration','0506'];
-	//'0809','0910','1011','1112','1213'
-    	var dirNames = ['0809','0910','1011','1112','1213'];
-
-
-    	dirNames.forEach(function(dirName){
-    		var directoryPath = 'assets/cache/countyMigration/'+dirName;
+    		var directoryPath = 'assets/cache/countyMigration';
     		var data = "";
-    		var key = "";
-    		fs.readdir(directoryPath, function(err,fileNames){
+    		var year = "";
+
+    		var fileNames = ['9091aggregate.txt','9192aggregate.txt'];
+
+    		var countyMigration = {};
+
+
     			fileNames.forEach(function(name){
     				//inflow or outflow from filename
-    				key = name.substr(name.length-14,1)
+    				year = name.substr(0,4);
     				var filePath = directoryPath + '/'+ name;
     				console.log(filePath);
+
+    				var curFlow = '';
+    				var curFips = '';
+
 
 
 					var fileContents = fs.readFileSync(filePath);
 					var lines = fileContents.toString().split('\n');
-					data += key + '\n';
-			    	for(i=0;i<lines.length;i++){    			
-			    		data += lines[i] + '\n';
-			    	}				
+
+
+					for(var i = 0; i<lines.length;i++){
+	    				var curReturns = 0;
+	    				var curExceptions = 0;
+    					var curLine = lines[i].split(' ');
+
+    					//This will switch the flow whenever we encounter a switch
+    					if(curLine[0] == 'i' || curLine[0] == 'o'){
+    						if(curLine[0] == 'i'){
+	    						curflow = 'inflow'
+	    						//countyMigration[countyFips][year][inflow]
+    						}
+    						else{
+	    						curflow = 'outflow'
+	    						//countyMigration[countyFips][year][inflow]    							
+    						}
+    					}
+    					else{
+    						//If not on an i or o, we have data
+    						curFips = curLine[0] + curLine[1];
+
+    						///Go through the rest of the line. First number we hit = returns, 2nd = exceptions
+    						for(var j=2;j<curLine.length;j++){
+    							if(!isNaN(curLine[j])){
+    								if(curReturns == 0){
+    									curReturns = curLine[j];
+    								}
+    								else{
+    									curExceptions = curLine[j];
+    								}
+    							}
+    						}
+
+
+    						if(!countyMigration[curFips]){
+    							countyMigration[curFips] = {};
+    						}
+    						if(!countyMigration[curFips][year]){
+    							countyMigration[curFips][year] = {};
+    						}
+    						if(!countyMigration[curFips][year][curFlow]){
+    							countyMigration[curFips][year][curFlow] = {};
+    						}
+
+
+    						countyMigration[curFips][year][curFlow]['returns'] = curReturns;
+    						countyMigration[curFips][year][curFlow]['exceptions'] = curExceptions;
+
+
+    					}
+
+
+
+
+
+					}
+
+
+
     			})
-    				var aggregateName = 'aggregate.txt';
-			    	var aggregatePath = directoryPath + '/' + aggregateName;
-			    	fs.writeFileSync(aggregatePath,data);
-			    	console.log(aggregateName + "written");
-    		})
-    	})
+    				// var aggregateName = 'aggregate.txt';
+			    	// var aggregatePath = directoryPath + '/' + aggregateName;
+			    	// fs.writeFileSync(aggregatePath,data);
+			    	// console.log(aggregateName + "written");
+
+
+
+			    	res.json(countyMigration);
+
 
 
     }
