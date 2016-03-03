@@ -273,42 +273,37 @@ module.exports = {
 		//var fileContents = fs.readFileSync("assets/cache/countyMigration/1990to1991CountyMigration/C9091aki.txt");
 
 
+		//19931994 need to be trim and redone
 
 
+//    	var dirNames = ['1991to1992CountyMigration','1992to1993CountyMigration','1993to1994CountyMigration','1994to1995CountyMigration','1995to1996CountyMigration','1996to1997CountyMigration','1997to1998CountyMigration','1998to1999CountyMigration','1999to2000CountyMigration','2000to2001CountyMigration','2001to2002CountyMigration','2002to2003CountyMigration','2003to2004CountyMigration','0506'];
 
-    	var dirNames = ['1112','1213'];
-
+    	var dirNames = ['1993to1994CountyMigration'];
 
 
     	dirNames.forEach(function(dirName){
     		var directoryPath = 'assets/cache/countyMigration/'+dirName;
-
+    		var data = "";
+    		var key = "";
     		fs.readdir(directoryPath, function(err,fileNames){
     			fileNames.forEach(function(name){
+    				//inflow or outflow from filename
+    				key = name.substr(name.length-5,1)
     				var filePath = directoryPath + '/'+ name;
     				console.log(filePath);
-    				var data = "";
+
 
 					var fileContents = fs.readFileSync(filePath);
 					var lines = fileContents.toString().split('\n');
-
-			    	for(i=0;i<lines.length;i++){
-
-			    		var curLine = lines[i].split(',');
-
-			    		if(curLine[2] == '96'){		    			
-			    			data += lines[i] + '\n';
-			    		}
+					data += key + '\n';
+			    	for(i=0;i<lines.length;i++){    			
+			    		data += lines[i] + '\n';
 			    	}				
-
-			    	var trimmedName = 'trimmed_' + name;
-			    	var trimmedPath = directoryPath + '/' + trimmedName;
-
-			    	fs.writeFileSync(trimmedPath,data);
-			    	console.log(trimmedName + "written");
-
     			})
-
+    				var aggregateName = 'aggregate.txt';
+			    	var aggregatePath = directoryPath + '/' + aggregateName;
+			    	fs.writeFileSync(aggregatePath,data);
+			    	console.log(aggregateName + "written");
     		})
     	})
 
