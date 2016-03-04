@@ -269,32 +269,33 @@ module.exports = {
     		//'96' in 3rd column
     	//2011 and 20122 are CSV aggregate
     		//96 in 3rd
+		//1990 and 1991 is space
+		//1992 thru 2003 is CSV
+		//2004 is space
+		//2005 is CSV
+		//2006 is space, n = in, t = out
+		//2007 thru 2010 is CSV
+		//2011 and 2012 is CSV
+
+    	fileCache.checkCache({type:"aggregate",id:"msaMigration"},function(data){
+    		if(data){
+        		console.log('cache sucess');
+        		console.time('send cache');
+        		res.json(data);
+        		console.timeEnd('send cache');
+    		}
+    		else{
+				//var fileContents = fs.readFileSync("assets/cache/countyMigration/1990to1991CountyMigration/C9091aki.txt");
+
+	    		var directoryPath = 'assets/cache/countyMigration';
+	    		var data = "";
+	    		var year = "";
+
+	    		var fileNames = ['9091aggregate.txt','9192aggregate.txt','9293aggregate.txt','9394aggregate.txt','9495aggregate.txt','9596aggregate.txt','9697aggregate.txt','9798aggregate.txt','9899aggregate.txt','9900aggregate.txt','0001aggregate.txt','0102aggregate.txt','0203aggregate.txt','0304aggregate.txt','0405aggregate.txt','0506aggregate.txt','0607aggregate.txt','0708aggregate.txt','0809aggregate.txt','0910aggregate.txt','1011aggregate.txt','1112aggregate.txt','1213aggregate.txt'];
 
 
-//1990 and 1991 is space
-//1992 thru 2003 is CSV
-//2004 is space
-//2005 is CSV
-//2006 is space, n = in, t = out
-//2007 thru 2010 is CSV
-//2011 and 2012 is CSV
 
-
-
-
-		//var fileContents = fs.readFileSync("assets/cache/countyMigration/1990to1991CountyMigration/C9091aki.txt");
-
-    		var directoryPath = 'assets/cache/countyMigration';
-    		var data = "";
-    		var year = "";
-
-    		var fileNames = ['9091aggregate.txt','9192aggregate.txt','9293aggregate.txt','9394aggregate.txt','9495aggregate.txt','9596aggregate.txt','9697aggregate.txt','9798aggregate.txt','9899aggregate.txt','9900aggregate.txt','0001aggregate.txt','0102aggregate.txt','0203aggregate.txt','0304aggregate.txt','0405aggregate.txt','0506aggregate.txt','0607aggregate.txt','0708aggregate.txt','0809aggregate.txt','0910aggregate.txt','1011aggregate.txt','1112aggregate.txt','1213aggregate.txt'];
-
-
-
-    		var countyMigration = {};
-
-
+	    		var countyMigration = {};
     			fileNames.forEach(function(name){
     				//inflow or outflow from filename
     				year = name.substr(0,4);
@@ -366,60 +367,48 @@ module.exports = {
     							countyMigration[curFips][year][curFlow] = {};
     						}
 
-	    				if(year == '9091' || year == '9192'){
-    						///Go through the rest of the line. First number we hit = returns, 2nd = exceptions
-    						for(var j=2;j<curLine.length;j++){
-    							if(!isNaN(curLine[j])){
-    								if(curReturns == 0){
-    									curReturns = curLine[j];
-    								}
-    								else{
-    									curExceptions = curLine[j];
-    								}
-    							}
-    						}
-	    				}
-	    				else if(year == '0405' || year == '0607' || year == '0708'|| year == '0809'|| year == '0910'|| year == '1011'){
-    						for(var j=4;j<curLine.length;j++){
-    							if(!isNaN(curLine[j])){
-    								if(curReturns == 0){
-    									curReturns = curLine[j];
-    								}
-    								else if(curExceptions == 0){
-    									curExceptions = curLine[j];
-    								}
-    								else{
-    									
-    								}
-    							}
-    						}	    					
-	    				}
-	    				else{
-	    					curReturns = curLine[6];
-	    					curExceptions = curLine[7];		
-	    				}
+		    				if(year == '9091' || year == '9192'){
+	    						///Go through the rest of the line. First number we hit = returns, 2nd = exceptions
+	    						for(var j=2;j<curLine.length;j++){
+	    							if(!isNaN(curLine[j])){
+	    								if(curReturns == 0){
+	    									curReturns = curLine[j];
+	    								}
+	    								else{
+	    									curExceptions = curLine[j];
+	    								}
+	    							}
+	    						}
+		    				}
+		    				else if(year == '0405' || year == '0607' || year == '0708'|| year == '0809'|| year == '0910'|| year == '1011'){
+	    						for(var j=4;j<curLine.length;j++){
+	    							if(!isNaN(curLine[j])){
+	    								if(curReturns == 0){
+	    									curReturns = curLine[j];
+	    								}
+	    								else if(curExceptions == 0){
+	    									curExceptions = curLine[j];
+	    								}
+	    								else{
 
-
+	    								}
+	    							}
+	    						}	    					
+		    				}
+		    				else{
+		    					curReturns = curLine[6];
+		    					curExceptions = curLine[7];		
+		    				}
     						countyMigration[curFips][year][curFlow]['returns'] = curReturns;
     						countyMigration[curFips][year][curFlow]['exceptions'] = curExceptions;
     					}
 					}
     			})
-
-
-
-
-
-
-			    	res.json(countyMigration);
-
-
-
+				fileCache.addData({type:"aggregate",id:"countyFlowMigration"},countyMigration);
+		    	res.json(countyMigration);
+    		}
+    	})
     }
-
-
-
-    
 };
 
 
