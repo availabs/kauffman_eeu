@@ -288,8 +288,10 @@ module.exports = {
     		var data = "";
     		var year = "";
 
-    		var fileNames = ['9091aggregate.txt','9192aggregate.txt','9293aggregate.txt','9394aggregate.txt','9495aggregate.txt','9596aggregate.txt','9697aggregate.txt','9798aggregate.txt','9899aggregate.txt','9900aggregate.txt','0001aggregate.txt','0102aggregate.txt','0203aggregate.txt','0304aggregate.txt'];
-    		
+    		var fileNames = ['9091aggregate.txt','9192aggregate.txt','9293aggregate.txt','9394aggregate.txt','9495aggregate.txt','9596aggregate.txt','9697aggregate.txt','9798aggregate.txt','9899aggregate.txt','9900aggregate.txt','0001aggregate.txt','0102aggregate.txt','0203aggregate.txt','0304aggregate.txt','0405aggregate.txt','0506aggregate.txt','0607aggregate.txt','0708aggregate.txt','0809aggregate.txt','0910aggregate.txt','1011aggregate.txt','1112aggregate.txt','1213aggregate.txt'];
+
+
+
     		var countyMigration = {};
 
 
@@ -312,7 +314,7 @@ module.exports = {
 	    				var curReturns = 0;
 	    				var curExceptions = 0;
 
-	    				if(year == '9091' || year == '9192'){
+	    				if(year == '9091' || year == '9192' || year == '0405' || year == '0607' || year == '0708'|| year == '0809'|| year == '0910'|| year == '1011'){
 							var curLine = lines[i].split(' ');
 	    				}
 	    				else{
@@ -323,11 +325,11 @@ module.exports = {
 
 
     					//This will switch the flow whenever we encounter a switch
-    					if(curLine[0].substr(0,1) == 'i'){
+    					if(curLine[0].substr(0,1) == 'i'|| curLine[0].substr(0,1) == 'n'){
 							curFlow = 'inflow'
 							//countyMigration[countyFips][year][inflow]
 						}
-						else if(curLine[0].substr(0,1) == 'o' || curLine[0].substr(0,1) == 'O'){
+						else if(curLine[0].substr(0,1) == 'o' || curLine[0].substr(0,1) == 'O' || curLine[0].substr(0,1) == 't' || curLine[0].substr(0,1) == 'u'){
     						curFlow = 'outflow'
     						//countyMigration[countyFips][year][inflow]    							
 						}
@@ -376,6 +378,21 @@ module.exports = {
     								}
     							}
     						}
+	    				}
+	    				else if(year == '0405' || year == '0607' || year == '0708'|| year == '0809'|| year == '0910'|| year == '1011'){
+    						for(var j=4;j<curLine.length;j++){
+    							if(!isNaN(curLine[j])){
+    								if(curReturns == 0){
+    									curReturns = curLine[j];
+    								}
+    								else if(curExceptions == 0){
+    									curExceptions = curLine[j];
+    								}
+    								else{
+    									
+    								}
+    							}
+    						}	    					
 	    				}
 	    				else{
 	    					curReturns = curLine[6];
