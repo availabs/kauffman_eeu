@@ -313,20 +313,31 @@ module.exports = {
 	    				var curExceptions = 0;
     					var curLine = lines[i].split(' ');
 
+
+
     					//This will switch the flow whenever we encounter a switch
-    					if(curLine[0] == 'i' || curLine[0] == 'o'){
-    						if(curLine[0] == 'i'){
-	    						curflow = 'inflow'
-	    						//countyMigration[countyFips][year][inflow]
-    						}
-    						else{
-	    						curflow = 'outflow'
-	    						//countyMigration[countyFips][year][inflow]    							
-    						}
-    					}
+    					if(curLine[0] == 'i\r'){
+							curFlow = 'inflow'
+							//countyMigration[countyFips][year][inflow]
+						}
+						else if(curLine[0] == 'o\r'){
+    						curFlow = 'outflow'
+    						//countyMigration[countyFips][year][inflow]    							
+						}
     					else{
     						//If not on an i or o, we have data
     						curFips = curLine[0] + curLine[1];
+
+    						if(!countyMigration[curFips]){
+    							countyMigration[curFips] = {};
+    						}
+    						if(!countyMigration[curFips][year]){
+    							countyMigration[curFips][year] = {};
+    						}
+    						if(!countyMigration[curFips][year][curFlow]){
+    							countyMigration[curFips][year][curFlow] = {};
+    						}
+
 
     						///Go through the rest of the line. First number we hit = returns, 2nd = exceptions
     						for(var j=2;j<curLine.length;j++){
@@ -341,15 +352,6 @@ module.exports = {
     						}
 
 
-    						if(!countyMigration[curFips]){
-    							countyMigration[curFips] = {};
-    						}
-    						if(!countyMigration[curFips][year]){
-    							countyMigration[curFips][year] = {};
-    						}
-    						if(!countyMigration[curFips][year][curFlow]){
-    							countyMigration[curFips][year][curFlow] = {};
-    						}
 
 
     						countyMigration[curFips][year][curFlow]['returns'] = curReturns;
@@ -357,11 +359,6 @@ module.exports = {
 
 
     					}
-
-
-
-
-
 					}
 
 
