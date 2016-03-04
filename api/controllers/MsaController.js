@@ -289,7 +289,7 @@ module.exports = {
     		var year = "";
 
     		var fileNames = ['9091aggregate.txt','9192aggregate.txt','9293aggregate.txt','9394aggregate.txt','9495aggregate.txt','9596aggregate.txt','9697aggregate.txt','9798aggregate.txt','9899aggregate.txt','9900aggregate.txt','0001aggregate.txt','0102aggregate.txt','0203aggregate.txt','0304aggregate.txt'];
-
+    		
     		var countyMigration = {};
 
 
@@ -340,6 +340,8 @@ module.exports = {
     						var curCounty = "";
     						curCounty = curLine[1];
 
+
+
     						if(curState && curState.length<2){
     							curState = "0" + curState;
     						}
@@ -350,7 +352,7 @@ module.exports = {
     							curCounty = "0" + curCounty;
     						}
 
-    						curFips = curLine[0] + curLine[1];
+    						curFips = curState + curCounty
 
     						if(!countyMigration[curFips]){
     							countyMigration[curFips] = {};
@@ -362,7 +364,7 @@ module.exports = {
     							countyMigration[curFips][year][curFlow] = {};
     						}
 
-
+	    				if(year == '9091' || year == '9192'){
     						///Go through the rest of the line. First number we hit = returns, 2nd = exceptions
     						for(var j=2;j<curLine.length;j++){
     							if(!isNaN(curLine[j])){
@@ -374,6 +376,13 @@ module.exports = {
     								}
     							}
     						}
+	    				}
+	    				else{
+	    					curReturns = curLine[6];
+	    					curExceptions = curLine[7];		
+	    				}
+
+
     						countyMigration[curFips][year][curFlow]['returns'] = curReturns;
     						countyMigration[curFips][year][curFlow]['exceptions'] = curExceptions;
     					}
