@@ -288,7 +288,7 @@ module.exports = {
     		var data = "";
     		var year = "";
 
-    		var fileNames = ['9091aggregate.txt','9192aggregate.txt'];
+    		var fileNames = ['9091aggregate.txt','9192aggregate.txt','9293aggregate.txt','9394aggregate.txt','9495aggregate.txt','9596aggregate.txt','9697aggregate.txt','9798aggregate.txt','9899aggregate.txt','9900aggregate.txt','0001aggregate.txt','0102aggregate.txt','0203aggregate.txt','0304aggregate.txt'];
 
     		var countyMigration = {};
 
@@ -311,21 +311,45 @@ module.exports = {
 					for(var i = 0; i<lines.length;i++){
 	    				var curReturns = 0;
 	    				var curExceptions = 0;
-    					var curLine = lines[i].split(' ');
 
+	    				if(year == '9091' || year == '9192'){
+							var curLine = lines[i].split(' ');
+	    				}
+	    				else{
+	    					
+	    					var curLine = lines[i].split(',');			
+	    				}
+    					
 
 
     					//This will switch the flow whenever we encounter a switch
-    					if(curLine[0] == 'i\r'){
+    					if(curLine[0].substr(0,1) == 'i'){
 							curFlow = 'inflow'
 							//countyMigration[countyFips][year][inflow]
 						}
-						else if(curLine[0] == 'o\r'){
+						else if(curLine[0].substr(0,1) == 'o' || curLine[0].substr(0,1) == 'O'){
     						curFlow = 'outflow'
     						//countyMigration[countyFips][year][inflow]    							
 						}
     					else{
     						//If not on an i or o, we have data
+
+    						var curState = "";
+    						curState = curLine[0]
+
+    						var curCounty = "";
+    						curCounty = curLine[1];
+
+    						if(curState && curState.length<2){
+    							curState = "0" + curState;
+    						}
+    						if(curCounty && curCounty.length == 1){
+    							curCounty = "00" + curCounty;
+    						}
+    						if(curCounty && curCounty.length == 2){
+    							curCounty = "0" + curCounty;
+    						}
+
     						curFips = curLine[0] + curLine[1];
 
     						if(!countyMigration[curFips]){
@@ -350,24 +374,14 @@ module.exports = {
     								}
     							}
     						}
-
-
-
-
     						countyMigration[curFips][year][curFlow]['returns'] = curReturns;
     						countyMigration[curFips][year][curFlow]['exceptions'] = curExceptions;
-
-
     					}
 					}
-
-
-
     			})
-    				// var aggregateName = 'aggregate.txt';
-			    	// var aggregatePath = directoryPath + '/' + aggregateName;
-			    	// fs.writeFileSync(aggregatePath,data);
-			    	// console.log(aggregateName + "written");
+
+
+
 
 
 
