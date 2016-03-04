@@ -277,7 +277,7 @@ module.exports = {
 		//2007 thru 2010 is CSV
 		//2011 and 2012 is CSV
 
-    	fileCache.checkCache({type:"aggregate",id:"msaMigration"},function(data){
+    	fileCache.checkCache({type:"aggregate",id:"countyFlowMigration"},function(data){
     		if(data){
         		console.log('cache sucess');
         		console.time('send cache');
@@ -313,7 +313,7 @@ module.exports = {
 
 					for(var i = 0; i<lines.length;i++){
 	    				var curReturns = 0;
-	    				var curExceptions = 0;
+	    				var curExemptions = 0;
 
 	    				if(year == '9091' || year == '9192' || year == '0405' || year == '0607' || year == '0708'|| year == '0809'|| year == '0910'|| year == '1011'){
 							var curLine = lines[i].split(' ');
@@ -368,14 +368,14 @@ module.exports = {
     						}
 
 		    				if(year == '9091' || year == '9192'){
-	    						///Go through the rest of the line. First number we hit = returns, 2nd = exceptions
+	    						///Go through the rest of the line. First number we hit = returns, 2nd = Exemptions
 	    						for(var j=2;j<curLine.length;j++){
 	    							if(!isNaN(curLine[j])){
 	    								if(curReturns == 0){
 	    									curReturns = curLine[j];
 	    								}
 	    								else{
-	    									curExceptions = curLine[j];
+	    									curExemptions = curLine[j];
 	    								}
 	    							}
 	    						}
@@ -386,8 +386,8 @@ module.exports = {
 	    								if(curReturns == 0){
 	    									curReturns = curLine[j];
 	    								}
-	    								else if(curExceptions == 0){
-	    									curExceptions = curLine[j];
+	    								else if(curExemptions == 0){
+	    									curExemptions = curLine[j];
 	    								}
 	    								else{
 
@@ -397,10 +397,10 @@ module.exports = {
 		    				}
 		    				else{
 		    					curReturns = curLine[6];
-		    					curExceptions = curLine[7];		
+		    					curExemptions = curLine[7];		
 		    				}
-    						countyMigration[curFips][year][curFlow]['returns'] = curReturns;
-    						countyMigration[curFips][year][curFlow]['exceptions'] = curExceptions;
+    						countyMigration[curFips][year][curFlow]['households'] = curReturns;
+    						countyMigration[curFips][year][curFlow]['individuals'] = curExemptions;
     					}
 					}
     			})
