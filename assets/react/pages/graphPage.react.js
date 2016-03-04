@@ -51,13 +51,21 @@ var GraphPage = React.createClass({
 
         	data = scope.refs.store.immGraph(filters);
         }
-        if(graph == 'migration'){
+        if(graph == 'netMigration'){
 
-        	data = scope.refs.store.migrationGraph(filters);
+        	data = scope.refs.store.netMigrationGraph(filters);
         }
-        if(graph == 'divComposite'){
+        if(graph == 'inflowMigration'){
 
-        	data = scope.refs.store.divCompGraph(filters);
+        	data = scope.refs.store.inflowMigrationGraph(filters);
+        }
+        if(graph == 'outflowMigration'){
+
+        	data = scope.refs.store.outflowMigrationGraph(filters);
+        }
+        if(graph == 'irsNet'){
+
+        	data = scope.refs.store.irsNetGraph(filters);
         }
 
 
@@ -107,18 +115,32 @@ var GraphPage = React.createClass({
 			d3.select('#diversity')
 				.attr('class',"active");
 		}	
-		else if(e.target.id == "migration"){
-			scope.setState({graph:"migration",loading:true});
-			d3.select('#migration')
+		else if(e.target.id == "netMigration"){
+			scope.setState({graph:"netMigration",loading:true});
+			d3.select('#netMigration')
 				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
 		}
-		else if(e.target.id == "divComposite"){
-			scope.setState({graph:"divComposite",loading:true});
-			d3.select('#divComposite')
+		else if(e.target.id == "inflowMigration"){
+			scope.setState({graph:"inflowMigration",loading:true});
+			d3.select('#inflowMigration')
 				.attr('class',"active");
-			d3.select('#diversity')
+			d3.select('#fluidity')
+				.attr('class',"active");
+		}
+		else if(e.target.id == "outflowMigration"){
+			scope.setState({graph:"outflowMigration",loading:true});
+			d3.select('#outflowMigration')
+				.attr('class',"active");
+			d3.select('#fluidity')
+				.attr('class',"active");
+		}	
+		else if(e.target.id == "irsNet"){
+			scope.setState({graph:"irsNet",loading:true});
+			d3.select('#irsNet')
+				.attr('class',"active");
+			d3.select('#fluidity')
 				.attr('class',"active");
 		}				
 		else{
@@ -167,7 +189,10 @@ var GraphPage = React.createClass({
 	    		<li className="dropdown" id="fluidity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
-			    		<li id="migration"  onClick={scope.toggleGraph}><a id="migration" >Net Migration</a></li>
+	    				<li id="irsNet"  onClick={scope.toggleGraph}><a id="irsNet" >Net Migration (IRS)</a></li>
+			    		<li id="netMigration"  onClick={scope.toggleGraph}><a id="netMigration" >Net Migration (ACS)</a></li>
+			    		<li id="inflowMigration"  onClick={scope.toggleGraph}><a id="inflowMigration" >Inflow Migration</a></li>
+			    		<li id="outflowMigration"  onClick={scope.toggleGraph}><a id="outflowMigration" >Outflow Migration</a></li>	
 	    			</ul>
 	    		</li>
 	    	</ul>

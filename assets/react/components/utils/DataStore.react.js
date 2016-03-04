@@ -10,7 +10,10 @@ var DataStore = React.createClass({
 			loading:true,
 			fullData:{},
 			immData:[],
-            migrationData:{},
+            migrationData:[],
+            inflowMigration:[],
+            outflowMigration:[],
+            irsNet:[],
 			shareValues:[],
 			newValues:[],
             msaPop:{},
@@ -24,43 +27,175 @@ var DataStore = React.createClass({
         var scope = this;
 
         scope.getData(function(data){
-            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),loading:false});
+            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),loading:false});
         })
     },
     getData:function(cb){
         var scope = this;
 
 
-        // d3.json("/allMsa",function(err,msaData){
+        d3.json("/allMsa",function(err,msaData){
 
-        //     d3.json("/countyPop",function(err,popData){
+            d3.json("/countyPop",function(err,popData){
                
-        //         d3.json("/shareImm",function(err,immData){
+                d3.json("/shareImm",function(err,immData){
 
-        //             d3.json("/migration",function(err,migrationData){
-        //                 var data = {};
-        //                 data['fullData'] = msaData;
-        //                 data['msaPop'] = popData;
-        //                 data['immData'] = immData;
-        //                 data['migrationData'] = migrationData;
-        //                 cb(data);
-        //             })
-        //         })
-        //     })
-        // })
+                    d3.json("/migration",function(err,migrationData){
+                        d3.json("/detailMigration",function(err,detailMigrationData){
+
+                            var data = {};
+                            data['fullData'] = msaData;
+                            data['msaPop'] = popData;
+                            data['immData'] = immData;
+                            data['migrationData'] = migrationData;
+                            data['detailMigrationData'] = detailMigrationData
+                            cb(data);                       
 
 
-        d3.json("/detailMigration",function(err,detailMigrationData){
-            console.log(detailMigrationData);
+
+                        })
+
+                    })
+                })
+            })
         })
+
+
+
     
 
+    },
+    processInflowMigration:function(data){
+        var scope = this; 
+
+        var reducedData = {}
+
+        var finalData = [];
+        Object.keys(data).forEach(function(msaId){
+            var valueArray = [];
+            Object.keys(data[msaId]).forEach(function(year){
+                if(data[msaId][year]){
+                    if(data[msaId][year]['inflow']){
+                        if(year > 12){
+                            var curYear = "19" + year;
+                        }
+                        else{
+                            var curYear = "20" + year;
+                        }
+                        valueArray.push( {x:+curYear,y:+data[msaId][year]['inflow']['individuals']});                        
+                    }
+                                        
+                }
+
+
+                
+            })
+
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
+
+
+        })
+
+
+        var rankedData = scope.rankMigration(finalData);
+
+        var polishedData = scope.polishData(rankedData);
+        polishedData.forEach(function(metroArea){
+            metroArea.values.sort(function(a,b){
+                return a.x - b.x
+            })
+        })
+        return polishedData;
+    },
+    processOutflowMigration:function(data){
+        var scope = this; 
+
+        var reducedData = {}
+
+        var finalData = [];
+        Object.keys(data).forEach(function(msaId){
+            var valueArray = [];
+            Object.keys(data[msaId]).forEach(function(year){
+                if(data[msaId][year]){
+                    if(data[msaId][year]['outflow']){
+                        if(year > 12){
+                            var curYear = "19" + year;
+                        }
+                        else{
+                            var curYear = "20" + year;
+                        }
+                        valueArray.push( {x:+curYear,y:+data[msaId][year]['outflow']['individuals']});                        
+                    }
+                                        
+                }
+            })
+
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
+
+
+        })
+
+
+        var rankedData = scope.rankMigration(finalData);
+        var polishedData = scope.polishData(rankedData);
+        polishedData.forEach(function(metroArea){
+            metroArea.values.sort(function(a,b){
+                return a.x - b.x
+            })
+        })
+        console.log('outflow',polishedData);        
+        return polishedData;
+    },
+    processIrsNet:function(data){
+var scope = this; 
+
+        var reducedData = {}
+
+        var finalData = [];
+        Object.keys(data).forEach(function(msaId){
+            var valueArray = [];
+            Object.keys(data[msaId]).forEach(function(year){
+                if(data[msaId][year]){
+                    if(data[msaId][year]['outflow']){
+                        if(year > 12){
+                            var curYear = "19" + year;
+                        }
+                        else{
+                            var curYear = "20" + year;
+                        }
+                        valueArray.push( {x:+curYear,y:(+data[msaId][year]['inflow']['individuals'] - +data[msaId][year]['outflow']['individuals'])});                        
+                    }
+                                        
+                }
+            })
+
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
+
+
+        })
+
+
+        var rankedData = scope.rankMigration(finalData);
+        var polishedData = scope.polishData(rankedData);
+        polishedData.forEach(function(metroArea){
+            metroArea.values.sort(function(a,b){
+                return a.x - b.x
+            })
+        })
+        console.log('outflow',polishedData);        
+        return polishedData;
     },
     processMigrationData:function(data){
         var scope = this;
 
         var reducedData = {}
-        
+
         var finalData = [];
         Object.keys(data).forEach(function(msaId){
             var valueArray = [];
@@ -84,6 +219,8 @@ var DataStore = React.createClass({
         var rankedData = scope.rankMigration(finalData);
 
         var polishedData = scope.polishData(rankedData);
+        console.log("net mig",polishedData);
+
         return polishedData;
 
     },
@@ -176,7 +313,7 @@ var DataStore = React.createClass({
 		graphData = scope.state.immData;
 		return graphData;    	
     },
-    migrationGraph:function(filters){
+    netMigrationGraph:function(filters){
         var scope = this;
         var graphData;
 
@@ -184,6 +321,36 @@ var DataStore = React.createClass({
 
 
         graphData = scope.state.migrationData;
+        return graphData;               
+    },
+    inflowMigrationGraph:function(filters){
+        var scope = this;
+        var graphData;
+
+
+
+
+        graphData = scope.state.outflowMigration;
+        return graphData;               
+    },
+    irsNetGraph:function(filters){
+        var scope = this;
+        var graphData;
+
+
+
+
+        graphData = scope.state.irsNet;
+        return graphData;               
+    },
+    outflowMigrationGraph:function(filters){
+        var scope = this;
+        var graphData;
+
+
+
+
+        graphData = scope.state.inflowMigration;
         return graphData;               
     },
 	shareGraph:function(filters){
@@ -243,22 +410,6 @@ var DataStore = React.createClass({
 
 
 	},
-    divCompGraph:function(filters){
-        var scope = this,
-            cities=[];
-
-        if(scope.state.loading){
-            console.log('reloading')
-            setTimeout(function(){ scope.divCompGraph(filters) }, 1500);
-        }
-        else{
-
-
-                var graphData = scope.polishData(scope.processDivComp());
-                console.log(graphData);
-                return graphData;
-            }       
-    },
 	densCompGraph:function(filters){
 		var scope = this,
 			cities=[];
@@ -571,58 +722,6 @@ var DataStore = React.createClass({
 		return cities;        
 
 	},
-    processDivComp:function(){
-        var scope = this;
-
-        var compCities = {};
-
-        var years = [2009,2010,2011,2012,2013,2014];
-        var compositeCityRanks = [];
-        scope.state.immData.forEach(function(item){
-            for(var i=0; i<scope.state.migrationData.length;i++){
-                if(item.key == scope.state.migrationData[i].key){
-
-                    var resultValues = [];
-
-                    item.values.forEach(function(itemValues){
-                        for(var j=0;j<scope.state.migrationData[i].values.length;j++){
-                            if(itemValues.x == scope.state.migrationData[i].values[j].x){
-                                resultValues.push({x:itemValues.x,y:( ((scope.state.immData.length - itemValues.rank)+1 + (scope.state.migrationData.length-scope.state.migrationData[i].values[j].rank)+1)/2 )})
-                            }
-                        }
-                    })
-
-                    compositeCityRanks.push({key:item.key,values:resultValues})
-                }
-            }
-        })
-
-        //Rank them
-        years.forEach(function(year){
-            var rank = 1;
-            //Sort cities according to each year
-            compositeCityRanks.sort(scope.sortCities(year));
-
-            //Go through and assign ranks for current year
-            compositeCityRanks.forEach(function(city){
-
-                city.values.forEach(function(yearValues){
-
-                    if(yearValues.x == year){
-                        yearValues.rank = rank;
-                    }
-                })
-
-                rank++;
-            })
-
-        })          
-
-
-        // console.log("divccomp",compositeCityRanks)
-
-        return compositeCityRanks;
-    },
 	rankComposite:function(){
 		var scope = this,
 			years = d3.range(1990,2010);
