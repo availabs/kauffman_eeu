@@ -34,33 +34,132 @@ var DataStore = React.createClass({
         var scope = this;
 
 
-        d3.json("/allMsa",function(err,msaData){
+        // d3.json("/allMsa",function(err,msaData){
 
-            d3.json("/countyPop",function(err,popData){
+        //     d3.json("/countyPop",function(err,popData){
                
-                d3.json("/shareImm",function(err,immData){
+        //         d3.json("/shareImm",function(err,immData){
 
-                    d3.json("/migration",function(err,migrationData){
-                        d3.json("/detailMigration",function(err,detailMigrationData){
+        //             d3.json("/migration",function(err,migrationData){
+        //                 d3.json("/detailMigration",function(err,detailMigrationData){
 
-                            var data = {};
-                            data['fullData'] = msaData;
-                            data['msaPop'] = popData;
-                            data['immData'] = immData;
-                            data['migrationData'] = migrationData;
-                            data['detailMigrationData'] = detailMigrationData
-                            cb(data);                       
+        //                     var data = {};
+        //                     data['fullData'] = msaData;
+        //                     data['msaPop'] = popData;
+        //                     data['immData'] = immData;
+        //                     data['migrationData'] = migrationData;
+        //                     data['detailMigrationData'] = detailMigrationData
+        //                     cb(data);                       
 
 
 
-                        })
+        //                 })
 
-                    })
+        //             })
+        //         })
+        //     })
+        // })
+    var match = 0;
+    var total = 0;
+    var curMatch = 0;
+    var miss = 0;
+    var missMetro = {};
+
+    //GREENVILLE/GREENWOOD SC IS A MISMATCH
+
+        d3.json("../../react/utils/data/inc5000/inc5000_2014.json",function(err,incData){
+        
+            Object.keys(incData).forEach(function(firm){
+                total++;
+                Object.keys(msaIdToName).forEach(function(msaId){
+                    if(msaIdToName[msaId].substr(0,7) == incData[firm].metro.substr(0,7)){
+                        
+                        //console.log(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2));
+                        //console.log(incData[firm].state_s)
+                        if(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2) == incData[firm].state_s){
+                            match++;
+                            curMatch++;
+                            //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+                        }
+                        else{
+                               
+                        
+                            if(msaIdToName[msaId].substr(msaIdToName[msaId].length-5,2) == incData[firm].state_s){
+                                match++;
+                                curMatch++;
+                                //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+                            }
+                            else{
+                                if(msaIdToName[msaId].substr(msaIdToName[msaId].length-8,2) == incData[firm].state_s){
+                                    match++;
+                                    curMatch++;
+                                    //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+                                }
+                                else{
+                                    if(msaIdToName[msaId].substr(msaIdToName[msaId].length-11,2) == incData[firm].state_s){
+                                        match++;
+                                        curMatch++;
+                                        //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 })
+                if(curMatch == 0){
+                    Object.keys(msaIdToName).forEach(function(msaId){
+                        if(msaIdToName[msaId].substr(0,5) == incData[firm].metro.substr(0,5)){
+                            if(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2) == incData[firm].state_s){
+                                match++;
+                                curMatch++;
+                                //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+                            }
+                            else{
+                                   
+                            
+                                if(msaIdToName[msaId].substr(msaIdToName[msaId].length-5,2) == incData[firm].state_s){
+                                    match++;
+                                    curMatch++;
+                                    //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+                                }
+                                else{
+                                    if(msaIdToName[msaId].substr(msaIdToName[msaId].length-8,2) == incData[firm].state_s){
+                                        match++;
+                                        curMatch++;
+                                        //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+                                    }
+                                    else{
+                                        if(msaIdToName[msaId].substr(msaIdToName[msaId].length-11,2) == incData[firm].state_s){
+                                            match++;
+                                            curMatch++;
+                                            //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+                                        }
+                                    }
+                                }
+                            }                        
+                        }
+                    })
+                    if(curMatch == 0){
+                        console.log(incData[firm].metro,incData[firm]);
+                        if(!missMetro[incData[firm].metro]){
+                            missMetro[incData[firm].metro] = 1;
+                        }
+                        else{
+                            missMetro[incData[firm].metro]++;
+                        }
+                        
+                        miss++;                            
+                    }
+                    
+                                 
+                }
+                curMatch = 0;
+
             })
+            console.log(match,miss,total);
+            console.log(missMetro);
+
         })
-
-
 
     
 
@@ -147,7 +246,7 @@ var DataStore = React.createClass({
                 return a.x - b.x
             })
         })
-        console.log('outflow',polishedData);        
+      
         return polishedData;
     },
     processIrsNet:function(data){
@@ -188,7 +287,7 @@ var scope = this;
                 return a.x - b.x
             })
         })
-        console.log('outflow',polishedData);        
+    
         return polishedData;
     },
     processMigrationData:function(data){
