@@ -419,7 +419,7 @@ var DataStore = React.createClass({
         graphData["raw"] = graphRawData;
         graphData["relative"] = polishedData;
 
-        console.log(graphData);
+
         return graphData;
 
     },
@@ -427,10 +427,41 @@ var DataStore = React.createClass({
         var scope = this;
         var graphData;
 
+        console.log(scope.state.msaPop);
 
 
 
-        graphData = scope.state.migrationData;
+        var graphRawData = scope.state.migrationData;
+
+        var graphRelativeData = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2011){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(scope.state.msaPop[metroArea.key]){
+                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});                
+        })
+
+
+        var rankedData = scope.rankMigration(graphRelativeData);
+
+        var polishedData = scope.polishData(rankedData);
+
+
+        var graphData = {};
+        graphData["raw"] = graphRawData;
+        graphData["relative"] = polishedData;
+
         return graphData;               
     },
     inflowMigrationGraph:function(filters){
@@ -438,19 +469,76 @@ var DataStore = React.createClass({
         var graphData;
 
 
+        var graphRawData = scope.state.inflowMigration;
+
+        var graphRelativeData = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2011){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(scope.state.msaPop[metroArea.key]){
+                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});                
+        })
 
 
-        graphData = scope.state.outflowMigration;
-        return graphData;               
+        var rankedData = scope.rankMigration(graphRelativeData);
+
+        var polishedData = scope.polishData(rankedData);
+
+
+        var graphData = {};
+        graphData["raw"] = graphRawData;
+        graphData["relative"] = polishedData;
+
+        return graphData;  
+             
     },
     irsNetGraph:function(filters){
         var scope = this;
         var graphData;
 
 
+        var graphRawData = scope.state.irsNet;
+
+        var graphRelativeData = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2011){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(scope.state.msaPop[metroArea.key]){
+                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});                
+        })
 
 
-        graphData = scope.state.irsNet;
+        var rankedData = scope.rankMigration(graphRelativeData);
+
+        var polishedData = scope.polishData(rankedData);
+
+
+        var graphData = {};
+        graphData["raw"] = graphRawData;
+        graphData["relative"] = polishedData;
+
         return graphData;               
     },
     outflowMigrationGraph:function(filters){
@@ -458,9 +546,37 @@ var DataStore = React.createClass({
         var graphData;
 
 
+        var graphRawData = scope.state.outflowMigration;
+
+        var graphRelativeData = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2011){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(scope.state.msaPop[metroArea.key]){
+                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});                
+        })
 
 
-        graphData = scope.state.inflowMigration;
+        var rankedData = scope.rankMigration(graphRelativeData);
+
+        var polishedData = scope.polishData(rankedData);
+
+
+        var graphData = {};
+        graphData["raw"] = graphRawData;
+        graphData["relative"] = polishedData;
+
         return graphData;               
     },
 	shareGraph:function(filters){
