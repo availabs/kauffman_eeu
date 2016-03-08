@@ -4,10 +4,16 @@ var	fs = require('fs'),
     msaIdToName = require("../../assets/react/components/utils/msaIdToName.json"),
     msatocounty = require("../../assets/react/utils/data/msatocounty.js"),
 	aggImmShare = require('../../assets/react/utils/data/ACS_5_Year_Immigration_Percentage/aggImmShare.json'),    
-    countypopagg = require("../../assets/cache/countyPop/countypopagg.json");
-
-
-
+    countypopagg = require("../../assets/cache/countyPop/countypopagg.json"),
+    inc2007 = require('../../assets/react/utils/data/inc5000/inc5000_2007.json'),
+	inc2008 = require('../../assets/react/utils/data/inc5000/inc5000_2008.json'),
+	inc2009 = require('../../assets/react/utils/data/inc5000/inc5000_2009.json'),
+	inc2010 = require('../../assets/react/utils/data/inc5000/inc5000_2010.json'),
+	inc2011 = require('../../assets/react/utils/data/inc5000/inc5000_2011.json'),
+	inc2012 = require('../../assets/react/utils/data/inc5000/inc5000_2012.json'),
+	inc2013 = require('../../assets/react/utils/data/inc5000/inc5000_2013.json'),
+	inc2014 = require('../../assets/react/utils/data/inc5000/inc5000_2014.json'),
+	inc2015 = require('../../assets/react/utils/data/inc5000/inc5000_2015.json');
 
 module.exports = {
     index: function (req, res) {
@@ -257,8 +263,144 @@ module.exports = {
 		})
         res.json(msaImmShare)
     },
+    inc5000:function(req,res){
 
-   detailMigration:function(req,res){
+    	var curYear = 2007;
+    	var dataArray = [inc2007,inc2008,inc2009,inc2010,inc2011,inc2012,inc2013,inc2014,inc2015];
+        var match = 0;
+        var total = 0;
+        var curMatch = 0;
+        var miss = 0;
+        var missMetro = {};
+        var metroFirms = {};
+		fileCache.checkCache({type:"aggregate",id:"inc5000"},function(data){
+			if(data){
+        		console.log('cache sucess');
+        		console.time('send cache');
+        		res.json(data);
+        		console.timeEnd('send cache');				
+			}
+			else{
+		    	dataArray.forEach(function(year){
+
+					Object.keys(year).forEach(function(firm){
+		                total++;
+		                Object.keys(msaIdToName).forEach(function(msaId){
+		                    if(!metroFirms[msaId]){
+		                        metroFirms[msaId] = {};
+		                    }
+		                    if(!metroFirms[msaId][curYear]){
+		                        metroFirms[msaId][curYear]=0;
+		                    }
+		                    if(msaIdToName[msaId].substr(0,7) == year[firm].metro.substr(0,7)){
+		                        
+		                        //console.log(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2));
+		                        //console.log(year[firm].state_s)
+		                        if(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2) == year[firm].state_s){
+		                            match++;
+		                            curMatch++;
+		                             metroFirms[msaId][curYear]++;
+		                            //console.log("INC|",year[firm].metro,year[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+		                        }
+		                        else{
+		                               
+		                        
+		                            if(msaIdToName[msaId].substr(msaIdToName[msaId].length-5,2) == year[firm].state_s){
+		                                match++;
+		                                curMatch++;
+		                                 metroFirms[msaId][curYear]++;
+		                                //console.log("INC|",year[firm].metro,year[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+		                            }
+		                            else{
+		                                if(msaIdToName[msaId].substr(msaIdToName[msaId].length-8,2) == year[firm].state_s){
+		                                    match++;
+		                                    curMatch++;
+		                                     metroFirms[msaId][curYear]++;
+		                                    //console.log("INC|",year[firm].metro,year[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+		                                }
+		                                else{
+		                                    if(msaIdToName[msaId].substr(msaIdToName[msaId].length-11,2) == year[firm].state_s){
+		                                        match++;
+		                                        curMatch++;
+		                                         metroFirms[msaId][curYear]++;
+		                                        //console.log("INC|",year[firm].metro,year[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+		                                    }
+		                                }
+		                            }
+		                        }
+		                    }
+		                })
+		                if(curMatch == 0){
+		                    Object.keys(msaIdToName).forEach(function(msaId){
+		                        if(msaIdToName[msaId].substr(0,5) == year[firm].metro.substr(0,5)){
+		                            if(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2) == year[firm].state_s){
+		                                match++;
+		                                curMatch++;
+		                                 metroFirms[msaId][curYear]++;
+		                                //console.log("INC|",year[firm].metro,year[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+		                            }
+		                            else{
+		                                   
+		                            
+		                                if(msaIdToName[msaId].substr(msaIdToName[msaId].length-5,2) == year[firm].state_s){
+		                                    match++;
+		                                    curMatch++;
+		                                     metroFirms[msaId][curYear]++;
+		                                    //console.log("INC|",year[firm].metro,year[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+		                                }
+		                                else{
+		                                    if(msaIdToName[msaId].substr(msaIdToName[msaId].length-8,2) == year[firm].state_s){
+		                                        match++;
+		                                        curMatch++;
+		                                         metroFirms[msaId][curYear]++;
+		                                        //console.log("INC|",year[firm].metro,year[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+		                                    }
+		                                    else{
+		                                        if(msaIdToName[msaId].substr(msaIdToName[msaId].length-11,2) == year[firm].state_s){
+		                                            match++;
+		                                            curMatch++;
+		                                             metroFirms[msaId][curYear]++;
+		                                            //console.log("INC|",year[firm].metro,year[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
+		                                        }
+		                                    }
+		                                }
+		                            }                        
+		                        }
+		                    })
+		                    if(curMatch == 0){
+		                        if(!missMetro[year[firm].metro]){
+		                            missMetro[year[firm].metro] = 1;
+		                        }
+		                        else{
+		                            missMetro[year[firm].metro]++;
+		                        }
+		                        
+		                        miss++;                            
+		                    }
+		                    
+		                                 
+		                }
+		                curMatch = 0;
+
+		            })
+
+		    		curYear++;
+		    	})
+				fileCache.addData({type:"aggregate",id:"inc5000"},metroFirms);
+		    	res.json(metroFirms);				
+			}
+
+
+
+		})
+
+
+
+
+
+    },
+
+    detailMigration:function(req,res){
 
     	//1990 and 1991 are txt, individual states
     	//1992 to 1994 are csv, indivudual states, no US data
@@ -524,10 +666,6 @@ module.exports = {
 				    	res.json(msaMigration);
 			    	}
 			    })
-
-
-
-
     		}
     	})
     }

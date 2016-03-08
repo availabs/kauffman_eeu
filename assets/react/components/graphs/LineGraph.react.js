@@ -9,7 +9,8 @@ var LineGraph = React.createClass({
     getInitialState:function(){
         return {
             extent:[363,0],
-            plot:"rank"
+            plot:"rank",
+            dataType:"raw"
         }
     },
     getDefaultProps:function(){
@@ -44,10 +45,16 @@ var LineGraph = React.createClass({
         else{
             //Get rid of everything already in the svg
             d3.selectAll("svg").remove();
-            var data = scope.props.data;
+
+            if(scope.props.graph != "inc5000"){
+                var data = scope.props.data;
+            }
+            else{
+                var data = scope.props.data[scope.state.dataType];
+            }
 
 
-
+            console.log(data);
 
 
             var filteredData = [];
@@ -94,7 +101,7 @@ var LineGraph = React.createClass({
                 var yBrush = d3.scale.linear()
                     .range([0,height]);
 
-                yBrush.domain([0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.rank }); })]);
+                yBrush.domain([0,d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.rank }); })]);
 
                 y.domain([scope.state.extent[1],scope.state.extent[0]]);
 
@@ -135,7 +142,7 @@ var LineGraph = React.createClass({
 
 
 
-                yBrush.domain([d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]);
+                yBrush.domain([d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]);
 
                 y.domain([scope.state.extent[0],scope.state.extent[1]]);
             }
@@ -526,11 +533,19 @@ brush.extent([s[1],s[0]])(d3.select(this));
         var scope = this;
 
 
-        if(scope.state.plot == "rank"){
-            var extent = [d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]              
+        if(scope.props.graph == "inc5000"){
+            var data = scope.props.data[scope.state.dataType];
         }
         else{
-            var extent = [d3.min(scope.props.data, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]            
+            var data = scope.props.data;
+        }
+
+
+        if(scope.state.plot == "rank"){
+            var extent = [d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]              
+        }
+        else{
+            var extent = [d3.min(data, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]            
         }
          
         
@@ -541,6 +556,12 @@ brush.extent([s[1],s[0]])(d3.select(this));
         console.log("toggle rank/val");
         var scope = this;
 
+        if(scope.props.graph == "inc5000"){
+            var data = scope.props.data[scope.state.dataType];
+        }
+        else{
+            var data = scope.props.data;
+        }
 
         var valButton = d3.select('#valueButton');
         var rankButton = d3.select('#rankButton')
@@ -564,16 +585,51 @@ brush.extent([s[1],s[0]])(d3.select(this));
 
         if(active == 'rankButton'){
             //scope.setState({plot:'rank',extent:[363,0]});
-            var extent = [d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]
+            var extent = [d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]
             scope.setState({plot:'rank',extent:extent})
 
         }
         else{
 
-            var extent = [0,d3.max(scope.props.data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]
+            var extent = [0,d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]
 
             scope.setState({plot:'value',extent:extent})
 
+        }
+
+
+
+    },
+    toggleRawRelative:function(e){
+        console.log("toggle rank/val");
+        var scope = this;
+
+
+        var rawButton = d3.select('#rawButton');
+        var relativeButton = d3.select('#relativeButton')
+        var activeButton;
+
+        if(rawButton.attr("class") == "btn btn-danger"){
+            rawButton.attr("class","btn btn-success") 
+            var active = rawButton.attr('id');
+        }
+        else{
+            rawButton.attr("class","btn btn-danger"); 
+        }
+
+        if(relativeButton.attr("class") == "btn btn-danger"){
+            relativeButton.attr("class","btn btn-success");
+            var active = relativeButton.attr('id');
+        }
+        else{
+            relativeButton.attr("class","btn btn-danger");
+        }
+
+        if(active == 'relativeButton'){
+            scope.setState({dataType:'relative'})
+        }
+        else{
+            scope.setState({dataType:'raw'})
         }
 
 
@@ -620,6 +676,9 @@ brush.extent([s[1],s[0]])(d3.select(this));
             marginLeft:'10px'
         }
 
+        var rawButton;
+        var relativeButton;
+
         var rankButton;
         var valueButton;
 
@@ -634,7 +693,15 @@ brush.extent([s[1],s[0]])(d3.select(this));
         }
 
 
+        if(scope.props.graph == "inc5000"){
+            rawButton = (
+                <button id="rawButton" style={buttonStyle} className="btn btn-success" onClick={scope.toggleRawRelative}>Raw Values</button>
+                )
 
+            relativeButton = (
+                <button id="relativeButton" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRawRelative}>Relative Values</button>
+                )                
+        }
 
 
 
@@ -643,7 +710,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
             return (
                 <div>
                     <h3>Rankings</h3>
-                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}</div>
+                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}</div>
                 </div>
             );          
         }

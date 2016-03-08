@@ -67,6 +67,9 @@ var GraphPage = React.createClass({
 
         	data = scope.refs.store.irsNetGraph(filters);
         }
+        if(graph == "inc5000"){
+        	data = scope.refs.store.incGraph(filters);
+        }
 
 
         if(!data){
@@ -142,7 +145,14 @@ var GraphPage = React.createClass({
 				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
-		}				
+		}	
+		else if(e.target.id == "inc5000"){
+			scope.setState({graph:"inc5000",loading:true});
+			d3.select('#inc5000')
+				.attr('class',"active");
+			d3.select('#fluidity')
+				.attr('class',"active");
+		}			
 		else{
 			scope.setState({graph:"densComposite",loading:true});
 			d3.select('#densComposite')
@@ -189,6 +199,7 @@ var GraphPage = React.createClass({
 	    		<li className="dropdown" id="fluidity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
+	    				<li id="inc5000"  onClick={scope.toggleGraph}><a id="inc5000" >High Growth Firms</a></li>	
 	    				<li id="irsNet"  onClick={scope.toggleGraph}><a id="irsNet" >Net Migration (IRS)</a></li>
 			    		<li id="netMigration"  onClick={scope.toggleGraph}><a id="netMigration" >Net Migration (ACS)</a></li>
 			    		<li id="inflowMigration"  onClick={scope.toggleGraph}><a id="inflowMigration" >Inflow Migration</a></li>

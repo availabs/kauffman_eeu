@@ -13,6 +13,7 @@ var DataStore = React.createClass({
             migrationData:[],
             inflowMigration:[],
             outflowMigration:[],
+            incData:[],
             irsNet:[],
 			shareValues:[],
 			newValues:[],
@@ -27,139 +28,42 @@ var DataStore = React.createClass({
         var scope = this;
 
         scope.getData(function(data){
-            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),loading:false});
+            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),incData:scope.processIncData(data['incData']),loading:false});
         })
     },
     getData:function(cb){
         var scope = this;
 
 
-        // d3.json("/allMsa",function(err,msaData){
+        d3.json("/allMsa",function(err,msaData){
 
-        //     d3.json("/countyPop",function(err,popData){
+            d3.json("/countyPop",function(err,popData){
                
-        //         d3.json("/shareImm",function(err,immData){
+                d3.json("/shareImm",function(err,immData){
 
-        //             d3.json("/migration",function(err,migrationData){
-        //                 d3.json("/detailMigration",function(err,detailMigrationData){
+                    d3.json("/migration",function(err,migrationData){
+                        d3.json("/detailMigration",function(err,detailMigrationData){
 
-        //                     var data = {};
-        //                     data['fullData'] = msaData;
-        //                     data['msaPop'] = popData;
-        //                     data['immData'] = immData;
-        //                     data['migrationData'] = migrationData;
-        //                     data['detailMigrationData'] = detailMigrationData
-        //                     cb(data);                       
-
-
-
-        //                 })
-
-        //             })
-        //         })
-        //     })
-        // })
-    var match = 0;
-    var total = 0;
-    var curMatch = 0;
-    var miss = 0;
-    var missMetro = {};
-
-    //GREENVILLE/GREENWOOD SC IS A MISMATCH
-
-        d3.json("../../react/utils/data/inc5000/inc5000_2014.json",function(err,incData){
-        
-            Object.keys(incData).forEach(function(firm){
-                total++;
-                Object.keys(msaIdToName).forEach(function(msaId){
-                    if(msaIdToName[msaId].substr(0,7) == incData[firm].metro.substr(0,7)){
-                        
-                        //console.log(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2));
-                        //console.log(incData[firm].state_s)
-                        if(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2) == incData[firm].state_s){
-                            match++;
-                            curMatch++;
-                            //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
-                        }
-                        else{
-                               
-                        
-                            if(msaIdToName[msaId].substr(msaIdToName[msaId].length-5,2) == incData[firm].state_s){
-                                match++;
-                                curMatch++;
-                                //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
-                            }
-                            else{
-                                if(msaIdToName[msaId].substr(msaIdToName[msaId].length-8,2) == incData[firm].state_s){
-                                    match++;
-                                    curMatch++;
-                                    //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
-                                }
-                                else{
-                                    if(msaIdToName[msaId].substr(msaIdToName[msaId].length-11,2) == incData[firm].state_s){
-                                        match++;
-                                        curMatch++;
-                                        //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                })
-                if(curMatch == 0){
-                    Object.keys(msaIdToName).forEach(function(msaId){
-                        if(msaIdToName[msaId].substr(0,5) == incData[firm].metro.substr(0,5)){
-                            if(msaIdToName[msaId].substr(msaIdToName[msaId].length-2,2) == incData[firm].state_s){
-                                match++;
-                                curMatch++;
-                                //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
-                            }
-                            else{
-                                   
-                            
-                                if(msaIdToName[msaId].substr(msaIdToName[msaId].length-5,2) == incData[firm].state_s){
-                                    match++;
-                                    curMatch++;
-                                    //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
-                                }
-                                else{
-                                    if(msaIdToName[msaId].substr(msaIdToName[msaId].length-8,2) == incData[firm].state_s){
-                                        match++;
-                                        curMatch++;
-                                        //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
-                                    }
-                                    else{
-                                        if(msaIdToName[msaId].substr(msaIdToName[msaId].length-11,2) == incData[firm].state_s){
-                                            match++;
-                                            curMatch++;
-                                            //console.log("INC|",incData[firm].metro,incData[firm].state_s,"|DATABASE|",msaIdToName[msaId]);
-                                        }
-                                    }
-                                }
-                            }                        
-                        }
+                     
+                            //GREENVILLE/GREENWOOD SC IS A MISMATCH
+                            d3.json("/inc5000",function(err,incData){
+                                var data = {};
+                                data['fullData'] = msaData;
+                                data['msaPop'] = popData;
+                                data['immData'] = immData;
+                                data['migrationData'] = migrationData;
+                                data['detailMigrationData'] = detailMigrationData;
+                                data['incData'] = incData;
+                                cb(data);  
+                            })
+                        })
                     })
-                    if(curMatch == 0){
-                        console.log(incData[firm].metro,incData[firm]);
-                        if(!missMetro[incData[firm].metro]){
-                            missMetro[incData[firm].metro] = 1;
-                        }
-                        else{
-                            missMetro[incData[firm].metro]++;
-                        }
-                        
-                        miss++;                            
-                    }
-                    
-                                 
-                }
-                curMatch = 0;
-
+                })
             })
-            console.log(match,miss,total);
-            console.log(missMetro);
-
         })
+
+
+
 
     
 
@@ -208,6 +112,41 @@ var DataStore = React.createClass({
         })
         return polishedData;
     },
+    processIncData:function(data){
+        var scope = this;
+
+        var reducedData = {}
+
+        var finalData = [];
+        Object.keys(data).forEach(function(msaId){
+            var valueArray = [];
+            Object.keys(data[msaId]).forEach(function(year){
+                
+                valueArray.push( {x:+year,y:+data[msaId][year]});                    
+                
+
+
+                
+            })
+
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
+
+
+        })
+
+
+        var rankedData = scope.rankInc(finalData);
+
+        var polishedData = scope.polishData(rankedData);
+        console.log("inc5000",polishedData);
+
+        return polishedData;
+
+
+
+    },
     processOutflowMigration:function(data){
         var scope = this; 
 
@@ -250,7 +189,7 @@ var DataStore = React.createClass({
         return polishedData;
     },
     processIrsNet:function(data){
-var scope = this; 
+        var scope = this; 
 
         var reducedData = {}
 
@@ -318,7 +257,6 @@ var scope = this;
         var rankedData = scope.rankMigration(finalData);
 
         var polishedData = scope.polishData(rankedData);
-        console.log("net mig",polishedData);
 
         return polishedData;
 
@@ -411,6 +349,79 @@ var scope = this;
 
 		graphData = scope.state.immData;
 		return graphData;    	
+    },
+    incGraph:function(filters){
+        var scope = this;
+        var graphData;
+
+
+        var ages = d3.range(12);
+
+        var data = scope.state.fullData['share'];
+
+        var totalEmp = {};
+
+        Object.keys(data).forEach(function(msaId){
+
+            //Iterating through every year within a metro area
+            var valueObject = {};
+            Object.keys(data[msaId]).forEach(function(year){
+                var totalEmploySum = 0;
+                //Creates Total Employment number for that year
+                //Creates Employment in new firms for that year
+                ages.forEach(function(age){
+                    if(data[msaId][year][age]){
+                        totalEmploySum = totalEmploySum + data[msaId][year][age];                   
+                    }
+                })
+
+                //Want to return: x:year y:percent
+                valueObject[year] = totalEmploySum;
+
+            })
+
+
+            //Only return once per metroArea
+            totalEmp[msaId] = {key:msaId,values:valueObject,area:false};
+        })
+
+
+
+
+        var graphRawData = scope.state.incData;
+
+        var graphRelativeData = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2011){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(totalEmp[metroArea.key]){
+                        var newY = yearVal.y / totalEmp[metroArea.key]["values"][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});                
+        })
+
+
+        var rankedData = scope.rankInc(graphRelativeData);
+
+        var polishedData = scope.polishData(rankedData);
+
+
+        var graphData = {};
+        graphData["raw"] = graphRawData;
+        graphData["relative"] = polishedData;
+
+        console.log(graphData);
+        return graphData;
+
     },
     netMigrationGraph:function(filters){
         var scope = this;
@@ -747,6 +758,30 @@ var scope = this;
 
 		return cities; 
 	},
+    rankInc:function(cities){
+        var scope=this,
+            years = d3.range(2007,2016);
+
+        years.forEach(function(year){
+            var rank = 1;
+            //Sort cities according to each year
+            cities.sort(scope.sortCities(year));
+
+            //Go through and assign ranks for current year
+            cities.forEach(function(city){
+
+                city.values.forEach(function(yearValues){
+                    if(yearValues.x == year){
+                        yearValues.rank = rank;
+                    }
+                })
+
+                rank++;
+            })
+        })          
+
+        return cities; 
+    },
 	rankShare:function(cities){
 		var scope=this,
             years = d3.range(1977,2013);
