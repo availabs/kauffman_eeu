@@ -28,7 +28,7 @@ var DataStore = React.createClass({
         var scope = this;
 
         scope.getData(function(data){
-            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),incData:scope.processIncData(data['incData']),loading:false});
+            scope.setState({fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),incData:scope.processIncData(data['incData']),totalMigrationFlow:scope.processTotalMigrationFlow(data['detailMigrationData']),loading:false});
         })
     },
     getData:function(cb){
@@ -206,6 +206,47 @@ var DataStore = React.createClass({
                             var curYear = "20" + year;
                         }
                         valueArray.push( {x:+curYear,y:(+data[msaId][year]['inflow']['individuals'] - +data[msaId][year]['outflow']['individuals'])});                        
+                    }
+                                        
+                }
+            })
+
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
+
+
+        })
+
+
+        var rankedData = scope.rankMigration(finalData);
+        var polishedData = scope.polishData(rankedData);
+        polishedData.forEach(function(metroArea){
+            metroArea.values.sort(function(a,b){
+                return a.x - b.x
+            })
+        })
+    
+        return polishedData;
+    },
+    processTotalMigrationFlow:function(data){
+        var scope = this; 
+
+        var reducedData = {}
+
+        var finalData = [];
+        Object.keys(data).forEach(function(msaId){
+            var valueArray = [];
+            Object.keys(data[msaId]).forEach(function(year){
+                if(data[msaId][year]){
+                    if(data[msaId][year]['outflow']){
+                        if(year > 12){
+                            var curYear = "19" + year;
+                        }
+                        else{
+                            var curYear = "20" + year;
+                        }
+                        valueArray.push( {x:+curYear,y:(+data[msaId][year]['inflow']['individuals'] + +data[msaId][year]['outflow']['individuals'])});                        
                     }
                                         
                 }
@@ -578,6 +619,44 @@ var DataStore = React.createClass({
         graphData["relative"] = polishedData;
 
         return graphData;               
+    },
+    totalMigrationFlowGraph:function(filters){
+        var scope = this;
+        var graphData;
+
+
+        var graphRawData = scope.state.outflowMigration;
+
+        var graphRelativeData = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2011){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(scope.state.msaPop[metroArea.key]){
+                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});                
+        })
+
+
+        var rankedData = scope.rankMigration(graphRelativeData);
+
+        var polishedData = scope.polishData(rankedData);
+
+
+        var graphData = {};
+        graphData["raw"] = graphRawData;
+        graphData["relative"] = polishedData;
+
+        return graphData;  
     },
 	shareGraph:function(filters){
 		var scope = this,

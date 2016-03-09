@@ -67,6 +67,10 @@ var GraphPage = React.createClass({
 
         	data = scope.refs.store.irsNetGraph(filters);
         }
+        if(graph == 'totalMigrationFlow'){
+
+        	data = scope.refs.store.totalMigrationFlowGraph(filters);
+        }
         if(graph == "inc5000"){
         	data = scope.refs.store.incGraph(filters);
         }
@@ -152,7 +156,14 @@ var GraphPage = React.createClass({
 				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
-		}			
+		}
+		else if(e.target.id == "totalMigrationFlow"){
+			scope.setState({graph:"totalMigrationFlow",loading:true});
+			d3.select('#totalMigrationFlow')
+				.attr('class',"active");
+			d3.select('#fluidity')
+				.attr('class',"active");
+		}				
 		else{
 			scope.setState({graph:"densComposite",loading:true});
 			d3.select('#densComposite')
@@ -202,6 +213,7 @@ var GraphPage = React.createClass({
 	    				<li id="inc5000"  onClick={scope.toggleGraph}><a id="inc5000" >High Growth Firms</a></li>	
 	    				<li id="irsNet"  onClick={scope.toggleGraph}><a id="irsNet" >Net Migration (IRS)</a></li>
 			    		<li id="netMigration"  onClick={scope.toggleGraph}><a id="netMigration" >Net Migration (ACS)</a></li>
+			    		<li id="totalMigrationFlow"  onClick={scope.toggleGraph}><a id="totalMigrationFlow" >Total Migration (Outflow/Inflow Sum) (IRS)</a></li>
 			    		<li id="inflowMigration"  onClick={scope.toggleGraph}><a id="inflowMigration" >Inflow Migration</a></li>
 			    		<li id="outflowMigration"  onClick={scope.toggleGraph}><a id="outflowMigration" >Outflow Migration</a></li>	
 	    			</ul>
