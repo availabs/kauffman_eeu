@@ -1,0 +1,2479 @@
+County,State,Gain
+Sioux,Iowa,34.9
+Cedar,Nebraska,33.1
+Lyon,Iowa,32.8
+Nemaha,Kansas,32.6
+Duchesne,Utah,31.0
+Hutchinson,South Dakota,30.8
+Boone,Nebraska,30.0
+Spink,South Dakota,29.8
+Clay,Nebraska,29.6
+Colfax,Nebraska,29.5
+Grundy,Iowa,29.3
+Stark,North Dakota,29.0
+Williams,North Dakota,28.7
+Bottineau,North Dakota,28.6
+Butler,Iowa,28.0
+Cuming,Nebraska,27.9
+Morgan,Utah,27.8
+Kossuth,Iowa,27.7
+Yuma,Colorado,27.7
+Richland,North Dakota,27.3
+Richland,Montana,27.0
+Pierce,Nebraska,27.0
+Ida,Iowa,27.0
+Turner,South Dakota,26.9
+Campbell,Wyoming,26.6
+Kingsbury,South Dakota,26.4
+Mercer,North Dakota,26.4
+Redwood,Minnesota,26.4
+Stevens,Minnesota,26.3
+Carroll,Iowa,26.2
+Plymouth,Iowa,26.2
+Sac,Iowa,26.0
+Pepin,Wisconsin,25.7
+Chippewa,Minnesota,25.6
+Brown,Minnesota,25.5
+Pipestone,Minnesota,25.3
+Chickasaw,Iowa,25.3
+Lagrange,Indiana,25.3
+Saline,Nebraska,25.3
+Swift,Minnesota,25.2
+Ochiltree,Texas,25.2
+O Brien,Iowa,25.0
+Delaware,Iowa,24.9
+Andrews,Texas,24.7
+Weston,Wyoming,24.6
+Marshall,Kansas,24.6
+Knox,Nebraska,24.6
+Palo Alto,Iowa,24.6
+Winneshiek,Iowa,24.5
+Dubois,Indiana,24.3
+Renville,Minnesota,24.2
+Platte,Nebraska,24.1
+Uintah,Utah,24.0
+Lincoln,South Dakota,24.0
+Clayton,Iowa,23.8
+Howard,Iowa,23.7
+Emery,Utah,23.6
+Traill,North Dakota,23.6
+Summit,Utah,23.3
+Cottonwood,Minnesota,23.3
+Holt,Nebraska,23.2
+Barnes,North Dakota,23.1
+Converse,Wyoming,22.9
+Butler,Nebraska,22.8
+Yellow Medicine,Minnesota,22.8
+Marshall,Minnesota,22.8
+Hancock,Iowa,22.7
+Morton,North Dakota,22.6
+Wabasha,Minnesota,22.5
+Jefferson,Nebraska,22.5
+Washita,Oklahoma,22.4
+Crawford,Iowa,22.4
+Bremer,Iowa,22.4
+Calhoun,Iowa,22.3
+York,Nebraska,22.2
+Cedar,Iowa,22.2
+Sibley,Minnesota,22.2
+Saunders,Nebraska,22.2
+Lafayette,Wisconsin,22.2
+Lac Qui Parle,Minnesota,22.1
+Rock,Minnesota,22.1
+Kingman,Kansas,22.1
+Pope,Minnesota,22.0
+Dawson,Montana,21.9
+Buchanan,Iowa,21.8
+Humboldt,Iowa,21.7
+Beckham,Oklahoma,21.7
+Moffat,Colorado,21.6
+Union,South Dakota,21.6
+Nobles,Minnesota,21.6
+Franklin,Idaho,21.6
+Le Sueur,Minnesota,21.4
+Emmet,Iowa,21.3
+Putnam,Ohio,21.2
+Custer,Nebraska,21.2
+Murray,Minnesota,21.1
+Kewaunee,Wisconsin,21.0
+Todd,Minnesota,21.0
+Bear Lake,Idaho,20.8
+Iowa,Iowa,20.8
+Seward,Nebraska,20.7
+Mitchell,Kansas,20.6
+Carver,Minnesota,20.6
+Calumet,Wisconsin,20.6
+Lyon,Minnesota,20.5
+Lake,South Dakota,20.5
+Antelope,Nebraska,20.5
+St Croix,Wisconsin,20.5
+Phelps,Nebraska,20.3
+Monroe,Illinois,20.3
+Jackson,Iowa,20.3
+Osage,Missouri,20.2
+Meeker,Minnesota,19.9
+Fairfax City,Virginia,19.9
+Pocahontas,Iowa,19.8
+Fayette,Iowa,19.7
+Red Willow,Nebraska,19.6
+McLeod,Minnesota,19.5
+Big Horn,Wyoming,19.4
+Garfield,Colorado,19.4
+Benton,Iowa,19.3
+Cherokee,Iowa,19.3
+Pecos,Texas,19.3
+Hamilton,Illinois,19.3
+Washington,Illinois,19.3
+Montague,Texas,19.3
+Walsh,North Dakota,19.3
+Poweshiek,Iowa,19.2
+Hamilton,Nebraska,19.2
+Hardin,Iowa,19.2
+Clay,Iowa,19.2
+Winnebago,Iowa,19.2
+Allamakee,Iowa,19.1
+Nicollet,Minnesota,19.1
+Cheyenne,Nebraska,19.1
+Poquoson City,Virginia,19.0
+Pierce,Wisconsin,19.0
+Polk,Minnesota,19.0
+Clinton,Illinois,18.9
+Millard,Utah,18.9
+Platte,Wyoming,18.8
+Keokuk,Iowa,18.7
+Kingfisher,Oklahoma,18.7
+Sweetwater,Wyoming,18.7
+Jefferson,Kansas,18.6
+Houston,Minnesota,18.6
+Box Elder,Utah,18.6
+Juab,Utah,18.6
+Madison,Iowa,18.5
+Harrison,Iowa,18.5
+Jones,Iowa,18.4
+Buena Vista,Iowa,18.4
+Mitchell,Iowa,18.4
+Caribou,Idaho,18.4
+Grant,South Dakota,18.3
+Pottawatomie,Kansas,18.3
+Wadena,Minnesota,18.3
+Stearns,Minnesota,18.3
+Marion,Kansas,18.3
+Sheridan,Wyoming,18.2
+Douglas,Minnesota,18.2
+Wright,Iowa,18.1
+Pembina,North Dakota,18.1
+Roseau,Minnesota,18.1
+Hamilton,Iowa,18.1
+Trempealeau,Wisconsin,18.1
+Cassia,Idaho,18.1
+Ellis,Kansas,18.0
+Benton,Minnesota,18.0
+Jackson,Minnesota,18.0
+Johnson,Texas,18.0
+Waseca,Minnesota,17.9
+McLean,North Dakota,17.9
+Buffalo,Wisconsin,17.9
+Chariton,Missouri,17.9
+Reeves,Texas,17.8
+Shelby,Iowa,17.6
+Wasatch,Utah,17.6
+Pennington,Minnesota,17.6
+Lincoln,Wyoming,17.5
+Dakota,Nebraska,17.5
+Yankton,South Dakota,17.5
+Uinta,Wyoming,17.4
+Coffey,Kansas,17.4
+Warren,Iowa,17.3
+Faribault,Minnesota,17.3
+Perry,Pennsylvania,17.3
+Jasper,Illinois,17.3
+Franklin,Iowa,17.2
+Perry,Missouri,17.1
+Box Butte,Nebraska,17.1
+Dodge,Minnesota,17.1
+Burt,Nebraska,17.1
+Nodaway,Missouri,17.0
+Gaines,Texas,17.0
+Iowa,Wisconsin,17.0
+Lucas,Iowa,16.9
+Carroll,Missouri,16.9
+Davison,South Dakota,16.8
+Douglas,Illinois,16.8
+Taylor,Wisconsin,16.7
+Ward,North Dakota,16.7
+Delta,Colorado,16.7
+Clay,Kansas,16.7
+Mercer,Ohio,16.7
+Pratt,Kansas,16.5
+Morrison,Minnesota,16.5
+Kandiyohi,Minnesota,16.5
+Ward,Texas,16.5
+Dunn,Wisconsin,16.5
+Piatt,Illinois,16.5
+Stutsman,North Dakota,16.4
+Natrona,Wyoming,16.4
+Gooding,Idaho,16.3
+Fillmore,Minnesota,16.3
+Scurry,Texas,16.3
+Jackson,Kansas,16.2
+Jones,Texas,16.2
+Green Lake,Wisconsin,16.1
+Tama,Iowa,16.1
+Linn,Missouri,16.1
+Custer,Montana,16.1
+Brown,South Dakota,16.0
+Goodhue,Minnesota,16.0
+Codington,South Dakota,16.0
+Gage,Nebraska,16.0
+Utah,Utah,16.0
+Dickenson,Virginia,15.9
+Ector,Texas,15.9
+Ottawa,Michigan,15.9
+Washington,Nebraska,15.9
+Beadle,South Dakota,15.9
+Madison,Nebraska,15.9
+Mahaska,Iowa,15.9
+Sevier,Utah,15.8
+Cooke,Texas,15.8
+Whitman,Washington,15.8
+Wright,Minnesota,15.8
+Texas,Oklahoma,15.7
+Van Buren,Iowa,15.7
+Brookings,South Dakota,15.6
+Portage,Wisconsin,15.6
+Anderson,Kansas,15.6
+Eagle,Colorado,15.6
+Richardson,Nebraska,15.6
+Sanders,Montana,15.5
+Meade,South Dakota,15.5
+Park,Wyoming,15.4
+Buffalo,Nebraska,15.4
+Union,Iowa,15.4
+Cass,Iowa,15.3
+Otter Tail,Minnesota,15.3
+Woodford,Illinois,15.3
+Sanpete,Utah,15.3
+Floyd,Iowa,15.3
+Clark,Wisconsin,15.3
+Woodward,Oklahoma,15.3
+Dickinson,Iowa,15.3
+Martin,Indiana,15.2
+Cloud,Kansas,15.2
+Brown,Kansas,15.1
+Dupage,Illinois,15.1
+Door,Wisconsin,15.1
+Montgomery,Iowa,15.0
+Dubuque,Iowa,15.0
+Manassas Park City,Virginia,15.0
+Greene,Iowa,15.0
+Holmes,Ohio,15.0
+Dawson,Nebraska,14.9
+Scott,Minnesota,14.9
+Barton,Kansas,14.9
+Cache,Utah,14.9
+Monona,Iowa,14.8
+Dodge,Nebraska,14.8
+Isanti,Minnesota,14.8
+Lee,Texas,14.7
+Marion,Iowa,14.7
+Washington,Minnesota,14.7
+Kendall,Illinois,14.7
+Butte,South Dakota,14.7
+Jasper,Indiana,14.7
+Mills,Iowa,14.6
+Benton,Indiana,14.6
+Lewis,New York,14.6
+Young,Texas,14.6
+Page,Iowa,14.5
+Shelby,Illinois,14.5
+Dakota,Minnesota,14.5
+Wells,Indiana,14.5
+Fulton,Pennsylvania,14.5
+Hockley,Texas,14.5
+Clay,Minnesota,14.5
+Jo Daviess,Illinois,14.4
+Tolland,Connecticut,14.4
+Guthrie,Iowa,14.4
+Chippewa,Wisconsin,14.4
+Kenai Peninsula,Alaska,14.4
+Snohomish,Washington,14.4
+Monroe,Ohio,14.3
+Grant,Wisconsin,14.2
+Burleigh,North Dakota,14.2
+Bergen,New Jersey,14.1
+Spencer,Indiana,14.1
+Buchanan,Virginia,14.1
+Ozaukee,Wisconsin,14.1
+Juniata,Pennsylvania,14.0
+Lawrence,South Dakota,14.0
+Jefferson,Colorado,14.0
+Cumberland,Pennsylvania,14.0
+Carbon,Wyoming,13.9
+Otoe,Nebraska,13.9
+Rusk,Wisconsin,13.9
+Midland,Texas,13.8
+Sullivan,Indiana,13.8
+Atchison,Kansas,13.8
+Medina,Ohio,13.8
+Lewis,Missouri,13.8
+Franklin,Arkansas,13.7
+Ripley,Indiana,13.7
+Hendricks,Indiana,13.7
+Effingham,Illinois,13.7
+Callahan,Texas,13.6
+Minidoka,Idaho,13.6
+Somerset,Pennsylvania,13.6
+Henry,Iowa,13.6
+Conejos,Colorado,13.6
+Fountain,Indiana,13.6
+Martin,Minnesota,13.6
+Madison,Idaho,13.6
+Louisa,Iowa,13.6
+Mesa,Colorado,13.5
+Livingston,Illinois,13.5
+Bates,Missouri,13.5
+Carbon,Utah,13.5
+Polk,Wisconsin,13.4
+Chisago,Minnesota,13.4
+Wyandot,Ohio,13.4
+Hancock,Illinois,13.4
+Humboldt,Nevada,13.4
+Caldwell,Missouri,13.3
+Custer,Oklahoma,13.3
+McClain,Oklahoma,13.3
+Wayne,Illinois,13.3
+Wood,Texas,13.3
+Bucks,Pennsylvania,13.3
+Dodge,Wisconsin,13.3
+McPherson,Kansas,13.3
+Boone,West Virginia,13.3
+Freeborn,Minnesota,13.3
+Outagamie,Wisconsin,13.2
+Erath,Texas,13.2
+Idaho,Idaho,13.2
+Adams,Washington,13.2
+Lebanon,Pennsylvania,13.2
+San Juan,Utah,13.1
+Montgomery,Missouri,13.1
+Andrew,Missouri,13.1
+Mower,Minnesota,13.1
+Garvin,Oklahoma,13.1
+Vernon,Wisconsin,13.1
+Franklin,Kansas,13.1
+Tipton,Indiana,13.1
+Olmsted,Minnesota,13.0
+Weld,Colorado,13.0
+Bedford,Pennsylvania,13.0
+Iroquois,Illinois,13.0
+Wyoming,West Virginia,12.9
+Lea,New Mexico,12.9
+Daviess,Indiana,12.9
+Ramsey,North Dakota,12.9
+Marshall,Illinois,12.9
+Marathon,Wisconsin,12.9
+Rice,Kansas,12.8
+Haskell,Oklahoma,12.8
+Fond du Lac,Wisconsin,12.8
+La Salle,Louisiana,12.8
+Fergus,Montana,12.8
+Keith,Nebraska,12.7
+Wyoming,New York,12.7
+Cass,North Dakota,12.7
+Waushara,Wisconsin,12.7
+Colusa,California,12.7
+Cumberland,Illinois,12.7
+Waukesha,Wisconsin,12.7
+Anoka,Minnesota,12.7
+Jefferson,Idaho,12.6
+Jefferson,Wisconsin,12.6
+Russell,Virginia,12.6
+Fremont,Idaho,12.6
+Noble,Ohio,12.6
+Jerome,Idaho,12.6
+White,Arkansas,12.5
+Dickinson,Kansas,12.5
+Aitkin,Minnesota,12.5
+Watonwan,Minnesota,12.5
+Monroe,Missouri,12.4
+Dallas,Iowa,12.4
+Routt,Colorado,12.4
+Wise,Texas,12.4
+Sarpy,Nebraska,12.4
+Waupaca,Wisconsin,12.4
+Morgan,Colorado,12.4
+Juneau,Wisconsin,12.4
+Huron,Michigan,12.4
+Snyder,Pennsylvania,12.3
+Eastland,Texas,12.3
+Pike,Illinois,12.3
+Hancock,Kentucky,12.3
+Steele,Minnesota,12.3
+Monroe,Wisconsin,12.3
+Lincoln,Oklahoma,12.2
+Moniteau,Missouri,12.2
+Lincoln,Wisconsin,12.2
+Union,Pennsylvania,12.2
+Lavaca,Texas,12.2
+Contra Costa,California,12.1
+Perry,Indiana,12.1
+Davis,Utah,12.1
+Fairfax,Virginia,12.1
+Cass,Nebraska,12.1
+Mercer,Illinois,12.0
+Story,Iowa,12.0
+Teton,Wyoming,12.0
+Manitowoc,Wisconsin,12.0
+Latah,Idaho,12.0
+Goshen,Wyoming,12.0
+Clarion,Pennsylvania,12.0
+Canadian,Oklahoma,12.0
+Gem,Idaho,12.0
+Preston,West Virginia,11.9
+Posey,Indiana,11.9
+Putnam,New York,11.8
+Sherburne,Minnesota,11.8
+Greene,Illinois,11.8
+New Kent,Virginia,11.8
+Wood,Wisconsin,11.8
+Webster,Kentucky,11.8
+Henry,Ohio,11.8
+Tooele,Utah,11.8
+Winona,Minnesota,11.7
+Sumner,Kansas,11.7
+Rice,Minnesota,11.6
+Marquette,Wisconsin,11.6
+Oconto,Wisconsin,11.6
+Jasper,Iowa,11.6
+La Plata,Colorado,11.5
+Wayne,Pennsylvania,11.5
+Marinette,Wisconsin,11.5
+Washoe,Nevada,11.5
+Wilson,Kansas,11.5
+Kanabec,Minnesota,11.5
+Butler,Pennsylvania,11.5
+Hunterdon,New Jersey,11.5
+Harvey,Kansas,11.4
+Logan,Colorado,11.4
+Green,Wisconsin,11.4
+Neosho,Kansas,11.4
+Hutchinson,Texas,11.4
+Langlade,Wisconsin,11.4
+Pine,Minnesota,11.4
+Osage,Kansas,11.4
+Mille Lacs,Minnesota,11.3
+Clearwater,Minnesota,11.3
+Live Oak,Texas,11.3
+King,Washington,11.3
+Atoka,Oklahoma,11.3
+Stephens,Oklahoma,11.3
+Barton,Missouri,11.3
+Lincoln,Washington,11.3
+Richland,Wisconsin,11.3
+Minnehaha,South Dakota,11.3
+Arlington,Virginia,11.2
+Eau Claire,Wisconsin,11.2
+Duval,Texas,11.2
+Kiowa,Oklahoma,11.1
+Fayette,Texas,11.1
+Elbert,Colorado,11.1
+Las Animas,Colorado,11.1
+Elko,Nevada,11.1
+Los Alamos,New Mexico,11.1
+Randall,Texas,11.1
+Lincoln,Nebraska,11.1
+Auglaize,Ohio,11.0
+Montgomery,Illinois,11.0
+Union,Oregon,11.0
+Columbia,Wisconsin,11.0
+Carroll,Illinois,11.0
+Becker,Minnesota,11.0
+Jefferson,Pennsylvania,11.0
+Hill,Texas,10.9
+Bingham,Idaho,10.9
+Miami,Kansas,10.9
+Ste Genevieve,Missouri,10.9
+Howard,Missouri,10.9
+Crawford,Wisconsin,10.9
+Moultrie,Illinois,10.9
+Cambria,Pennsylvania,10.9
+Twin Falls,Idaho,10.9
+El Dorado,California,10.8
+Ray,Missouri,10.8
+Paulding,Ohio,10.8
+Norfolk,Massachusetts,10.8
+Clinton,Iowa,10.8
+Price,Wisconsin,10.8
+Vermilion,Louisiana,10.8
+Appanoose,Iowa,10.7
+Fulton,Ohio,10.7
+Lawrence,Arkansas,10.7
+Upshur,Texas,10.7
+Fayette,Georgia,10.7
+Fayette,Illinois,10.7
+Whitley,Indiana,10.7
+Zapata,Texas,10.7
+Hardin,Texas,10.6
+Elk,Pennsylvania,10.6
+Randolph,Indiana,10.6
+Gillespie,Texas,10.6
+Stoddard,Missouri,10.6
+Seneca,Ohio,10.6
+Rockingham,New Hampshire,10.6
+Rockwall,Texas,10.5
+Montgomery,Maryland,10.5
+Potter,Pennsylvania,10.5
+White,Illinois,10.5
+Cerro Gordo,Iowa,10.4
+Seward,Kansas,10.4
+Gray,Texas,10.4
+Pike,Indiana,10.4
+Indiana,Pennsylvania,10.3
+Cass,Missouri,10.3
+Shawano,Wisconsin,10.3
+Bosque,Texas,10.3
+Panola,Texas,10.3
+Van Zandt,Texas,10.3
+Newton,Indiana,10.3
+Pushmataha,Oklahoma,10.2
+Grant,Arkansas,10.2
+Marshall,West Virginia,10.2
+Breckinridge,Kentucky,10.2
+Cole,Missouri,10.2
+Moore,Texas,10.2
+Le Flore,Oklahoma,10.2
+Hall,Nebraska,10.2
+Matanuska-Susitna,Alaska,10.2
+Iron,Missouri,10.1
+Palo Pinto,Texas,10.1
+Ford,Kansas,10.1
+Blue Earth,Minnesota,10.1
+Jefferson,Montana,10.1
+Forest,Wisconsin,10.1
+Tuscarawas,Ohio,10.1
+Placer,California,10.1
+Hamilton,Indiana,10.1
+Grundy,Missouri,10.1
+Madison,Missouri,10.1
+Baker,Oregon,10.0
+Knox,Ohio,10.0
+Shelby,Ohio,10.0
+Adams,Nebraska,10.0
+Koochiching,Minnesota,10.0
+White,Indiana,10.0
+Comanche,Texas,10.0
+Clay,Arkansas,9.9
+Bollinger,Missouri,9.9
+Logan,Oklahoma,9.9
+Washburn,Wisconsin,9.9
+Fremont,Colorado,9.8
+Jersey,Illinois,9.8
+Murray,Oklahoma,9.8
+Payne,Oklahoma,9.8
+Franklin,Pennsylvania,9.8
+Wayne,Missouri,9.8
+Washington,Idaho,9.8
+Boulder,Colorado,9.8
+Craig,Oklahoma,9.7
+Itasca,Minnesota,9.7
+Montezuma,Colorado,9.7
+Lincoln,West Virginia,9.7
+Warren,Ohio,9.7
+Boone,Iowa,9.7
+Washakie,Wyoming,9.7
+Gasconade,Missouri,9.6
+Macon,Missouri,9.6
+Bullitt,Kentucky,9.6
+Grant,West Virginia,9.5
+Washington,Iowa,9.5
+Prowers,Colorado,9.5
+Colonial Heights City,Virginia,9.5
+Hood,Texas,9.5
+Dent,Missouri,9.5
+Marshall,Oklahoma,9.4
+Hubbard,Minnesota,9.4
+Okmulgee,Oklahoma,9.4
+Bonneville,Idaho,9.4
+Washington,Kentucky,9.4
+Weber,Utah,9.4
+Barron,Wisconsin,9.4
+Napa,California,9.3
+Rogers,Oklahoma,9.3
+Cannon,Tennessee,9.3
+Clinton,Michigan,9.3
+Mayes,Oklahoma,9.3
+Pawnee,Oklahoma,9.3
+Chesterfield,Virginia,9.3
+Hughes,South Dakota,9.3
+Upshur,West Virginia,9.3
+Runnels,Texas,9.2
+Larue,Kentucky,9.2
+Cooper,Missouri,9.2
+Gibson,Indiana,9.1
+Shenandoah,Virginia,9.1
+Stark,Illinois,9.1
+Parmer,Texas,9.1
+Castro,Texas,9.1
+Smith,Texas,9.1
+Oldham,Kentucky,9.0
+Columbia,Oregon,9.0
+McLean,Kentucky,9.0
+Washington,Pennsylvania,9.0
+Tioga,Pennsylvania,9.0
+Grand Forks,North Dakota,9.0
+Missaukee,Michigan,8.9
+Roane,West Virginia,8.9
+Ogle,Illinois,8.9
+Grant,Washington,8.9
+Adams,Indiana,8.9
+Spokane,Washington,8.9
+Platte,Missouri,8.9
+Shoshone,Idaho,8.9
+Cleburne,Alabama,8.9
+Lampasas,Texas,8.9
+Cowley,Kansas,8.8
+Parker,Texas,8.8
+Lassen,California,8.7
+DeKalb,Alabama,8.7
+Lincoln,Missouri,8.7
+Matagorda,Texas,8.7
+Brown,Wisconsin,8.7
+McDonough,Illinois,8.7
+Randolph,Illinois,8.7
+Boundary,Idaho,8.7
+Bureau,Illinois,8.7
+Allegany,New York,8.6
+Martin,Kentucky,8.6
+Middlesex,New Jersey,8.6
+Nassau,Florida,8.6
+Clearfield,Pennsylvania,8.6
+Chester,Pennsylvania,8.6
+Washington,Oregon,8.6
+Floyd,Virginia,8.6
+Pope,Arkansas,8.5
+Fairfield,Ohio,8.5
+Darke,Ohio,8.5
+Schuylkill,Pennsylvania,8.5
+Freestone,Texas,8.5
+Beauregard,Louisiana,8.5
+Pike,Kentucky,8.5
+Richland,Illinois,8.5
+Scotts Bluff,Nebraska,8.4
+Decatur,Indiana,8.4
+Eddy,New Mexico,8.4
+Lewis And Clark,Montana,8.4
+Garfield,Oklahoma,8.4
+Strafford,New Hampshire,8.4
+Columbia,Pennsylvania,8.4
+Frederick,Maryland,8.4
+Howard,Maryland,8.4
+Carroll,Ohio,8.4
+Roanoke,Virginia,8.3
+Jackson,Kentucky,8.3
+Anderson,Kentucky,8.3
+Barbour,West Virginia,8.3
+Greene,Pennsylvania,8.3
+Pottawattamie,Iowa,8.3
+Wyoming,Pennsylvania,8.3
+Pulaski,Indiana,8.3
+Scott,Arkansas,8.2
+Park,Montana,8.2
+Livingston,Missouri,8.2
+Williams,Ohio,8.2
+Washington,Wisconsin,8.2
+Crawford,Pennsylvania,8.2
+Lyon,Nevada,8.1
+Schoolcraft,Michigan,8.1
+Rockingham,Virginia,8.1
+Monroe,West Virginia,8.1
+Lincoln,Montana,8.1
+Leslie,Kentucky,8.1
+Mingo,West Virginia,8.1
+Orange,Texas,8.1
+Sauk,Wisconsin,8.1
+Huntingdon,Pennsylvania,8.0
+Barry,Missouri,8.0
+Laramie,Wyoming,8.0
+Marshall,Iowa,8.0
+Albany,Wyoming,7.9
+Cameron,Texas,7.9
+Clinton,Missouri,7.9
+Nowata,Oklahoma,7.9
+Douglas,Colorado,7.9
+Sanilac,Michigan,7.9
+Stafford,Virginia,7.9
+Wayne,Ohio,7.9
+Kodiak Island,Alaska,7.9
+Montgomery,Pennsylvania,7.9
+Fulton,Indiana,7.9
+Coos,New Hampshire,7.8
+Labette,Kansas,7.8
+Wabash,Illinois,7.8
+Marshall,Indiana,7.8
+Washington,Utah,7.8
+Ford,Illinois,7.8
+Grady,Oklahoma,7.8
+Lewis,West Virginia,7.8
+Loudoun,Virginia,7.8
+Johnson,Illinois,7.7
+Menominee,Michigan,7.7
+Clay,West Virginia,7.7
+Bradford,Pennsylvania,7.7
+Starke,Indiana,7.7
+Yellowstone,Montana,7.7
+Dallas,Missouri,7.7
+Sutter,California,7.7
+Carroll,Maryland,7.7
+Union,Kentucky,7.7
+Huron,Ohio,7.7
+Ravalli,Montana,7.7
+York,Maine,7.7
+Lamb,Texas,7.6
+Harrison,Indiana,7.6
+Jackson,Wisconsin,7.6
+Sheboygan,Wisconsin,7.6
+Orange,Vermont,7.6
+Defiance,Ohio,7.6
+Lawrence,Missouri,7.6
+Cass,Illinois,7.6
+Ashland,Ohio,7.6
+Sussex,New Jersey,7.5
+Adams,Pennsylvania,7.5
+Meade,Kentucky,7.5
+Allen,Kansas,7.5
+Cleburne,Arkansas,7.5
+Henry,Illinois,7.5
+Gallatin,Montana,7.5
+Harrisonburg City,Virginia,7.4
+Reno,Kansas,7.4
+Fannin,Texas,7.4
+Prince George,Virginia,7.4
+Bristol,Rhode Island,7.4
+Ventura,California,7.4
+Benton,Missouri,7.4
+Westmoreland,Pennsylvania,7.4
+Iron,Utah,7.4
+Shelby,Texas,7.4
+Rusk,Texas,7.4
+Centre,Pennsylvania,7.4
+Crawford,Illinois,7.3
+Henry,Missouri,7.3
+Chaffee,Colorado,7.3
+Saline,Illinois,7.3
+Greene,Indiana,7.3
+Benewah,Idaho,7.3
+Jackson,Indiana,7.3
+Madison,Ohio,7.3
+Franklin,Missouri,7.3
+Hopkins,Texas,7.3
+Mountrail,North Dakota,7.2
+Colorado,Texas,7.2
+Botetourt,Virginia,7.2
+Montrose,Colorado,7.2
+Otsego,New York,7.2
+Hughes,Oklahoma,7.2
+Menard,Illinois,7.2
+Nolan,Texas,7.2
+Cedar,Missouri,7.2
+Christian,Missouri,7.2
+Austin,Texas,7.2
+Randolph,Arkansas,7.2
+Deschutes,Oregon,7.1
+Kitsap,Washington,7.1
+Audrain,Missouri,7.1
+Pontotoc,Oklahoma,7.1
+Torrance,New Mexico,7.1
+Warren,Pennsylvania,7.1
+Lake,Ohio,7.1
+Blaine,Oklahoma,7.1
+Christian,Illinois,7.1
+Carroll,Indiana,7.0
+Walworth,Wisconsin,7.0
+Holmes,Florida,7.0
+Finney,Kansas,7.0
+Leon,Texas,7.0
+Creek,Oklahoma,7.0
+Bastrop,Texas,7.0
+Deer Lodge,Montana,7.0
+Parke,Indiana,7.0
+Howard,Texas,6.9
+Northumberland,Pennsylvania,6.9
+Montgomery,New York,6.9
+Winnebago,Wisconsin,6.9
+Hood River,Oregon,6.9
+Sequoyah,Oklahoma,6.9
+Porter,Indiana,6.8
+Lake,Minnesota,6.8
+Portage,Ohio,6.8
+Johnson,Iowa,6.8
+Overton,Tennessee,6.8
+Franklin,Indiana,6.8
+Clay,Indiana,6.8
+Independence,Arkansas,6.8
+Clay,Illinois,6.8
+Garrett,Maryland,6.7
+Woodbury,Iowa,6.7
+Summit,Colorado,6.7
+Clay,Missouri,6.7
+Pike,Pennsylvania,6.7
+Letcher,Kentucky,6.7
+Warren,New Jersey,6.7
+Van Wert,Ohio,6.7
+Texas,Missouri,6.7
+Macoupin,Illinois,6.7
+Decatur,Tennessee,6.6
+Johnson,Kansas,6.6
+Coffee,Alabama,6.6
+Mercer,Kentucky,6.6
+Adair,Missouri,6.6
+Hanover,Virginia,6.6
+Flathead,Montana,6.6
+Yell,Arkansas,6.6
+Champaign,Ohio,6.6
+Washington,Indiana,6.6
+Meigs,Ohio,6.5
+Presque Isle,Michigan,6.5
+Stone,Mississippi,6.5
+Middlesex,Massachusetts,6.5
+Logan,Arkansas,6.5
+Taylor,Texas,6.5
+Lancaster,Pennsylvania,6.5
+Scott,Virginia,6.5
+Lawrence,Illinois,6.4
+Jefferson,Iowa,6.4
+George,Mississippi,6.4
+Jackson,Texas,6.4
+Teller,Colorado,6.4
+Geauga,Ohio,6.4
+Boone,Indiana,6.4
+Augusta,Virginia,6.4
+Grayson,Virginia,6.3
+Riley,Kansas,6.3
+Madison,Virginia,6.3
+Lewis,Washington,6.3
+Clinton,Indiana,6.3
+McHenry,Illinois,6.3
+Jefferson,New York,6.2
+Livingston,New York,6.2
+Adams,Colorado,6.2
+Somerset,New Jersey,6.2
+Rensselaer,New York,6.2
+Tazewell,Virginia,6.2
+Stewart,Tennessee,6.2
+Warrick,Indiana,6.2
+Mason,Washington,6.1
+Mercer,Pennsylvania,6.1
+Oceana,Michigan,6.1
+Douglas,Missouri,6.1
+Vernon,Missouri,6.1
+Nicholas,West Virginia,6.1
+Sandusky,Ohio,6.1
+Jackson,Oklahoma,6.1
+Vernon,Louisiana,6.1
+Bonner,Idaho,6.0
+McDonald,Missouri,6.0
+Allen,Louisiana,6.0
+Hancock,Indiana,6.0
+Cascade,Montana,6.0
+Webster,West Virginia,6.0
+Herkimer,New York,5.9
+Franklin,Vermont,5.9
+Lincoln,Tennessee,5.9
+Pontotoc,Mississippi,5.9
+Howell,Missouri,5.9
+Lyon,Kansas,5.9
+Faulkner,Arkansas,5.9
+Muscatine,Iowa,5.9
+Johnson,Arkansas,5.9
+Silver Bow,Montana,5.9
+Polk,Arkansas,5.9
+Marshall,Kentucky,5.9
+Pend Oreille,Washington,5.9
+Linn,Iowa,5.9
+Pittsburg,Oklahoma,5.9
+Montgomery,Indiana,5.9
+Franklin,Washington,5.9
+Van Buren,Arkansas,5.9
+Nye,Nevada,5.8
+Caldwell,Kentucky,5.8
+Kendall,Texas,5.8
+Addison,Vermont,5.8
+Cherokee,Texas,5.8
+Tyler,Texas,5.7
+Chelan,Washington,5.7
+Noble,Indiana,5.7
+Middlesex,Connecticut,5.7
+Greene,Mississippi,5.7
+Perry,Illinois,5.7
+Saline,Kansas,5.7
+Douglas,Washington,5.7
+Tillman,Oklahoma,5.7
+Douglas,Nevada,5.7
+Morrow,Oregon,5.7
+Warren,Illinois,5.7
+Fauquier,Virginia,5.7
+La Crosse,Wisconsin,5.7
+Warren,Virginia,5.6
+Evangeline,Louisiana,5.6
+Knox,Indiana,5.6
+Macomb,Michigan,5.6
+Belmont,Ohio,5.6
+Crook,Oregon,5.6
+Delaware,New York,5.6
+Clinton,Pennsylvania,5.6
+Cass,Texas,5.6
+Aroostook,Maine,5.6
+La Salle,Illinois,5.6
+Cass,Indiana,5.6
+Morgan,Ohio,5.6
+San Mateo,California,5.6
+Oswego,New York,5.6
+McIntosh,Oklahoma,5.5
+Delaware,Oklahoma,5.5
+Starr,Texas,5.5
+Madison,New York,5.5
+Geneva,Alabama,5.5
+Butler,Kansas,5.5
+Burnett,Wisconsin,5.5
+Tishomingo,Mississippi,5.5
+Churchill,Nevada,5.4
+Cherokee,Kansas,5.4
+Jasper,Texas,5.4
+Calvert,Maryland,5.4
+Grayson,Kentucky,5.4
+Caddo,Oklahoma,5.4
+Morgan,Missouri,5.4
+Bannock,Idaho,5.4
+Crow Wing,Minnesota,5.4
+Orange,Indiana,5.4
+Lawrence,Alabama,5.3
+Windsor,Vermont,5.3
+Cleveland,Oklahoma,5.3
+Braxton,West Virginia,5.3
+Noble,Oklahoma,5.3
+Jefferson Davis,Louisiana,5.3
+Karnes,Texas,5.3
+Stone,Missouri,5.3
+Morgan,Kentucky,5.3
+Sharp,Arkansas,5.3
+Pennington,South Dakota,5.3
+Atascosa,Texas,5.3
+Harlan,Kentucky,5.2
+Northampton,Pennsylvania,5.2
+Jim Wells,Texas,5.2
+Vermillion,Indiana,5.2
+Stanislaus,California,5.2
+Alexandria City,Virginia,5.2
+Pike,Missouri,5.1
+Rio Grande,Colorado,5.1
+Perry,Mississippi,5.1
+Washington,Vermont,5.1
+Elmore,Idaho,5.1
+Monroe,Pennsylvania,5.1
+Crawford,Arkansas,5.1
+Montgomery,Kansas,5.1
+Williamson,Tennessee,5.0
+Johnson,Kentucky,5.0
+Stevens,Washington,5.0
+Crawford,Missouri,5.0
+Yuma,Arizona,5.0
+Plaquemines,Louisiana,5.0
+Morgan,Indiana,5.0
+Hudson,New Jersey,4.9
+Ripley,Missouri,4.9
+Clark,Illinois,4.9
+Sonoma,California,4.9
+Ellis,Texas,4.9
+Walla Walla,Washington,4.9
+Carbon,Pennsylvania,4.9
+Crenshaw,Alabama,4.9
+Wapello,Iowa,4.9
+Bartholomew,Indiana,4.9
+Susquehanna,Pennsylvania,4.9
+Jasper,Missouri,4.9
+Boone,Kentucky,4.9
+Hancock,Ohio,4.9
+Payette,Idaho,4.8
+Ramsey,Minnesota,4.8
+Polk,Missouri,4.8
+Greene,Arkansas,4.8
+Pottawatomie,Oklahoma,4.8
+Giles,Virginia,4.8
+Anchorage,Alaska,4.8
+Webster,Missouri,4.8
+Rush,Indiana,4.8
+Oconee,Georgia,4.8
+Alamosa,Colorado,4.8
+Fort Bend,Texas,4.8
+Kosciusko,Indiana,4.8
+Hardy,West Virginia,4.7
+Okfuskee,Oklahoma,4.7
+Windham,Connecticut,4.7
+Berks,Pennsylvania,4.7
+Houghton,Michigan,4.7
+Ashland,Wisconsin,4.7
+Milam,Texas,4.7
+Oneida,Wisconsin,4.7
+Wright,Missouri,4.7
+Oneida,New York,4.7
+Scott,Missouri,4.7
+Chenango,New York,4.7
+Clackamas,Oregon,4.7
+Clay,Florida,4.7
+Adair,Kentucky,4.7
+Marion,Kentucky,4.7
+DeKalb,Illinois,4.7
+Webster,Iowa,4.6
+Montgomery,Virginia,4.6
+Newton,Texas,4.6
+Hale,Texas,4.6
+Grant,Kentucky,4.6
+Logan,Kentucky,4.6
+Elkhart,Indiana,4.6
+Macon,Tennessee,4.6
+Acadia,Louisiana,4.6
+Fulton,Illinois,4.6
+Putnam,West Virginia,4.5
+Brooks,Texas,4.5
+York,Pennsylvania,4.5
+Warren,Missouri,4.5
+Fairbanks North Star,Alaska,4.5
+Cumberland,Maine,4.5
+Essex,New York,4.5
+Val Verde,Texas,4.5
+Manassas City,Virginia,4.5
+Dewitt,Texas,4.5
+Carroll,Arkansas,4.5
+Raleigh,West Virginia,4.5
+Adams,Illinois,4.5
+Carson City,Nevada,4.5
+St Mary's,Maryland,4.5
+Mifflin,Pennsylvania,4.5
+Mineral,West Virginia,4.5
+Putnam,Indiana,4.5
+Page,Virginia,4.4
+Dickinson,Michigan,4.4
+Salt Lake,Utah,4.4
+Boone,Arkansas,4.4
+Madison,Arkansas,4.4
+Bourbon,Kansas,4.4
+Butler,Ohio,4.4
+Limestone,Texas,4.4
+Morrow,Ohio,4.4
+Androscoggin,Maine,4.4
+Wood,Ohio,4.4
+Taylor,West Virginia,4.4
+Ionia,Michigan,4.4
+Orange,Virginia,4.4
+Miami,Indiana,4.3
+San Patricio,Texas,4.3
+Union,Ohio,4.3
+Brazoria,Texas,4.3
+Piscataquis,Maine,4.3
+Magoffin,Kentucky,4.3
+Ohio,Kentucky,4.3
+Hampshire,Massachusetts,4.3
+Osage,Oklahoma,4.3
+Wayne,Tennessee,4.3
+Marion,Oregon,4.3
+Jennings,Indiana,4.3
+Franklin,Alabama,4.3
+Windham,Vermont,4.2
+Blaine,Idaho,4.2
+Caldwell,Louisiana,4.2
+Dale,Alabama,4.2
+DeKalb,Tennessee,4.2
+Siskiyou,California,4.2
+Frederick,Virginia,4.2
+Lincoln,Kentucky,4.2
+Franklin,Massachusetts,4.2
+St Joseph,Michigan,4.2
+Union,Tennessee,4.2
+Dawson,Texas,4.2
+Cullman,Alabama,4.2
+Lawrence,Pennsylvania,4.2
+Henry,Kentucky,4.1
+Whiteside,Illinois,4.1
+Covington,Alabama,4.1
+Cheshire,New Hampshire,4.1
+Perry,Ohio,4.1
+Shasta,California,4.1
+New London,Connecticut,4.1
+White,Georgia,4.1
+Kittitas,Washington,4.1
+Lafayette,Missouri,4.0
+Washington,Alabama,4.0
+Taylor,Kentucky,4.0
+Huntington,Indiana,4.0
+Newton,Missouri,4.0
+Butler,Kentucky,4.0
+Nelson,Kentucky,4.0
+Effingham,Georgia,4.0
+Franklin,Maine,4.0
+Putnam,Tennessee,4.0
+Tippah,Mississippi,3.9
+Benton,Washington,3.9
+Unicoi,Tennessee,3.9
+Jefferson,Missouri,3.9
+Muhlenberg,Kentucky,3.9
+Harrison,Ohio,3.9
+Thurston,Washington,3.9
+Island,Washington,3.9
+Williamson,Texas,3.9
+Steuben,Indiana,3.9
+Chambers,Texas,3.8
+Pierce,Washington,3.8
+Franklin,Illinois,3.8
+Blount,Alabama,3.8
+Providence,Rhode Island,3.8
+Saratoga,New York,3.8
+Yolo,California,3.8
+Iron,Michigan,3.8
+Delta,Michigan,3.8
+Pendleton,Kentucky,3.8
+Armstrong,Pennsylvania,3.8
+Somerset,Maine,3.8
+Grundy,Illinois,3.8
+Albany,New York,3.8
+Benton,Arkansas,3.8
+Greenup,Kentucky,3.8
+Powhatan,Virginia,3.7
+Crawford,Kansas,3.7
+Laclede,Missouri,3.7
+Aransas,Texas,3.7
+Calhoun,Texas,3.7
+Lawrence,Indiana,3.7
+Camp,Texas,3.7
+Kern,California,3.7
+Crawford,Indiana,3.7
+Miller,Missouri,3.7
+Sevier,Arkansas,3.6
+Clatsop,Oregon,3.6
+Logan,Ohio,3.6
+Sullivan,New Hampshire,3.6
+Ottawa,Ohio,3.6
+Suwannee,Florida,3.6
+Clallam,Washington,3.6
+Boone,Illinois,3.6
+Yavapai,Arizona,3.6
+Allegan,Michigan,3.6
+Whatcom,Washington,3.6
+Saline,Missouri,3.6
+Monmouth,New Jersey,3.6
+Kay,Oklahoma,3.5
+Douglas,Kansas,3.5
+Polk,Texas,3.5
+Lumpkin,Georgia,3.5
+St Charles,Missouri,3.5
+Carlton,Minnesota,3.5
+Wise,Virginia,3.5
+Chippewa,Michigan,3.5
+Logan,Illinois,3.5
+Burnet,Texas,3.5
+Branch,Michigan,3.4
+Baxter,Arkansas,3.4
+Polk,Tennessee,3.4
+Fremont,Wyoming,3.4
+Titus,Texas,3.4
+Tompkins,New York,3.4
+Preble,Ohio,3.4
+Clinton,New York,3.3
+Liberty,Texas,3.3
+Umatilla,Oregon,3.3
+Arenac,Michigan,3.3
+San Diego,California,3.3
+Nez Perce,Idaho,3.3
+Covington City,Virginia,3.3
+Miami,Ohio,3.3
+Catahoula,Louisiana,3.3
+Rutland,Vermont,3.3
+Comal,Texas,3.3
+Dimmit,Texas,3.3
+Lycoming,Pennsylvania,3.3
+Bandera,Texas,3.3
+Caledonia,Vermont,3.3
+Phelps,Missouri,3.3
+Paulding,Georgia,3.2
+Marion,Alabama,3.2
+Rutherford,Tennessee,3.2
+Clark,Washington,3.2
+Klickitat,Washington,3.2
+Mariposa,California,3.2
+Orleans,Vermont,3.2
+Wilbarger,Texas,3.2
+Hampshire,West Virginia,3.2
+DeKalb,Indiana,3.2
+Montgomery,Tennessee,3.2
+Wabash,Indiana,3.2
+Eaton,Michigan,3.2
+Smith,Tennessee,3.2
+Deaf Smith,Texas,3.2
+Tuscola,Michigan,3.2
+Lee,Illinois,3.1
+Floyd,Indiana,3.1
+Montour,Pennsylvania,3.1
+Jefferson,Indiana,3.1
+Lexington City,Virginia,3.1
+Leelanau,Michigan,3.1
+Ottawa,Oklahoma,3.1
+Saline,Arkansas,3.1
+Coles,Illinois,3.1
+Galax City,Virginia,3.1
+Floyd,Kentucky,3.1
+Newport,Rhode Island,3.1
+Harrison,Texas,3.1
+Wilson,Texas,3.0
+Brown,Texas,3.0
+Fleming,Kentucky,3.0
+Yates,New York,3.0
+St Lawrence,New York,3.0
+Barren,Kentucky,3.0
+Lonoke,Arkansas,3.0
+Callaway,Missouri,3.0
+Malheur,Oregon,2.9
+Washington,Oklahoma,2.9
+Collin,Texas,2.9
+Meigs,Tennessee,2.9
+Davie,North Carolina,2.9
+Otero,Colorado,2.9
+Juneau,Alaska,2.9
+Lee,Iowa,2.9
+Stokes,North Carolina,2.9
+Comanche,Oklahoma,2.9
+Patrick,Virginia,2.9
+Dade,Georgia,2.9
+Stanly,North Carolina,2.9
+Frio,Texas,2.9
+Monongalia,West Virginia,2.9
+Ritchie,West Virginia,2.8
+Queen Anne's,Maryland,2.8
+Kennebec,Maine,2.8
+Brown,Indiana,2.8
+Bedford,Virginia,2.8
+Cape Girardeau,Missouri,2.8
+Cumberland,Tennessee,2.8
+Morgan,Tennessee,2.8
+Amherst,Virginia,2.8
+Santa Cruz,California,2.8
+Greenbrier,West Virginia,2.8
+Emmet,Michigan,2.8
+Citrus,Florida,2.8
+Licking,Ohio,2.7
+Worcester,Massachusetts,2.7
+Carter,Oklahoma,2.7
+Owen,Indiana,2.7
+Bee,Texas,2.7
+Plumas,California,2.7
+Des Moines,Iowa,2.7
+Hennepin,Minnesota,2.7
+Columbiana,Ohio,2.7
+Maverick,Texas,2.7
+Blackford,Indiana,2.7
+Perry,Kentucky,2.7
+San Luis Obispo,California,2.7
+Knott,Kentucky,2.6
+Sullivan,New York,2.6
+Mackinac,Michigan,2.6
+Calloway,Kentucky,2.6
+Perry,Arkansas,2.6
+Spotsylvania,Virginia,2.6
+Tillamook,Oregon,2.6
+Terrebonne,Louisiana,2.6
+Kauai,Hawaii,2.6
+Jay,Indiana,2.6
+Hartford,Connecticut,2.6
+Erie,New York,2.6
+Seminole,Oklahoma,2.6
+York,Virginia,2.6
+Jefferson,Washington,2.6
+Graves,Kentucky,2.6
+Calhoun,Florida,2.6
+Jefferson,Texas,2.6
+Maricopa,Arizona,2.5
+Yancey,North Carolina,2.5
+Clark,Nevada,2.5
+Chaves,New Mexico,2.5
+Cayuga,New York,2.5
+Yakima,Washington,2.5
+Midland,Michigan,2.5
+Dearborn,Indiana,2.4
+Lawrence,Kentucky,2.4
+Henry,Georgia,2.4
+Desoto,Mississippi,2.4
+Chilton,Alabama,2.4
+Henderson,Tennessee,2.4
+Tuolumne,California,2.4
+Mason,West Virginia,2.4
+Todd,Kentucky,2.3
+Marion,Tennessee,2.3
+Denton,Texas,2.3
+Dane,Wisconsin,2.3
+Monroe,Michigan,2.3
+Wythe,Virginia,2.3
+Itawamba,Mississippi,2.3
+McNairy,Tennessee,2.2
+Bryan,Georgia,2.2
+West Carroll,Louisiana,2.2
+Salem City,Virginia,2.2
+Arapahoe,Colorado,2.2
+Multnomah,Oregon,2.2
+Skagit,Washington,2.1
+Laurel,Kentucky,2.1
+Montmorency,Michigan,2.1
+Cecil,Maryland,2.1
+Leavenworth,Kansas,2.1
+McCurtain,Oklahoma,2.1
+Delaware,Pennsylvania,2.1
+Barry,Michigan,2.1
+Gratiot,Michigan,2.1
+Marin,California,2.1
+Curry,New Mexico,2.1
+Marion,West Virginia,2.1
+Schuyler,New York,2.1
+St Louis,Minnesota,2.1
+Plymouth,Massachusetts,2.1
+Prince Georges,Maryland,2.0
+Tazewell,Illinois,2.0
+Watauga,North Carolina,2.0
+St Landry,Louisiana,2.0
+Okaloosa,Florida,2.0
+Habersham,Georgia,2.0
+McDowell,West Virginia,2.0
+St Joseph,Indiana,1.9
+Lafourche,Louisiana,1.9
+Washington,Arkansas,1.9
+Pacific,Washington,1.9
+Wetzel,West Virginia,1.9
+Adams,Ohio,1.9
+Kent,Rhode Island,1.9
+Russell,Kentucky,1.9
+De Witt,Illinois,1.9
+Missoula,Montana,1.9
+Pierce,Georgia,1.9
+Charles Mix,South Dakota,1.9
+Honolulu,Hawaii,1.9
+Wharton,Texas,1.9
+Collier,Florida,1.8
+Sabine,Louisiana,1.8
+Smith,Mississippi,1.8
+Anne Arundel,Maryland,1.8
+Sumner,Tennessee,1.7
+St Clair,Michigan,1.7
+Bond,Illinois,1.7
+Marshall,Tennessee,1.7
+Grainger,Tennessee,1.7
+Pettis,Missouri,1.7
+Santa Cruz,Arizona,1.7
+Seneca,New York,1.7
+Manistee,Michigan,1.7
+Monroe,Indiana,1.7
+Bayfield,Wisconsin,1.7
+Lancaster,Nebraska,1.7
+Choctaw,Oklahoma,1.7
+Highland,Ohio,1.7
+Cattaraugus,New York,1.7
+Carroll,New Hampshire,1.7
+Ketchikan Gateway,Alaska,1.7
+Roosevelt,New Mexico,1.7
+Coos,Oregon,1.6
+Clay,Alabama,1.6
+Johnson,Missouri,1.6
+Cherokee,Oklahoma,1.6
+Jackson,Alabama,1.6
+Santa Clara,California,1.6
+Taney,Missouri,1.6
+Greene,Missouri,1.6
+Asotin,Washington,1.6
+Stephenson,Illinois,1.6
+St Francois,Missouri,1.6
+Jefferson,Tennessee,1.6
+Livingston,Louisiana,1.5
+Douglas,Wisconsin,1.5
+Barnstable,Massachusetts,1.5
+Venango,Pennsylvania,1.5
+Mason,Illinois,1.5
+Chester,Tennessee,1.5
+Tippecanoe,Indiana,1.5
+Steuben,New York,1.5
+Grafton,New Hampshire,1.5
+Santa Barbara,California,1.5
+Nueces,Texas,1.5
+Yuba,California,1.5
+Lamoille,Vermont,1.4
+King William,Virginia,1.4
+Randolph,North Carolina,1.4
+Hardin,Kentucky,1.4
+Calcasieu,Louisiana,1.4
+Josephine,Oregon,1.4
+Kleberg,Texas,1.4
+Pulaski,Arkansas,1.4
+Charles,Maryland,1.4
+Lawrence,Tennessee,1.4
+Rhea,Tennessee,1.4
+Gladwin,Michigan,1.4
+Logan,West Virginia,1.4
+Pinellas,Florida,1.4
+Harrison,Kentucky,1.4
+Currituck,North Carolina,1.4
+Fayette,Alabama,1.4
+Lamar,Alabama,1.4
+Jackson,North Carolina,1.4
+Greene,New York,1.4
+Medina,Texas,1.3
+Burleson,Texas,1.3
+Waller,Texas,1.3
+Union,Illinois,1.3
+Washington,Rhode Island,1.3
+Hall,Georgia,1.3
+Surry,North Carolina,1.3
+Madison,North Carolina,1.3
+Klamath,Oregon,1.3
+San Jacinto,Texas,1.2
+Dixie,Florida,1.2
+Sagadahoc,Maine,1.2
+Carroll,Kentucky,1.2
+Wayne,West Virginia,1.2
+Sebastian,Arkansas,1.2
+Dickson,Tennessee,1.2
+Solano,California,1.2
+Morris,Texas,1.2
+Wayne,New York,1.1
+Bennington,Vermont,1.1
+San Francisco,California,1.1
+Benton,Tennessee,1.1
+Winston,Alabama,1.1
+Edgar,Illinois,1.1
+Union,New Jersey,1.1
+Black Hawk,Iowa,1.1
+Union,Mississippi,1.1
+Ogemaw,Michigan,1.0
+Hardin,Ohio,1.0
+Larimer,Colorado,1.0
+Rock,Wisconsin,1.0
+Amador,California,1.0
+Grayson,Texas,0.9
+Nelson,Virginia,0.9
+Leake,Mississippi,0.9
+Assumption,Louisiana,0.9
+Merrimack,New Hampshire,0.9
+Winchester City,Virginia,0.9
+Isle Of Wight,Virginia,0.9
+Guernsey,Ohio,0.9
+Suffolk,New York,0.9
+Little River,Arkansas,0.9
+Brown,Ohio,0.9
+Morgan,West Virginia,0.8
+Lincoln,New Mexico,0.8
+Carroll,Virginia,0.8
+Knox,Kentucky,0.8
+Coryell,Texas,0.8
+Jackson,West Virginia,0.8
+Bryan,Oklahoma,0.8
+Penobscot,Maine,0.8
+Macon,North Carolina,0.8
+Morris,New Jersey,0.8
+Terry,Texas,0.8
+Schoharie,New York,0.7
+Washington,Florida,0.7
+Walker,Alabama,0.7
+Fulton,New York,0.7
+Inyo,California,0.7
+Mercer,New Jersey,0.7
+Cochise,Arizona,0.7
+Clinton,Ohio,0.7
+Okeechobee,Florida,0.7
+Gilmer,Georgia,0.7
+Amelia,Virginia,0.7
+Clare,Michigan,0.7
+Beaver,Pennsylvania,0.7
+Washington,Ohio,0.7
+Allen,Kentucky,0.6
+Avery,North Carolina,0.6
+Brooke,West Virginia,0.6
+Duval,Florida,0.6
+McMinn,Tennessee,0.5
+District Of Columbia,District Of Columbia,0.5
+Charlotte,Virginia,0.5
+Tioga,New York,0.5
+Okanogan,Washington,0.5
+Haywood,North Carolina,0.5
+San Juan,Washington,0.5
+Alexander,North Carolina,0.5
+Benzie,Michigan,0.5
+Gloucester,Virginia,0.5
+Grand Traverse,Michigan,0.5
+Williamson,Illinois,0.5
+Pulaski,Missouri,0.5
+Garrard,Kentucky,0.5
+Conway,Arkansas,0.5
+Grant,Louisiana,0.4
+Monroe,Kentucky,0.4
+Gonzales,Texas,0.4
+Fayette,West Virginia,0.4
+Daviess,Kentucky,0.4
+Ocean,New Jersey,0.4
+Alger,Michigan,0.4
+Clark,Arkansas,0.4
+Pulaski,Kentucky,0.4
+Randolph,West Virginia,0.4
+Newaygo,Michigan,0.4
+Camden,Missouri,0.4
+Swain,North Carolina,0.3
+Curry,Oregon,0.3
+Anderson,Tennessee,0.3
+Tarrant,Texas,0.3
+Scott,Tennessee,0.3
+Massac,Illinois,0.3
+Lewis,Kentucky,0.3
+San Juan,New Mexico,0.3
+Johnson,Indiana,0.3
+Henderson,Texas,0.3
+Simpson,Kentucky,0.3
+Washington,Virginia,0.3
+Angelina,Texas,0.3
+Hickman,Tennessee,0.3
+Wasco,Oregon,0.2
+Charlotte,Florida,0.2
+Glenn,California,0.2
+Carroll,Tennessee,0.2
+Hardee,Florida,0.2
+Monterey,California,0.2
+Rockcastle,Kentucky,0.1
+Lee,Virginia,0.1
+Lake,California,0.1
+Wichita,Texas,0.1
+Washington,Maryland,0.1
+Chautauqua,New York,0.1
+Polk,Oregon,0.1
+Muskingum,Ohio,0.1
+Robertson,Texas,0.1
+Gogebic,Michigan,0.0
+Campbell,Kentucky,0.0
+Nacogdoches,Texas,0.0
+Yadkin,North Carolina,0.0
+Linn,Oregon,0.0
+Webster,Louisiana,0.0
+Ascension,Louisiana,0.0
+Wagoner,Oklahoma,0.0
+Whitley,Kentucky,0.0
+Anderson,Texas,0.0
+Fentress,Tennessee,-0.1
+Woodford,Kentucky,-0.1
+Allegany,Maryland,-0.1
+Vinton,Ohio,-0.1
+Jones,Mississippi,-0.1
+Henderson,North Carolina,-0.1
+Casey,Kentucky,-0.1
+Highlands,Florida,-0.1
+Monroe,Florida,-0.1
+Hardin,Tennessee,-0.1
+Kankakee,Illinois,-0.1
+Kerr,Texas,-0.1
+Duplin,North Carolina,-0.1
+Jefferson,Illinois,-0.1
+Ohio,West Virginia,-0.2
+Weakley,Tennessee,-0.2
+Lamar,Mississippi,-0.2
+Union,Georgia,-0.2
+Maui,Hawaii,-0.2
+Carter,Kentucky,-0.2
+Uvalde,Texas,-0.2
+Morgan,Illinois,-0.2
+Hillsdale,Michigan,-0.2
+Osceola,Michigan,-0.2
+Otsego,Michigan,-0.2
+Genesee,New York,-0.3
+Warren,Tennessee,-0.3
+El Paso,Texas,-0.3
+Douglas,Nebraska,-0.3
+Winn,Louisiana,-0.3
+Burlington,New Jersey,-0.3
+Colfax,New Mexico,-0.3
+Prince William,Virginia,-0.3
+Bossier,Louisiana,-0.3
+Trinity,Texas,-0.3
+Scott,Iowa,-0.4
+Houston,Georgia,-0.4
+Bay,Florida,-0.4
+Yamhill,Oregon,-0.4
+Hocking,Ohio,-0.4
+Gordon,Georgia,-0.4
+Hot Spring,Arkansas,-0.4
+Lauderdale,Alabama,-0.4
+Antrim,Michigan,-0.4
+Christian,Kentucky,-0.4
+Baker,Florida,-0.4
+Morgan,Alabama,-0.4
+Cheatham,Tennessee,-0.4
+Dawson,Georgia,-0.4
+Orleans,New York,-0.5
+Oakland,Michigan,-0.5
+Grays Harbor,Washington,-0.5
+Lenawee,Michigan,-0.5
+Washington,Missouri,-0.5
+McKean,Pennsylvania,-0.5
+Giles,Tennessee,-0.5
+Sacramento,California,-0.6
+Dade,Florida,-0.6
+Cortland,New York,-0.6
+Waynesboro City,Virginia,-0.6
+Buchanan,Missouri,-0.6
+Wexford,Michigan,-0.6
+Hart,Kentucky,-0.6
+Campbell,Virginia,-0.6
+St Mary,Louisiana,-0.6
+Henrico,Virginia,-0.7
+Canyon,Idaho,-0.7
+Mohave,Arizona,-0.7
+Nassau,New York,-0.7
+Wayne,Mississippi,-0.7
+Lincoln,Maine,-0.7
+McCreary,Kentucky,-0.7
+Rock Island,Illinois,-0.7
+Graham,Arizona,-0.7
+Lawrence,Ohio,-0.7
+Harrison,Mississippi,-0.7
+Harris,Texas,-0.7
+Ada,Idaho,-0.7
+Roberts,South Dakota,-0.7
+Cass,Minnesota,-0.7
+Pike,Georgia,-0.8
+Onondaga,New York,-0.8
+Franklin,New York,-0.8
+Columbia,Georgia,-0.8
+Albemarle,Virginia,-0.8
+Catoosa,Georgia,-0.8
+Loudon,Tennessee,-0.8
+Dunklin,Missouri,-0.8
+Willacy,Texas,-0.8
+Cherokee,North Carolina,-0.8
+Cowlitz,Washington,-0.8
+Luzerne,Pennsylvania,-0.8
+Jefferson,Ohio,-0.9
+Gallia,Ohio,-0.9
+Henry,Indiana,-0.9
+Nevada,California,-0.9
+Madison,Illinois,-0.9
+Mitchell,North Carolina,-0.9
+Escambia,Alabama,-0.9
+Wayne,Kentucky,-0.9
+Fluvanna,Virginia,-0.9
+Franklin,Virginia,-1.0
+Dutchess,New York,-1.0
+Vermilion,Illinois,-1.0
+Madera,California,-1.0
+Champaign,Illinois,-1.0
+Jackson,Louisiana,-1.0
+Blair,Pennsylvania,-1.0
+Lackawanna,Pennsylvania,-1.0
+Geary,Kansas,-1.1
+Hopkins,Kentucky,-1.1
+Wilson,Tennessee,-1.1
+Sawyer,Wisconsin,-1.1
+Pickens,Georgia,-1.1
+Coffee,Tennessee,-1.1
+Washington,New York,-1.1
+Prentiss,Mississippi,-1.1
+Cherokee,Alabama,-1.2
+West Feliciana,Louisiana,-1.2
+Estill,Kentucky,-1.2
+Elmore,Alabama,-1.2
+Tehama,California,-1.2
+Columbia,Florida,-1.2
+Red River,Texas,-1.3
+Clermont,Ohio,-1.3
+Clark,Indiana,-1.3
+Gates,North Carolina,-1.3
+Covington,Mississippi,-1.3
+Pickaway,Ohio,-1.3
+McLean,Illinois,-1.3
+Bradley,Arkansas,-1.3
+Jackson,Florida,-1.3
+Salem,New Jersey,-1.3
+Marion,Mississippi,-1.3
+Franklin,Tennessee,-1.3
+Rio Arriba,New Mexico,-1.3
+Van Buren,Michigan,-1.4
+Harrison,West Virginia,-1.4
+Desoto,Florida,-1.4
+Tulsa,Oklahoma,-1.4
+Jackson,Arkansas,-1.4
+Lincoln,Arkansas,-1.4
+Dukes,Massachusetts,-1.4
+Henderson,Kentucky,-1.4
+St Clair,Alabama,-1.4
+Sedgwick,Kansas,-1.4
+Kanawha,West Virginia,-1.5
+Essex,Massachusetts,-1.5
+Ontario,New York,-1.5
+Alpena,Michigan,-1.5
+Erie,Pennsylvania,-1.5
+St Charles,Louisiana,-1.5
+Kalkaska,Michigan,-1.5
+Santa Rosa,Florida,-1.5
+Marion,Missouri,-1.5
+Butler,Missouri,-1.5
+Niagara,New York,-1.5
+Randolph,Missouri,-1.5
+Lake,Montana,-1.5
+Pittsylvania,Virginia,-1.5
+Campbell,Tennessee,-1.6
+Dorchester,South Carolina,-1.6
+Virginia Beach City,Virginia,-1.6
+Litchfield,Connecticut,-1.6
+Claiborne,Tennessee,-1.6
+San Benito,California,-1.6
+Calaveras,California,-1.6
+Franklin,Georgia,-1.6
+Boyle,Kentucky,-1.6
+Haralson,Georgia,-1.6
+Lawrence,Mississippi,-1.7
+Bienville,Louisiana,-1.7
+James City,Virginia,-1.7
+Robertson,Tennessee,-1.7
+Hancock,Maine,-1.8
+Zavala,Texas,-1.8
+Ashtabula,Ohio,-1.8
+Berkshire,Massachusetts,-1.8
+Taos,New Mexico,-1.8
+Marion,Illinois,-1.8
+Knox,Illinois,-1.8
+Appling,Georgia,-1.8
+Lake,Illinois,-1.8
+Marion,Ohio,-1.8
+Richland,Ohio,-1.8
+Alachua,Florida,-1.8
+Cass,Michigan,-1.8
+Wakulla,Florida,-1.8
+Navarro,Texas,-1.9
+Kaufman,Texas,-1.9
+Harford,Maryland,-1.9
+Louisa,Virginia,-1.9
+Benton,Oregon,-1.9
+Oxford,Maine,-1.9
+Shelby,Indiana,-1.9
+Hill,Montana,-2.0
+Amite,Mississippi,-2.0
+Warren,New York,-2.0
+Hendry,Florida,-2.0
+Marshall,Alabama,-2.0
+Grimes,Texas,-2.0
+Jackson,Georgia,-2.1
+Allegheny,Pennsylvania,-2.1
+Summit,Ohio,-2.1
+Cheboygan,Michigan,-2.1
+Levy,Florida,-2.1
+Franklin,Ohio,-2.1
+Polk,Iowa,-2.2
+Howard,Arkansas,-2.2
+Gloucester,New Jersey,-2.2
+King George,Virginia,-2.2
+Lane,Oregon,-2.2
+Walton,Florida,-2.2
+Potter,Texas,-2.2
+Smyth,Virginia,-2.2
+Adair,Oklahoma,-2.2
+Craighead,Arkansas,-2.2
+Rockland,New York,-2.3
+Talladega,Alabama,-2.3
+Luna,New Mexico,-2.3
+Westchester,New York,-2.3
+Lorain,Ohio,-2.3
+Lincoln,Mississippi,-2.3
+Henry,Tennessee,-2.3
+Clarke,Alabama,-2.3
+Waldo,Maine,-2.3
+Chittenden,Vermont,-2.3
+Marquette,Michigan,-2.3
+Lake,Florida,-2.4
+Carter,Tennessee,-2.4
+Poinsett,Arkansas,-2.4
+Rabun,Georgia,-2.4
+Blount,Tennessee,-2.4
+Nevada,Arkansas,-2.4
+St Louis,Missouri,-2.4
+Guadalupe,Texas,-2.4
+Walthall,Mississippi,-2.4
+Crawford,Ohio,-2.4
+Tom Green,Texas,-2.4
+Hunt,Texas,-2.4
+Union,Florida,-2.5
+Queens,New York,-2.5
+Greene,Virginia,-2.5
+Kings,California,-2.5
+Obion,Tennessee,-2.6
+Delaware,Ohio,-2.6
+Osceola,Florida,-2.6
+Beltrami,Minnesota,-2.6
+Sevier,Tennessee,-2.6
+Lubbock,Texas,-2.6
+Santa Fe,New Mexico,-2.6
+Fannin,Georgia,-2.6
+Arkansas,Arkansas,-2.7
+San Miguel,New Mexico,-2.7
+Camden,Georgia,-2.7
+Montgomery,Kentucky,-2.8
+Cross,Arkansas,-2.8
+Monroe,Tennessee,-2.8
+Kootenai,Idaho,-2.8
+Franklin,Louisiana,-2.8
+St Martin,Louisiana,-2.8
+Powell,Kentucky,-2.8
+Wood,West Virginia,-2.8
+Union,Louisiana,-2.8
+Lamar,Texas,-2.9
+Hillsborough,New Hampshire,-2.9
+Cuyahoga,Ohio,-2.9
+Philadelphia,Pennsylvania,-2.9
+Bay,Michigan,-2.9
+Kent,Maryland,-2.9
+Lehigh,Pennsylvania,-2.9
+Houston,Alabama,-2.9
+Shelby,Kentucky,-2.9
+Merced,California,-2.9
+Johnson,Tennessee,-2.9
+Mason,Michigan,-3.0
+Vilas,Wisconsin,-3.0
+Brantley,Georgia,-3.0
+Garland,Arkansas,-3.0
+Crockett,Tennessee,-3.0
+Goochland,Virginia,-3.0
+Schenectady,New York,-3.0
+Humboldt,California,-3.0
+Madison,Kentucky,-3.0
+Simpson,Mississippi,-3.0
+Columbia,New York,-3.0
+Montgomery,Texas,-3.1
+Ingham,Michigan,-3.1
+Chattooga,Georgia,-3.1
+Hamilton,Ohio,-3.1
+York,South Carolina,-3.1
+Cabell,West Virginia,-3.1
+Somerset,Maryland,-3.2
+Gregg,Texas,-3.2
+Hampden,Massachusetts,-3.2
+Orange,California,-3.2
+Newton,Mississippi,-3.2
+St James,Louisiana,-3.2
+Falls,Texas,-3.2
+Humphreys,Tennessee,-3.2
+Mecosta,Michigan,-3.2
+Suffolk,Massachusetts,-3.2
+Culpeper,Virginia,-3.2
+Jones,North Carolina,-3.2
+Choctaw,Alabama,-3.2
+Madison,Georgia,-3.3
+Montcalm,Michigan,-3.3
+Roane,Tennessee,-3.3
+Clarke,Mississippi,-3.3
+Bell,Kentucky,-3.3
+Coshocton,Ohio,-3.3
+Randolph,Alabama,-3.3
+Pike,Ohio,-3.4
+Belknap,New Hampshire,-3.4
+Carroll,Georgia,-3.4
+Stephens,Georgia,-3.4
+Ulster,New York,-3.4
+Isabella,Michigan,-3.4
+Baldwin,Alabama,-3.4
+Polk,North Carolina,-3.4
+Dona Ana,New Mexico,-3.5
+Erie,Ohio,-3.5
+Lapeer,Michigan,-3.5
+Anderson,South Carolina,-3.5
+Knox,Maine,-3.5
+Wilkes,North Carolina,-3.5
+Jefferson,Kentucky,-3.5
+Dinwiddie,Virginia,-3.6
+Walker,Texas,-3.6
+Abbeville,South Carolina,-3.6
+Scott,Indiana,-3.6
+Bradley,Tennessee,-3.6
+Whitfield,Georgia,-3.6
+Otero,New Mexico,-3.6
+Butte,California,-3.6
+Pemiscot,Missouri,-3.6
+Jackson,Oregon,-3.6
+Staunton City,Virginia,-3.6
+Houston,Texas,-3.7
+Fayette,Ohio,-3.7
+Jeff Davis,Georgia,-3.7
+Imperial,California,-3.7
+Stark,Ohio,-3.8
+Broward,Florida,-3.8
+Franklin,Kentucky,-3.8
+Mercer,West Virginia,-3.8
+Dyer,Tennessee,-3.8
+Grundy,Tennessee,-3.8
+Jasper,Mississippi,-3.8
+Valencia,New Mexico,-3.9
+Greene,Tennessee,-3.9
+Flagler,Florida,-3.9
+Chatham,North Carolina,-3.9
+San Joaquin,California,-3.9
+Bibb,Alabama,-3.9
+St Clair,Illinois,-3.9
+Bowie,Texas,-3.9
+Worcester,Maryland,-4.0
+Lake,Indiana,-4.0
+Rankin,Mississippi,-4.0
+Coconino,Arizona,-4.0
+Scioto,Ohio,-4.0
+Sumter,Florida,-4.0
+Chatham,Georgia,-4.0
+Bartow,Georgia,-4.0
+Hancock,West Virginia,-4.1
+Concordia,Louisiana,-4.1
+Charlton,Georgia,-4.1
+Franklin,Mississippi,-4.1
+Victoria,Texas,-4.1
+Hawkins,Tennessee,-4.1
+Berkeley,South Carolina,-4.1
+Jessamine,Kentucky,-4.2
+Spartanburg,South Carolina,-4.2
+Wayne,Indiana,-4.2
+Pike,Alabama,-4.2
+Etowah,Alabama,-4.2
+De Soto,Louisiana,-4.2
+Warren,Kentucky,-4.2
+New Madrid,Missouri,-4.2
+Grant,New Mexico,-4.3
+McDowell,North Carolina,-4.3
+Pender,North Carolina,-4.3
+Indian River,Florida,-4.3
+Pasco,Florida,-4.3
+Muskogee,Oklahoma,-4.3
+Calhoun,Alabama,-4.3
+Bradford,Florida,-4.3
+Carteret,North Carolina,-4.3
+Hampton City,Virginia,-4.4
+Talbot,Maryland,-4.4
+Shiawassee,Michigan,-4.4
+Bedford,Tennessee,-4.4
+Ashley,Arkansas,-4.4
+Pearl River,Mississippi,-4.4
+Bedford City,Virginia,-4.4
+Murray,Georgia,-4.4
+Baltimore,Maryland,-4.4
+Union,Arkansas,-4.4
+Fayette,Pennsylvania,-4.4
+Bristol City,Virginia,-4.5
+Onslow,North Carolina,-4.5
+Socorro,New Mexico,-4.5
+Washington,Texas,-4.5
+Jackson,Ohio,-4.5
+Monroe,Mississippi,-4.6
+Webb,Texas,-4.6
+Jackson,Missouri,-4.6
+Fayette,Indiana,-4.6
+McCracken,Kentucky,-4.6
+Manatee,Florida,-4.6
+Washington,Louisiana,-4.6
+Cape May,New Jersey,-4.6
+Hidalgo,Texas,-4.6
+Telfair,Georgia,-4.7
+DeKalb,Georgia,-4.7
+Douglas,Georgia,-4.8
+Walton,Georgia,-4.8
+Essex,Virginia,-4.8
+Trinity,California,-4.8
+Ross,Ohio,-4.8
+Iosco,Michigan,-4.8
+Henry,Virginia,-4.8
+Miller,Arkansas,-4.8
+Westmoreland,Virginia,-4.8
+Southampton,Virginia,-4.9
+Montgomery,Mississippi,-4.9
+Johnston,North Carolina,-4.9
+Bell,Texas,-4.9
+Alcorn,Mississippi,-4.9
+Clay,Kentucky,-4.9
+Pueblo,Colorado,-4.9
+Kent,Michigan,-4.9
+Mason,Kentucky,-4.9
+Vigo,Indiana,-5.0
+Wayne,Georgia,-5.0
+Scott,Kentucky,-5.0
+Washington,Tennessee,-5.0
+Wilkinson,Mississippi,-5.0
+Harris,Georgia,-5.0
+Roscommon,Michigan,-5.0
+Mississippi,Missouri,-5.1
+Carroll,Mississippi,-5.1
+Drew,Arkansas,-5.1
+Ashe,North Carolina,-5.1
+Colleton,South Carolina,-5.1
+Bristol,Massachusetts,-5.1
+Nash,North Carolina,-5.1
+Dallas,Texas,-5.1
+West Baton Rouge,Louisiana,-5.1
+Emanuel,Georgia,-5.2
+Dodge,Georgia,-5.2
+Pickens,South Carolina,-5.2
+Webster,Mississippi,-5.2
+Fayette,Kentucky,-5.2
+Charlevoix,Michigan,-5.2
+Pickens,Alabama,-5.2
+Red River,Louisiana,-5.2
+Iberville,Louisiana,-5.2
+Kershaw,South Carolina,-5.2
+Caroline,Maryland,-5.2
+Peach,Georgia,-5.3
+Florence,South Carolina,-5.3
+Putnam,Florida,-5.3
+Henry,Alabama,-5.3
+Monroe,Arkansas,-5.3
+Sussex,Virginia,-5.3
+Greene,Ohio,-5.3
+Hernando,Florida,-5.4
+Avoyelles,Louisiana,-5.4
+Lancaster,Virginia,-5.4
+Nottoway,Virginia,-5.4
+Kalamazoo,Michigan,-5.4
+Ware,Georgia,-5.4
+Martin,Florida,-5.4
+Crawford,Michigan,-5.4
+Brunswick,Virginia,-5.4
+Clark,Ohio,-5.5
+Tangipahoa,Louisiana,-5.5
+Lee,Georgia,-5.5
+Ouachita,Louisiana,-5.5
+Shawnee,Kansas,-5.5
+Hancock,Mississippi,-5.5
+Hays,Texas,-5.5
+Sampson,North Carolina,-5.5
+Caldwell,Texas,-5.6
+Lincoln,Oregon,-5.6
+Breathitt,Kentucky,-5.6
+Pointe Coupee,Louisiana,-5.6
+Oklahoma,Oklahoma,-5.6
+White,Tennessee,-5.6
+Craven,North Carolina,-5.6
+Alameda,California,-5.6
+Hamblen,Tennessee,-5.6
+Boone,Missouri,-5.7
+St Tammany,Louisiana,-5.7
+Rowan,Kentucky,-5.7
+Montgomery,North Carolina,-5.7
+Brevard,Florida,-5.7
+Douglas,Oregon,-5.8
+Hawaii,Hawaii,-5.8
+Vanderburgh,Indiana,-5.8
+Kings,New York,-5.8
+Marion,Florida,-5.8
+Grady,Georgia,-5.8
+Claiborne,Louisiana,-5.8
+Mecklenburg,Virginia,-5.8
+Mobile,Alabama,-5.8
+Bertie,North Carolina,-5.9
+Hart,Georgia,-5.9
+Jones,Georgia,-5.9
+Polk,Georgia,-5.9
+Tulare,California,-5.9
+Berrien,Georgia,-6.0
+Chemung,New York,-6.0
+Cocke,Tennessee,-6.0
+Autauga,Alabama,-6.0
+Gwinnett,Georgia,-6.0
+Lee,Mississippi,-6.0
+Taylor,Florida,-6.1
+Camden,New Jersey,-6.1
+Jackson,Illinois,-6.1
+Jackson,Mississippi,-6.1
+St Lucie,Florida,-6.1
+St Francis,Arkansas,-6.1
+Dauphin,Pennsylvania,-6.1
+Lenoir,North Carolina,-6.1
+Montgomery,Alabama,-6.2
+Chesapeake City,Virginia,-6.2
+Dare,North Carolina,-6.2
+El Paso,Colorado,-6.2
+Darlington,South Carolina,-6.2
+Humphreys,Mississippi,-6.2
+Trigg,Kentucky,-6.2
+Boyd,Kentucky,-6.2
+Clayton,Georgia,-6.3
+Mississippi,Arkansas,-6.3
+Racine,Wisconsin,-6.3
+Transylvania,North Carolina,-6.4
+Walker,Georgia,-6.4
+Limestone,Alabama,-6.5
+Saluda,South Carolina,-6.5
+Allen,Indiana,-6.5
+Hamilton,Florida,-6.5
+Sullivan,Tennessee,-6.6
+St Bernard,Louisiana,-6.6
+Cabarrus,North Carolina,-6.6
+Washington,Maine,-6.6
+Buckingham,Virginia,-6.6
+Lucas,Ohio,-6.6
+Lincoln,North Carolina,-6.6
+Bourbon,Kentucky,-6.7
+Hopewell City,Virginia,-6.7
+Jefferson,West Virginia,-6.7
+Lunenburg,Virginia,-6.7
+McLennan,Texas,-6.7
+Wyandotte,Kansas,-6.8
+Marshall,Mississippi,-6.8
+Shelby,Alabama,-6.8
+Allen,Ohio,-6.8
+Cibola,New Mexico,-6.8
+Wicomico,Maryland,-6.8
+Perquimans,North Carolina,-6.8
+Caroline,Virginia,-6.9
+La Paz,Arizona,-6.9
+Cobb,Georgia,-6.9
+East Feliciana,Louisiana,-6.9
+Colbert,Alabama,-7.0
+Cook,Georgia,-7.0
+Rapides,Louisiana,-7.0
+Granville,North Carolina,-7.0
+Caldwell,North Carolina,-7.0
+Maury,Tennessee,-7.1
+Livingston,Michigan,-7.1
+Bexar,Texas,-7.1
+Kenton,Kentucky,-7.1
+Hardeman,Tennessee,-7.1
+Liberty,Georgia,-7.1
+Burke,North Carolina,-7.2
+Iberia,Louisiana,-7.2
+Knox,Tennessee,-7.2
+Greene,North Carolina,-7.2
+Kenosha,Wisconsin,-7.2
+Ben Hill,Georgia,-7.2
+Beaufort,North Carolina,-7.2
+Broome,New York,-7.3
+Lafayette,Louisiana,-7.3
+Seminole,Florida,-7.3
+Williamsburg,South Carolina,-7.3
+Appomattox,Virginia,-7.3
+Clark,Kentucky,-7.3
+Leon,Florida,-7.4
+Ouachita,Arkansas,-7.4
+Butler,Alabama,-7.5
+Decatur,Georgia,-7.5
+Hempstead,Arkansas,-7.5
+Macon,Illinois,-7.5
+Monroe,Alabama,-7.5
+Howard,Indiana,-7.5
+Greenwood,South Carolina,-7.5
+Travis,Texas,-7.5
+Sangamon,Illinois,-7.5
+Harnett,North Carolina,-7.5
+Attala,Mississippi,-7.6
+Jasper,Georgia,-7.6
+Bernalillo,New Mexico,-7.6
+LaPorte,Indiana,-7.6
+Halifax,Virginia,-7.6
+Prince Edward,Virginia,-7.6
+Lee,North Carolina,-7.7
+Taylor,Georgia,-7.7
+Columbus,North Carolina,-7.7
+Clarendon,South Carolina,-7.7
+Brazos,Texas,-7.7
+Tallapoosa,Alabama,-7.7
+Rutherford,North Carolina,-7.7
+Davidson,Tennessee,-7.8
+Upson,Georgia,-7.8
+Gila,Arizona,-7.8
+Grant,Indiana,-7.9
+Union,North Carolina,-7.9
+Pulaski,Virginia,-7.9
+Polk,Florida,-7.9
+Elbert,Georgia,-7.9
+St Johns,Florida,-8.0
+Calhoun,Michigan,-8.0
+Turner,Georgia,-8.0
+Gibson,Tennessee,-8.1
+Coweta,Georgia,-8.1
+Pitt,North Carolina,-8.1
+Tuscaloosa,Alabama,-8.1
+Jackson,Michigan,-8.2
+Toombs,Georgia,-8.2
+Person,North Carolina,-8.2
+Calhoun,Mississippi,-8.2
+Madison,Florida,-8.2
+Catawba,North Carolina,-8.3
+Conecuh,Alabama,-8.3
+Lafayette,Mississippi,-8.3
+Lexington,South Carolina,-8.3
+Natchitoches,Louisiana,-8.3
+Bulloch,Georgia,-8.3
+Butts,Georgia,-8.3
+Fairfield,Connecticut,-8.3
+Berkeley,West Virginia,-8.3
+New Haven,Connecticut,-8.4
+Athens,Ohio,-8.4
+Lowndes,Alabama,-8.5
+Coffee,Georgia,-8.5
+Thomas,Georgia,-8.5
+Adams,Mississippi,-8.5
+Dooly,Georgia,-8.5
+Peoria,Illinois,-8.5
+Roosevelt,Montana,-8.6
+Dorchester,Maryland,-8.6
+Hampton,South Carolina,-8.6
+Jenkins,Georgia,-8.6
+Essex,New Jersey,-8.6
+Newport News City,Virginia,-8.7
+Accomack,Virginia,-8.7
+Martin,North Carolina,-8.7
+Madison,Indiana,-8.7
+Moore,North Carolina,-8.7
+Del Norte,California,-8.7
+New Castle,Delaware,-8.8
+Trumbull,Ohio,-8.8
+Bladen,North Carolina,-8.8
+Jasper,South Carolina,-8.8
+Worth,Georgia,-8.8
+Winnebago,Illinois,-8.8
+Desha,Arkansas,-8.9
+Chambers,Alabama,-8.9
+Sarasota,Florida,-8.9
+Mendocino,California,-8.9
+Iredell,North Carolina,-8.9
+Montgomery,Ohio,-8.9
+San Bernardino,California,-9.0
+Tate,Mississippi,-9.0
+Charleston,South Carolina,-9.0
+Monroe,New York,-9.1
+Caswell,North Carolina,-9.2
+Jefferson Davis,Mississippi,-9.2
+Barnwell,South Carolina,-9.2
+Kent,Delaware,-9.2
+Barrow,Georgia,-9.2
+Caddo,Louisiana,-9.3
+Pasquotank,North Carolina,-9.3
+Cherokee,Georgia,-9.3
+Wilkes,Georgia,-9.3
+Hale,Alabama,-9.3
+Lamar,Georgia,-9.4
+Orange,New York,-9.4
+Newberry,South Carolina,-9.4
+Calhoun,South Carolina,-9.4
+Hamilton,Tennessee,-9.4
+Laurens,South Carolina,-9.5
+Evans,Georgia,-9.5
+Jefferson,Arkansas,-9.5
+Chesterfield,South Carolina,-9.5
+Edgecombe,North Carolina,-9.5
+Chickasaw,Mississippi,-9.5
+Warren,North Carolina,-9.5
+Shelby,Tennessee,-9.6
+Saginaw,Michigan,-9.6
+Brooks,Georgia,-9.6
+Orangeburg,South Carolina,-9.6
+Scott,Mississippi,-9.6
+Marengo,Alabama,-9.6
+Oconee,South Carolina,-9.6
+Tattnall,Georgia,-9.7
+Richland,Louisiana,-9.7
+Dallas,Arkansas,-9.7
+Pike,Mississippi,-9.8
+Richmond,New York,-9.9
+Columbia,Arkansas,-9.9
+Rockingham,North Carolina,-9.9
+Delaware,Indiana,-9.9
+Suffolk City,Virginia,-9.9
+Lincoln,Louisiana,-10.0
+Washtenaw,Michigan,-10.1
+Bleckley,Georgia,-10.1
+Jefferson,Alabama,-10.1
+Hertford,North Carolina,-10.2
+Orange,North Carolina,-10.2
+Beaufort,South Carolina,-10.2
+Screven,Georgia,-10.3
+Fayette,Tennessee,-10.4
+Pinal,Arizona,-10.4
+Muskegon,Michigan,-10.4
+Chester,South Carolina,-10.4
+Mahoning,Ohio,-10.5
+Franklin,North Carolina,-10.5
+Lowndes,Georgia,-10.5
+Colquitt,Georgia,-10.5
+Alamance,North Carolina,-10.6
+Lee,Alabama,-10.6
+Davidson,North Carolina,-10.6
+Troup,Georgia,-10.6
+Sumter,South Carolina,-10.6
+Los Angeles,California,-10.6
+Jefferson,Florida,-10.7
+Pulaski,Georgia,-10.7
+Lynchburg City,Virginia,-10.8
+Wilkinson,Georgia,-10.8
+Volusia,Florida,-10.8
+New York,New York,-10.9
+Chowan,North Carolina,-10.9
+Galveston,Texas,-10.9
+Floyd,Georgia,-10.9
+Cherokee,South Carolina,-10.9
+Passaic,New Jersey,-11.0
+St John The Baptist,Louisiana,-11.1
+Sandoval,New Mexico,-11.1
+Morehouse,Louisiana,-11.2
+Riverside,California,-11.2
+Lee,Florida,-11.2
+Washington,Georgia,-11.3
+Franklin City,Virginia,-11.3
+Emporia City,Virginia,-11.3
+Barbour,Alabama,-11.3
+Palm Beach,Florida,-11.3
+Mitchell,Georgia,-11.3
+Russell,Alabama,-11.3
+Muscogee,Georgia,-11.3
+Noxubee,Mississippi,-11.4
+Durham,North Carolina,-11.4
+Wake,North Carolina,-11.4
+Cleveland,North Carolina,-11.4
+Apache,Arizona,-11.4
+Forrest,Mississippi,-11.4
+McDuffie,Georgia,-11.5
+Washington,North Carolina,-11.5
+Coosa,Alabama,-11.5
+Copiah,Mississippi,-11.6
+Richmond,North Carolina,-11.6
+Halifax,North Carolina,-11.6
+Cumberland,New Jersey,-11.6
+Seminole,Georgia,-11.6
+Fulton,Georgia,-11.6
+Berrien,Michigan,-11.7
+Sumter,Alabama,-11.7
+Kane,Illinois,-11.7
+Wilcox,Alabama,-11.7
+New Hanover,North Carolina,-11.7
+Laurens,Georgia,-11.8
+Lowndes,Mississippi,-11.8
+Kemper,Mississippi,-11.8
+Sussex,Delaware,-11.8
+Dallas,Alabama,-11.9
+Bullock,Alabama,-11.9
+Randolph,Georgia,-11.9
+Denver,Colorado,-12.0
+Marion,Indiana,-12.1
+Vance,North Carolina,-12.1
+Wayne,North Carolina,-12.1
+Pima,Arizona,-12.2
+Union,South Carolina,-12.2
+Aiken,South Carolina,-12.2
+Neshoba,Mississippi,-12.3
+Jefferson,Mississippi,-12.3
+Bronx,New York,-12.3
+Milwaukee,Wisconsin,-12.3
+Perry,Alabama,-12.3
+Jefferson,Oregon,-12.4
+Rosebud,Montana,-12.4
+Danville City,Virginia,-12.4
+Bamberg,South Carolina,-12.5
+Warren,Mississippi,-12.5
+Wayne,Michigan,-12.5
+Chicot,Arkansas,-12.6
+Tipton,Tennessee,-12.6
+Richmond,Georgia,-12.6
+Bibb,Georgia,-12.6
+Navajo,Arizona,-12.7
+Lee,Arkansas,-12.7
+Lauderdale,Tennessee,-12.7
+Northampton,North Carolina,-12.8
+Sharkey,Mississippi,-12.8
+Madison,Mississippi,-12.9
+Clay,Mississippi,-12.9
+Tift,Georgia,-12.9
+Lancaster,South Carolina,-12.9
+Winston,Mississippi,-12.9
+Fresno,California,-12.9
+Glynn,Georgia,-13.0
+Yalobusha,Mississippi,-13.0
+Crisp,Georgia,-13.1
+Putnam,Georgia,-13.1
+Buncombe,North Carolina,-13.1
+Dillon,South Carolina,-13.1
+Meriwether,Georgia,-13.1
+Jefferson,Louisiana,-13.1
+Rowan,North Carolina,-13.2
+Wilson,North Carolina,-13.2
+Crittenden,Arkansas,-13.2
+Bethel,Alaska,-13.2
+Morgan,Georgia,-13.3
+Jefferson,Georgia,-13.3
+Georgetown,South Carolina,-13.3
+Lauderdale,Mississippi,-13.3
+Cook,Illinois,-13.3
+Norfolk City,Virginia,-13.4
+Macon,Alabama,-13.4
+Orange,Florida,-13.5
+Hillsborough,Florida,-13.5
+Madison,Louisiana,-13.5
+Oktibbeha,Mississippi,-13.6
+McCormick,South Carolina,-13.8
+Portsmouth City,Virginia,-13.8
+Greene,Georgia,-13.8
+Mecklenburg,North Carolina,-13.8
+Hoke,North Carolina,-13.8
+East Baton Rouge,Louisiana,-13.9
+Charlottesville City,Virginia,-13.9
+Haywood,Tennessee,-14.0
+Marlboro,South Carolina,-14.0
+Dougherty,Georgia,-14.1
+Martinsville City,Virginia,-14.2
+Brunswick,North Carolina,-14.3
+Baldwin,Georgia,-14.3
+Panola,Mississippi,-14.5
+St Louis City,Missouri,-14.5
+Will,Illinois,-14.5
+Early,Georgia,-14.5
+Gaston,North Carolina,-14.5
+Terrell,Georgia,-14.6
+Rolette,North Dakota,-14.7
+Greene,Alabama,-14.7
+Anson,North Carolina,-14.7
+Northampton,Virginia,-14.7
+Holmes,Mississippi,-14.7
+Sumter,Georgia,-14.8
+Richmond City,Virginia,-14.8
+Escambia,Florida,-14.8
+Petersburg City,Virginia,-14.8
+Marion,South Carolina,-14.9
+Edgefield,South Carolina,-15.0
+East Carroll,Louisiana,-15.0
+Burke,Georgia,-15.0
+Gadsden,Florida,-15.0
+Robeson,North Carolina,-15.0
+Allendale,South Carolina,-15.1
+Quitman,Mississippi,-15.2
+Guilford,North Carolina,-15.2
+Phillips,Arkansas,-15.5
+Lee,South Carolina,-15.6
+Madison,Tennessee,-15.7
+Hancock,Georgia,-15.9
+Tallahatchie,Mississippi,-15.9
+Bolivar,Mississippi,-15.9
+Fairfield,South Carolina,-16.0
+Leflore,Mississippi,-16.0
+Grenada,Mississippi,-16.1
+Scotland,North Carolina,-16.2
+Clarke,Georgia,-16.2
+Richland,South Carolina,-16.3
+Greenville,South Carolina,-16.5
+Atlantic,New Jersey,-16.5
+Monroe,Georgia,-16.5
+Big Horn,Montana,-16.7
+Washington,Mississippi,-16.8
+Nome,Alaska,-16.9
+Cumberland,North Carolina,-17.1
+Spalding,Georgia,-17.1
+Sunflower,Mississippi,-17.2
+Baltimore City,Maryland,-17.3
+Madison,Alabama,-17.8
+Tunica,Mississippi,-18.0
+Claiborne,Mississippi,-18.0
+Horry,South Carolina,-18.2
+Roanoke City,Virginia,-18.2
+Coahoma,Mississippi,-18.8
+Yazoo,Mississippi,-18.9
+Glacier,Montana,-18.9
+McKinley,New Mexico,-19.2
+Orleans,Louisiana,-19.2
+Genesee,Michigan,-19.5
+Hinds,Mississippi,-21.5
+Forsyth,North Carolina,-23.8
+Todd,South Dakota,-31.6
+Shannon,South Dakota,-34.7
