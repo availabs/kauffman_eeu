@@ -4,6 +4,7 @@ var React = require("react"),
 	RankingsGraph = require("../components/graphs/RankingsGraph.react"),
 	Loading = require("../components/layout/Loading.react"),
 	LineGraph = require("../components/graphs/LineGraph.react"),
+	BarGraph = require("../components/graphs/BarGraph.react"),	
 	DataStore = require("../components/utils/DataStore.react");
 
 
@@ -71,6 +72,10 @@ var GraphPage = React.createClass({
 
         	data = scope.refs.store.totalMigrationFlowGraph(filters);
         }
+        if(graph == 'opportunity'){
+
+        	data = scope.refs.store.opportunityGraph(filters);
+        }        
         if(graph == "inc5000"){
         	data = scope.refs.store.incGraph(filters);
         }
@@ -79,7 +84,6 @@ var GraphPage = React.createClass({
         if(!data){
             console.log('reloading')
             setTimeout(function(){ scope.processData(graph) }, 1500);
-        
         }
         else{
 			return(data)      	
@@ -163,7 +167,14 @@ var GraphPage = React.createClass({
 				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
-		}				
+		}	
+		else if(e.target.id == "opportunity"){
+			scope.setState({graph:"opportunity",loading:true});
+			d3.select('#opportunity')
+				.attr('class',"active");
+			d3.select('#diversity')
+				.attr('class',"active");
+		}					
 		else{
 			scope.setState({graph:"densComposite",loading:true});
 			d3.select('#densComposite')
@@ -205,6 +216,7 @@ var GraphPage = React.createClass({
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Diversity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
 			    		<li id="immigrant" className="active" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>		
+			    		<li id="opportunity" onClick={scope.toggleGraph} ><a id="opportunity" >Income Gain/Loss from Childhood Residence</a></li>		
 	    			</ul>
 	    		</li>
 	    		<li className="dropdown" id="fluidity">
@@ -227,7 +239,12 @@ var GraphPage = React.createClass({
 
 
 	    var store = (<DataStore ref='store' />);
-	    var graph = (<LineGraph data={scope.state.data} graph={scope.state.graph} />)
+	    if(scope.state.graph != "opportunity"){
+	    	var graph = (<LineGraph data={scope.state.data} graph={scope.state.graph} />)
+	    }
+	    else{
+	    	var graph = (<BarGraph data={scope.state.data} graph={scope.state.graph} />)
+	    }
 	    var filters = "none"
 	    console.log("graphapge render state",scope.state);
 	    if(!scope.state.loading){

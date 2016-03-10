@@ -12,7 +12,7 @@ var DataStore = React.createClass({
 		return {
 			loading:true,
 			fullData:{},
-            equalityData:[],
+            opportunityData:[],
 			immData:[],
             migrationData:[],
             inflowMigration:[],
@@ -32,13 +32,13 @@ var DataStore = React.createClass({
         var scope = this;
 
         scope.getData(function(data){
-            scope.setState({equalityData:scope.processEqualityData(),fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),incData:scope.processIncData(data['incData']),totalMigrationFlow:scope.processTotalMigrationFlow(data['detailMigrationData']),loading:false});
+            scope.setState({opportunityData:data['opportunityData'],fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),incData:scope.processIncData(data['incData']),totalMigrationFlow:scope.processTotalMigrationFlow(data['detailMigrationData']),loading:false});
         })
     },
     getData:function(cb){
         var scope = this;
 
-
+        var oppData = scope.processOpportunityData(function(data){return data});
         d3.json("/allMsa",function(err,msaData){
             d3.json("/countyPop",function(err,popData){
                 d3.json("/shareImm",function(err,immData){
@@ -53,6 +53,7 @@ var DataStore = React.createClass({
                                 data['migrationData'] = migrationData;
                                 data['detailMigrationData'] = detailMigrationData;
                                 data['incData'] = incData;
+                                data['opportunityData'] = oppData;
                                 cb(data);  
                             })
                         })
@@ -66,7 +67,7 @@ var DataStore = React.createClass({
     
 
     },
-    processEqualityData:function(){
+    processOpportunityData:function(cb){
         var scope = this;
         var match = 0;
         var curMatch = 1;
@@ -162,53 +163,38 @@ var DataStore = React.createClass({
                             
 
 
-                                    var reducedData = {}
+                            var reducedData = {}
 
-                                    var finalData = [];
-                                    Object.keys(msaGains).forEach(function(msaId){
-                                        var valueArray = [];
-                                        Object.keys(msaGains[msaId]).forEach(function(income){
-                                            
-                                            valueArray.push( {x:income,y:+msaGains[msaId][income]});                    
-                                            
-
-
-                                            
-                                        })
-
-                                        if(valueArray.length != 0){
-                                         finalData.push({key:msaId,values:valueArray,area:false});                
-                                        }
+                            var finalData = [];
+                            Object.keys(msaGains).forEach(function(msaId){
+                                var valueArray = [];
+                                Object.keys(msaGains[msaId]).forEach(function(income){
+                                    
+                                    valueArray.push( {x:income,y:+msaGains[msaId][income]});                    
+                                    
 
 
-                                    })
+                                    
+                                })
+
+                                if(valueArray.length != 0){
+                                 finalData.push({key:msaId,values:valueArray,area:false});                
+                                }
 
 
-                                    var rankedData = scope.rankInc(finalData);
+                            })
 
-                                    var polishedData = scope.polishData(rankedData);
-                        
-                                    console.log(polishedData);
-                                    return polishedData
 
+                            var rankedData = scope.rankInc(finalData);
+
+                            var polishedData = scope.polishData(rankedData);
+                
+                            console.log(polishedData);
+                            cb(polishedData);
                         })
-
                     })
-
-
-
-
-
-
-
-
-
-
-                })
-                              
+                })        
             })
-
-
         })
     },
     processInflowMigration:function(data){
@@ -521,12 +507,30 @@ var DataStore = React.createClass({
         return trimmedData;    	
 
     },
+    opportunityGraph:function(filters){
+        var scope = this;
+        var graphData;
+
+
+        if(!scope.state.opportunityData){
+            scope.setState({opportunityData:scope.processOpportunityData()});
+            setTimeout(function(){scope.opportunityGraph()},1500);
+        }
+        else{
+            graphData = scope.state.opportunityData;
+            return graphData;
+        }
+
+
+        
+       
+    },
     immGraph:function(filters){
 		var scope = this;
 		var graphData;
 
 
-
+        console.log(scope.state);
 
 		graphData = scope.state.immData;
 		return graphData;    	
