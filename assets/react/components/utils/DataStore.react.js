@@ -1,9 +1,6 @@
 var React = require("react"),
 	d3 = require("d3"),
     colorbrewer = require('colorbrewer'),
-    sicsToState = require('../utils/sicsToState.js'),
-    abbrToFips = require('../utils/abbrToFips.json'),
-    msatocounty = require('../../utils/data/msatocounty.js'),
     msaIdToName = require('../utils/msaIdToName.json');
 
 var DataStore = React.createClass({
@@ -32,13 +29,13 @@ var DataStore = React.createClass({
         var scope = this;
 
         scope.getData(function(data){
-            scope.setState({opportunityData:data['opportunityData'],fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),incData:scope.processIncData(data['incData']),totalMigrationFlow:scope.processTotalMigrationFlow(data['detailMigrationData']),loading:false});
+            scope.setState({opportunityData:scope.processOpportunityData(data['opportunityData']),fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),incData:scope.processIncData(data['incData']),totalMigrationFlow:scope.processTotalMigrationFlow(data['detailMigrationData']),loading:false});
         })
     },
     getData:function(cb){
         var scope = this;
 
-        var oppData = scope.processOpportunityData(function(data){return data});
+
         d3.json("/allMsa",function(err,msaData){
             d3.json("/countyPop",function(err,popData){
                 d3.json("/shareImm",function(err,immData){
@@ -46,156 +43,67 @@ var DataStore = React.createClass({
                         d3.json("/detailMigration",function(err,detailMigrationData){
                             //GREENVILLE/GREENWOOD SC IS A MISMATCH
                             d3.json("/inc5000",function(err,incData){
-                                var data = {};
-                                data['fullData'] = msaData;
-                                data['msaPop'] = popData;
-                                data['immData'] = immData;
-                                data['migrationData'] = migrationData;
-                                data['detailMigrationData'] = detailMigrationData;
-                                data['incData'] = incData;
-                                data['opportunityData'] = oppData;
-                                cb(data);  
+                                d3.json("/equalOpp",function(err,oppData){
+                                    var data = {};
+                                    data['fullData'] = msaData;
+                                    data['msaPop'] = popData;
+                                    data['immData'] = immData;
+                                    data['migrationData'] = migrationData;
+                                    data['detailMigrationData'] = detailMigrationData;
+                                    data['incData'] = incData;
+                                    data['opportunityData'] = oppData;
+                                    cb(data);  
+                                })
                             })
                         })
                     })
                 })
             })
         })
-
-
-
-    
-
     },
-    processOpportunityData:function(cb){
+    processOpportunityData:function(data){
         var scope = this;
-        var match = 0;
-        var curMatch = 1;
-        var index = 0;
-        var countyGains = {};
-        d3.csv("../react/utils/data/opportunity/estimates_for_all_counties_low_income.csv",function(err,lowOppData){
-            d3.csv("../react/utils/data/national_county.csv",function(err,countyNames){
-                d3.csv("../react/utils/data/opportunity/estimates_for_all_counties_high_income.csv",function(err,highOppData){
-                    
-                    lowOppData.forEach(function(curCounty){
-                        var state;
-                        Object.keys(sicsToState).forEach(function(stateFips){
-                            if(sicsToState[stateFips] == curCounty.State){
-                                state = stateFips;
-                            }
-                        })
+        var msaGains = {};
 
-                        Object.keys(abbrToFips).forEach(function(stateAbbr){
-                            if(abbrToFips[stateAbbr] == state){
-                                state = stateAbbr;
-                            }
-                        })
+        //filter out null rows
+        Object.keys(data).forEach(function(msaId){
+            if(data[msaId]["highIncome"] != null && data[msaId]["lowIncome"] != null){
+                msaGains[msaId] = {};
+                msaGains[msaId] = data[msaId];
+            }
 
-                        while(curMatch && index < countyNames.length){
-                            if(curCounty.County == countyNames[index].Name.substring(0,countyNames[index].Name.length-7)){
-                                if(state = countyNames[index].State){
-                                    match++;
-                                    curMatch = 0;
-                                    countyGains[countyNames[index].Fips] = {}
-                                    countyGains[countyNames[index].Fips]["lowIncome"] = (+curCounty.Gain/100);
-                                }
-                            }
-                            index++;
-                        }
-
-
-                        index = 0;
-                        curMatch = 1;
-                    })
-                    highOppData.forEach(function(curCounty){
-                        var state;
-                        Object.keys(sicsToState).forEach(function(stateFips){
-                            if(sicsToState[stateFips] == curCounty.State){
-                                state = stateFips;
-                            }
-                        })
-
-                        Object.keys(abbrToFips).forEach(function(stateAbbr){
-                            if(abbrToFips[stateAbbr] == state){
-                                state = stateAbbr;
-                            }
-                        })
-
-                        while(curMatch && index < countyNames.length){
-                            if(curCounty.County == countyNames[index].Name.substring(0,countyNames[index].Name.length-7)){
-                                if(state = countyNames[index].State){
-                                    match++;
-                                    curMatch = 0;
-                                    countyGains[countyNames[index].Fips]["highIncome"] = (+curCounty.Gain/100);
-                                }
-                            }
-                            index++;
-                        }
-
-
-                        index = 0;
-                        curMatch = 1;
-                    })
-                    
-
-                    var msaGains ={};
-                    d3.json("../cache/aggregate/msaPop.json",function(err,data){
-                        d3.json("../cache/countyPop/countypopagg.json",function(err,countyPopData){
-                            var msaCounties = data;
-
-                            msatocounty.forEach(function(countyMap){
-
-                                msaGains[Object.keys(countyMap)] = {};
-                                msaGains[Object.keys(countyMap)]["lowIncome"] = 0;
-                                msaGains[Object.keys(countyMap)]["highIncome"] = 0;
-
-                            })
-
-                            Object.keys(msaGains).forEach(function(msaId){
-                                var curPop = 0;
-                                Object.keys(countyGains).forEach(function(countyFips){
-                                    if(countyPopData[countyFips]){
-                                        msaGains[msaId]["lowIncome"] += +countyGains[countyFips]["lowIncome"] * +countyPopData[countyFips][2011]/+msaCounties[msaId][2011];
-                                        msaGains[msaId]["highIncome"] += +countyGains[countyFips]["highIncome"] * +countyPopData[countyFips][2011]/+msaCounties[msaId][2011];               
-                                    }
-                                })
-                            })
-                            
-
-
-                            var reducedData = {}
-
-                            var finalData = [];
-                            Object.keys(msaGains).forEach(function(msaId){
-                                var valueArray = [];
-                                Object.keys(msaGains[msaId]).forEach(function(income){
-                                    
-                                    valueArray.push( {x:income,y:+msaGains[msaId][income]});                    
-                                    
-
-
-                                    
-                                })
-
-                                if(valueArray.length != 0){
-                                 finalData.push({key:msaId,values:valueArray,area:false});                
-                                }
-
-
-                            })
-
-
-                            var rankedData = scope.rankInc(finalData);
-
-                            var polishedData = scope.polishData(rankedData);
-                
-                            console.log(polishedData);
-                            cb(polishedData);
-                        })
-                    })
-                })        
-            })
         })
+
+
+        var reducedData = {}
+
+        var finalData = [];
+        Object.keys(msaGains).forEach(function(msaId){
+            var valueArray = [];
+            Object.keys(msaGains[msaId]).forEach(function(income){
+                
+                valueArray.push( {x:income,y:+msaGains[msaId][income]});                    
+                
+
+
+                
+            })
+
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
+
+
+        })
+
+
+        var rankedData = scope.rankOpp(finalData);
+
+        var polishedData = scope.polishOppData(rankedData);
+
+        console.log(polishedData);
+        return polishedData;
+
     },
     processInflowMigration:function(data){
         var scope = this; 
@@ -512,25 +420,15 @@ var DataStore = React.createClass({
         var graphData;
 
 
-        if(!scope.state.opportunityData){
-            scope.setState({opportunityData:scope.processOpportunityData()});
-            setTimeout(function(){scope.opportunityGraph()},1500);
-        }
-        else{
-            graphData = scope.state.opportunityData;
-            return graphData;
-        }
+        console.log(scope.state);
 
-
-        
-       
+        graphData = scope.state.opportunityData;
+        return graphData;  
     },
     immGraph:function(filters){
 		var scope = this;
 		var graphData;
 
-
-        console.log(scope.state);
 
 		graphData = scope.state.immData;
 		return graphData;    	
@@ -1121,6 +1019,35 @@ var DataStore = React.createClass({
 
         return cities; 
     },
+    rankOpp:function(cities){
+
+        var scope=this,
+            incomes = ['highIncome','lowIncome'];
+
+        incomes.forEach(function(income){
+            var rank = 1;
+            //Sort cities according to each year
+            cities.sort(scope.sortCities(income));
+
+            //Go through and assign ranks for current year
+            cities.forEach(function(city){
+
+                city.values.forEach(function(yearValues){
+                    if(yearValues.x == income){
+                        yearValues.rank = rank;
+                    }
+                })
+
+                rank++;
+            })
+        })          
+
+        return cities; 
+
+
+
+
+    },
 	rankShare:function(cities){
 		var scope=this,
             years = d3.range(1977,2013);
@@ -1293,6 +1220,19 @@ var DataStore = React.createClass({
         return colorGroup;
 
     },
+    colorOppGroup:function(){
+        var scope = this;
+
+
+        var colorGroup = d3.scale.ordinal()
+            .domain(["lowIncome","highIncome"])
+            .range(['red','green']);
+        
+
+
+        return colorGroup;
+
+    },
     colorImmFunction:function(params){
         var scope = this,
             cityColor;
@@ -1302,6 +1242,25 @@ var DataStore = React.createClass({
             var color = scope.colorImmGroup();
                        
             cityColor = color(curRank);            
+        }
+
+                
+        return cityColor;
+
+    },
+    colorOppFunction:function(params){
+        var scope = this,
+            cityColor;
+        if(params){
+            //var valueLength = params.values.length;
+            //var curRank = params.values[0].y;
+            var color = scope.colorOppGroup();
+                    
+
+
+
+
+            cityColor = color(params);            
         }
 
                 
@@ -1364,7 +1323,34 @@ var DataStore = React.createClass({
         });
         return newData;
     },
+    polishOppData:function(data){
+        var scope = this;
 
+        var newData = [];
+        Object.keys(data).forEach(function(metroArea){
+            if(data[metroArea].length != 0){
+                
+                    var city = {
+                        values:null,
+                        name: msaIdToName[data[metroArea].key],
+                        key:data[metroArea].key
+                    }
+
+
+                    city.values = data[metroArea].values.map(function(i){
+                        return {
+                            city:city,
+                            color:scope.colorOppFunction(i.x),
+                            x:i.x,
+                            y:i.y,
+                            rank:i.rank
+                        }
+                    })   
+                newData.push(city);           
+            }
+        });
+        return newData;
+    },
 
 	render:function(){
 		var scope = this;

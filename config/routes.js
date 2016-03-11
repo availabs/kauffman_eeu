@@ -36,6 +36,8 @@ module.exports.routes = {
 
   '/detailMigration' : 'MsaController.detailMigration',
 
-  '/inc5000' : 'MsaController.inc5000'
+  '/inc5000' : 'MsaController.inc5000',
+
+  '/equalOpp' : 'MsaController.equalOpp'
 
   };

@@ -1,10 +1,12 @@
 var	fs = require('fs'),
 	d3 = require('d3'),
 	http = require('http'),
+	countypopagg = require('../../assets/cache/countyPop/countypopagg.json'),
     msaIdToName = require("../../assets/react/components/utils/msaIdToName.json"),
     msatocounty = require("../../assets/react/utils/data/msatocounty.js"),
 	aggImmShare = require('../../assets/react/utils/data/ACS_5_Year_Immigration_Percentage/aggImmShare.json'),    
-    countypopagg = require("../../assets/cache/countyPop/countypopagg.json"),
+    sicsToState = require('../../assets/react/components/utils/sicsToState.js'),
+    abbrToFips = require('../../assets/react/components/utils/abbrToFips.json'),
     inc2007 = require('../../assets/react/utils/data/inc5000/inc5000_2007.json'),
 	inc2008 = require('../../assets/react/utils/data/inc5000/inc5000_2008.json'),
 	inc2009 = require('../../assets/react/utils/data/inc5000/inc5000_2009.json'),
@@ -89,6 +91,67 @@ module.exports = {
         	}
         })
 
+    },
+    equalOpp:function(req,res){
+       	var match = 0;
+        var curMatch = 1;
+        var index = 0;
+        var countyGains = {};
+
+        fileCache.checkCache({type:"aggregate",id:"aggMsaOppData"},function(aggMsaOppData){
+        	if(aggMsaOppData){
+        		console.log('cache sucess');
+        		console.time('send cache');
+        		res.json(aggMsaOppData);
+        		console.timeEnd('send cache');
+        	}
+        	else{
+				fileCache.checkCache({type:"opportunity",id:"lowIncome"},function(lowOppData){
+		        	if(lowOppData){
+						fileCache.checkCache({type:"opportunity",id:"highIncome"},function(highOppData){
+							if(highOppData){
+								combineEqualOpp(lowOppData,highOppData,function(aggMsaOppData){
+									res.json(aggMsaOppData);
+								});
+							}
+							else{
+								highIncomeOpp(function(highOppData){
+									combineEqualOpp(lowOppData,highOppData,function(aggMsaOppData){
+										res.json(aggMsaOppData);
+									});
+								});
+							}
+						})
+		        	}
+		        	else{
+						lowIncomeOpp(function(lowOppData){
+							fileCache.checkCache({type:"opportunity",id:"highIncome"},function(highOppData){
+								if(highOppData){
+									combineEqualOpp(lowOppData,highOppData,function(aggMsaOppData){
+										res.json(aggMsaOppData);
+									});
+								}
+								else{
+									highIncomeOpp(function(highOppData){
+										combineEqualOpp(lowOppData,highOppData,function(aggMsaOppData){
+											res.json(aggMsaOppData);
+										});
+									});
+								}
+							})							
+						});
+		        	}
+		        })
+        	}
+        })
+
+
+                    
+
+
+                       
+            
+    
     },
     migration:function(req,res){
 
@@ -389,15 +452,7 @@ module.exports = {
 				fileCache.addData({type:"aggregate",id:"inc5000"},metroFirms);
 		    	res.json(metroFirms);				
 			}
-
-
-
 		})
-
-
-
-
-
     },
 
     detailMigration:function(req,res){
@@ -671,6 +726,82 @@ module.exports = {
     }
 };
 
+function combineEqualOpp(lowIncome,highIncome,cb){
+// msaCounties[msaId].forEach(function(county)
+    var msaGains ={};
+
+    fileCache.checkCache({type:"aggregate",id:"msaPop"},function(msaPop){
+    	if(msaPop){
+    		fileCache.checkCache({type:"aggregate",id:"msaCounties"},function(data){
+                if(data){
+                    var msaCounties = data;
+
+                    msatocounty.forEach(function(countyMap){
+
+                        msaGains[Object.keys(countyMap)] = {};
+                        msaGains[Object.keys(countyMap)]["lowIncome"] = 0;
+                        msaGains[Object.keys(countyMap)]["highIncome"] = 0;
+
+                    })
+
+                    Object.keys(msaGains).forEach(function(msaId){
+                    	if(msaCounties[msaId]){
+	                    	msaCounties[msaId].forEach(function(county){
+
+	                            if(countypopagg[county]){
+
+	                                msaGains[msaId]["lowIncome"] += +lowIncome[county] * +countypopagg[county][2011]/+msaPop[msaId][2011];
+	                                msaGains[msaId]["highIncome"] += +highIncome[county] * +countypopagg[county][2011]/+msaPop[msaId][2011];               
+	                            }
+	                    	})                    		
+                    	}
+
+                    })
+       
+        			fileCache.addData({type:"aggregate",id:"aggMsaOppData"},msaGains);
+                    cb(msaGains);                   	
+                }
+                else{
+
+                }
+    		})
+    	}
+    	else{
+			aggregateMsaPop(function(msaPop){
+        		fileCache.checkCache({type:"aggregate",id:"msaCounties"},function(data){
+                    if(data){
+	                    var msaCounties = data;
+
+	                    msatocounty.forEach(function(countyMap){
+
+	                        msaGains[Object.keys(countyMap)] = {};
+	                        msaGains[Object.keys(countyMap)]["lowIncome"] = 0;
+	                        msaGains[Object.keys(countyMap)]["highIncome"] = 0;
+
+	                    })
+
+	                    Object.keys(msaGains).forEach(function(msaId){
+	                    	if(msaCounties[msaId]){
+		                    	msaCounties[msaId].forEach(function(county){
+		                            if(countypopagg[county]){
+		                                msaGains[msaId]["lowIncome"] += +lowIncome[county] * +countypopagg[county][2011]/+msaPop[msaId][2011];
+		                                msaGains[msaId]["highIncome"] += +highIncome[county] * +countypopagg[county][2011]/+msaPop[msaId][2011];               
+		                            }
+		                    	})                    		
+	                    	}
+	                    })
+	                    
+	        			fileCache.addData({type:"aggregate",id:"aggMsaOppData"},msaGains);
+	                    cb(msaGains);                     	
+                    }
+                    else{
+
+                    }
+        		})
+			})
+    	}
+    })
+}
 
 function combineMigration(data1990,data2000,data2010){
 
@@ -719,7 +850,197 @@ function combineMigration(data1990,data2000,data2010){
 
 }
 
+//Given a reference json, county name and state name, will return 5 digit county fips
+function countyNameToFips(countyNames,stateName,countyName){
 
+	var curFips;
+    var state;
+    
+    Object.keys(sicsToState).forEach(function(stateFips){
+        if(sicsToState[stateFips] == stateName){
+            state = stateFips;
+        }
+    })
+    Object.keys(abbrToFips).forEach(function(stateAbbr){
+        if(abbrToFips[stateAbbr] == state){
+            state = stateAbbr;
+        }
+    })
+
+
+    Object.keys(countyNames).forEach(function(countyFips){
+    	if(countyName == countyNames[countyFips].countyName.substring(0,countyNames[countyFips].countyName.length-7)){
+    		if(state == countyNames[countyFips].stateAbbr){
+    			curFips = countyFips;
+    		}
+    	}
+    })
+
+	return curFips;			
+}
+
+
+function nationalCountyNames(cb){
+	var fileContents = fs.readFileSync("assets/react/utils/data/national_county.csv");
+
+	var lines = fileContents.toString().split('\n');
+
+	var header = [];
+
+	header =(lines[0].toString().split(','));
+
+	var rows = [];
+
+
+	var jsonData = {};
+
+    for(i=1;i<lines.length;i++){
+		rows.push(lines[i].toString().split(','));
+	}
+
+    rows.forEach(function(countyRow){
+    	//state,fips,name,code
+		var countyName = countyRow[2];
+		var stateAbbr = countyRow[0];
+		var countyFips = countyRow[1];
+
+
+		if(!jsonData[countyFips]){
+			jsonData[countyFips] = {};
+		}
+		jsonData[countyFips]['countyName'] = countyRow[2];
+		jsonData[countyFips]['stateAbbr'] = countyRow[0];
+
+	})	
+
+	fileCache.addData({type:"misc",id:"countyNames"},jsonData);
+	cb(jsonData);	
+}
+
+function lowIncomeOpp(cb){
+	var fileContents = fs.readFileSync("assets/react/utils/data/opportunity/estimates_for_all_counties_low_income.csv");
+
+	var lines = fileContents.toString().split('\n');
+
+	var header = [];
+
+	header =(lines[0].toString().split(','));
+
+	var rows = [];
+
+	var jsonData = {};
+
+
+
+    fileCache.checkCache({type:"misc",id:"countyNames"},function(countyNames){
+    	if(countyNames){
+
+		    for(i=1;i<lines.length;i++){
+				rows.push(lines[i].toString().split(','));
+			}
+
+		    rows.forEach(function(countyRow){
+
+				var countyName = countyRow[0];
+				var countyState = countyRow[1];
+
+				var countyFips = countyNameToFips(countyNames,countyState,countyName);
+				if(!jsonData[countyFips]){
+					jsonData[countyFips] = 0;;
+				}
+				jsonData[countyFips] = countyRow[2]/100;
+
+			})	
+
+			fileCache.addData({type:"opportunity",id:"lowIncome"},jsonData);
+			cb(jsonData);
+    	}
+    	else{
+    		nationalCountyNames(function(countyNames){
+			    for(i=1;i<lines.length;i++){
+					rows.push(lines[i].toString().split(','));
+				}
+
+			    rows.forEach(function(countyRow){
+
+					var countyName = countyRow[0];
+					var countyState = countyRow[1];
+
+					var countyFips = countyNameToFips(countyNames,countyState,countyName);
+					if(!jsonData[countyFips]){
+						jsonData[countyFips] = 0;;
+					}
+					jsonData[countyFips] = countyRow[2]/100;
+
+				})	
+
+				fileCache.addData({type:"opportunity",id:"lowIncome"},jsonData);
+				cb(jsonData);
+    		});
+    	}
+    })
+}
+
+function highIncomeOpp(){
+	var fileContents = fs.readFileSync("assets/react/utils/data/opportunity/estimates_for_all_counties_high_income.csv");
+
+	var lines = fileContents.toString().split('\n');
+
+	var header = [];
+
+	header =(lines[0].toString().split(','));
+
+	var rows = [];
+
+	var jsonData = {};
+
+    fileCache.checkCache({type:"misc",id:"countyNames"},function(countyNames){
+    	if(countyNames){
+
+		    for(i=1;i<lines.length;i++){
+				rows.push(lines[i].toString().split(','));
+			}
+
+		    rows.forEach(function(countyRow){
+
+				var countyName = countyRow[0];
+				var countyState = countyRow[1];
+
+				var countyFips = countyNameToFips(countyNames,countyState,countyName);
+				if(!jsonData[countyFips]){
+					jsonData[countyFips] = 0;;
+				}
+				jsonData[countyFips] = countyRow[2]/100;
+
+			})	
+
+			fileCache.addData({type:"opportunity",id:"highIncome"},jsonData);
+			return jsonData;
+    	}
+    	else{
+    		nationalCountyNames(function(countyNames){
+			    for(i=1;i<lines.length;i++){
+					rows.push(lines[i].toString().split(','));
+				}
+
+			    rows.forEach(function(countyRow){
+
+					var countyName = countyRow[0];
+					var countyState = countyRow[1];
+
+					var countyFips = countyNameToFips(countyNames,countyState,countyName);
+					if(!jsonData[countyFips]){
+						jsonData[countyFips] = 0;;
+					}
+					jsonData[countyFips] = countyRow[2]/100;
+				})	
+
+				fileCache.addData({type:"opportunity",id:"highIncome"},jsonData);
+				return jsonData;
+    		});
+    	}
+    })
+}
 
 function migration1990(){
 
