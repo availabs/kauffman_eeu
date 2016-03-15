@@ -16,6 +16,7 @@ var BarGraph = React.createClass({
         })
     },
     renderGraph:function(){
+        var percFormat = d3.format(".3%");
         var scope = this;
 
         if(scope.props.data.length == 0){
@@ -49,14 +50,18 @@ var BarGraph = React.createClass({
 			    .orient("left")
 			    .ticks(20, "%");
 
+            var voronoi = d3.geom.voronoi()
+                .x(function(d) { return x0(d.city.key); })
+                .y(function(d) { return y(d.y); })
+                .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
+
 			var svg = d3.select("#rankGraph").append("svg")
 			    .attr("width", width + margin.left + margin.right)
 			    .attr("height", height + margin.top + margin.bottom)
 			  .append("g")
 			    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
-			x0.domain(data.map(function(d) { return d.key; }));
+			x0.domain(data.map(function(d) { return +d.key; }));
             x1.domain(['lowIncome','highIncome']).rangeRoundBands([0,x0.rangeBand()]);
 			y.domain([d3.min(data, function(d) { return d['values'][0]['y']; }), d3.max(data, function(d) { return d['values'][0]['y']; })]);
 
@@ -82,16 +87,76 @@ var BarGraph = React.createClass({
                   .data(data)
                 .enter().append("g")
                   .attr("class","metroArea")
-                  .attr("transform",function(d){return "translate(" + x0(d.key) + ",0)";});
+                  .attr("transform",function(d){ return "translate(" + x0(d.key) + ",0)";});
 
             metroArea.selectAll("rect")
                   .data(function(d){ return d.values;})
                 .enter().append("rect")
+                  .attr("id",function(d){return "metroArea"+ d.city.key + d.city.x;})
                   .attr("width",x1.rangeBand())
                   .attr("x",function(d){ return x1(d.x);})
                   .attr("y",function(d){ return y(d.y);})
                   .attr("height",function(d){return height- y(d.y);})
                   .style("fill",function(d){return d.color;})
+
+            var focus = svg.append("g")
+                  .attr("transform", "translate(-100,-100)")
+                  .attr("class", "focus");
+
+
+                focus.append("text")
+                  .attr("y", -10)
+                  .style("font-weight","bold");
+
+            var voronoiGroup = svg.append("g")
+                  .attr("class", "voronoi")
+                  .style("fill","#FFFFFF")
+                  .style("stroke","#000000")
+                  .style("opacity","0")
+
+            voronoiGroup.selectAll("path")
+                    .data(voronoi(d3.nest()
+                        .key(function(d) {return (x0(d.city.key) + x1(d.x)) + "," + y(d.y); })
+                        .rollup(function(v) { return v[0]; })
+                        .entries(d3.merge(data.map(function(d) { return d.values; })) )
+                        .map(function(d) { return d.values; })))
+                .enter().append("path")
+                    .attr("d", function(d) { if(d!=undefined){return "M" + d.join("L") + "Z"}; })
+                    .datum(function(d) { if(d!=undefined){return d.point}; })
+                    .on("mouseover", mouseover)
+                    .on("mouseout", mouseout)
+                    .on("click",click);
+        
+            function mouseover(d) {
+                var popText = "",
+                    name;
+
+                    name = d.city.name;
+               
+                    var rect = d3.select("#metroArea"+d.city.key+d.city.x);
+
+                    rect.style("fill","#000000");
+
+                    //console.log(rect);
+                popText = "Name: " + name + " High Income: " + percFormat(d.city.values[1].y) + " Low Income: " + percFormat(d.city.values[0].y);
+
+
+                focus.attr("transform", "translate(100,-25)");
+                focus.select("text").text(popText);
+            }
+
+            function click(d){
+                var years = d3.range(1977,2013);
+     
+                console.log("d.city",d.city);
+            }
+
+
+            function mouseout(d) {                              
+                    var rect = d3.select("#metroArea"+d.city.key+d.city.x);
+                    console.log(rect);
+                    rect.style("fill",function(){return "#FFFFFF"})
+            }
 
 
         }

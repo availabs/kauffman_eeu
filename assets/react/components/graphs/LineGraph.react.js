@@ -331,85 +331,9 @@ var LineGraph = React.createClass({
             }
 
             function click(d){
-                d3.select("#hoverRow").remove();
-                d3.select("#hoverRowLock").remove();
                 var years = d3.range(1977,2013);
      
-
-
                 console.log("d.city",d.city);
-
-
-                var table = d3.select("#currentRowScroll").append("table")
-                            .attr("id","hoverRow")
-                            .attr("class", "table table-hover")
-                            .style("margin","0px"),
-                        thead = table.append("tbody"),
-                        tbody = table.append("tbody");
-
-
-
-                // create 1 row
-                var rows = tbody.append("tr")
-                    .selectAll("tr");
-
-
-                // create a cell in each row for each column
-                var cells = rows.select("td")
-                    .data(d.city.values)
-                    .enter()
-                    .append("td")
-                        .text(function(d) {return d.rank; })
-                        .style("min-width",'150px')
-                        .style("height",'60px');
-                
-
-
-
-
-                var tableLock = d3.select("#currentRowLock").append("table")
-                            .attr("id","hoverRowLock")
-                            .attr("class", "table table-hover")
-                            .style("margin","0px"),
-                        theadLock = tableLock.append("tbody"),
-                        tbodyLock = tableLock.append("tbody");
-
-       
-
-
-
-               // create 1 row
-                var rowsLock = tbodyLock.append("tr")
-                    .selectAll("tr");
-
-                var color = [{
-                    0:{
-                        float:"left",
-                        height:38,
-                        width:10,
-                        backgroundColor:d.city.color
-                    }
-                }]
-
-                var colorCell = rowsLock.select("td")
-                    .data(color)
-                    .enter()
-                    .append("td")
-                    .style("background",function(v){return v[0].backgroundColor})
-                    .style("min-width",'150px')
-                    .style("height",'60px');  
-
-
-                var nameLock = [{0:d.city.name}];
-
-                var nameCellLock = rowsLock.select("td")
-                    .data(nameLock)
-                    .enter()
-                    .append("td")
-                    .text(function(v){return v[0]})
-                    .style("min-width",'150px')
-                    .style("height",'60px');
-
             }
 
 
