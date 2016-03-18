@@ -393,28 +393,17 @@ var LineGraph = React.createClass({
             function brushend() {
                 var s = brush.extent();
 
-
-
-                
-                
-
                 if(scope.state.plot == "rank"){
-
-brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
-                s = brush.extent();
-                scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})                      
+                    brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
+                    s = brush.extent();
+                    scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})                      
                 }
                 else{
+                    brush.extent([s[1],s[0]])(d3.select(this));
+                    s = brush.extent();
 
-brush.extent([s[1],s[0]])(d3.select(this));
-                s = brush.extent();
-
-                scope.setState({extent:[s[1],s[0]]})                            
+                    scope.setState({extent:[s[1],s[0]]})                            
                 }              
-
-
-                
-
 
                 svg.classed("selecting", !d3.event.target.empty());
             }

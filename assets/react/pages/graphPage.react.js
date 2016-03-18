@@ -11,7 +11,7 @@ var React = require("react"),
 var GraphPage = React.createClass({
 	getInitialState:function(){
 		return({
-			graph:"immigrant",
+			graph:"inc5000",
 			data:[],
 			loading:true,
 			});
@@ -212,17 +212,17 @@ var GraphPage = React.createClass({
 	    				<li id="densComposite"  onClick={scope.toggleGraph}><a id="densComposite" >Density Composite Rank</a></li>
 	    			</ul>
 	    		</li>
-	    		<li className="dropdown active" id="diversity">
+	    		<li className="dropdown" id="diversity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Diversity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
-			    		<li id="immigrant" className="active" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>		
+			    		<li id="immigrant" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>		
 			    		<li id="opportunity" onClick={scope.toggleGraph} ><a id="opportunity" >Income Gain/Loss from Childhood Residence</a></li>		
 	    			</ul>
 	    		</li>
-	    		<li className="dropdown" id="fluidity">
+	    		<li className="dropdown active" id="fluidity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
-	    				<li id="inc5000"  onClick={scope.toggleGraph}><a id="inc5000" >High Growth Firms</a></li>	
+	    				<li id="inc5000"  className="active" onClick={scope.toggleGraph}><a id="inc5000" >High Growth Firms</a></li>	
 	    				<li id="irsNet"  onClick={scope.toggleGraph}><a id="irsNet" >Net Migration (IRS)</a></li>
 			    		<li id="netMigration"  onClick={scope.toggleGraph}><a id="netMigration" >Net Migration (ACS)</a></li>
 			    		<li id="totalMigrationFlow"  onClick={scope.toggleGraph}><a id="totalMigrationFlow" >Total Migration (Outflow/Inflow Sum) (IRS)</a></li>

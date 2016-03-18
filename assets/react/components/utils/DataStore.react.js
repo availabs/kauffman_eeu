@@ -36,30 +36,30 @@ var DataStore = React.createClass({
         var scope = this;
 
 
-        d3.json("/allMsa",function(err,msaData){
-            d3.json("/countyPop",function(err,popData){
-                d3.json("/shareImm",function(err,immData){
-                    d3.json("/migration",function(err,migrationData){
-                        d3.json("/detailMigration",function(err,detailMigrationData){
-                            //GREENVILLE/GREENWOOD SC IS A MISMATCH
-                            d3.json("/inc5000",function(err,incData){
-                                d3.json("/equalOpp",function(err,oppData){
-                                    var data = {};
-                                    data['fullData'] = msaData;
-                                    data['msaPop'] = popData;
-                                    data['immData'] = immData;
-                                    data['migrationData'] = migrationData;
-                                    data['detailMigrationData'] = detailMigrationData;
-                                    data['incData'] = incData;
-                                    data['opportunityData'] = oppData;
-                                    cb(data);  
-                                })
-                            })
-                        })
-                    })
-                })
-            })
-        })
+        // d3.json("/allMsa",function(err,msaData){
+        //     d3.json("/countyPop",function(err,popData){
+        //         d3.json("/shareImm",function(err,immData){
+        //             d3.json("/migration",function(err,migrationData){
+        //                 d3.json("/detailMigration",function(err,detailMigrationData){
+        //                     //GREENVILLE/GREENWOOD SC IS A MISMATCH
+        //                     d3.json("/inc5000",function(err,incData){
+        //                         d3.json("/equalOpp",function(err,oppData){
+        //                             var data = {};
+        //                             data['fullData'] = msaData;
+        //                             data['msaPop'] = popData;
+        //                             data['immData'] = immData;
+        //                             data['migrationData'] = migrationData;
+        //                             data['detailMigrationData'] = detailMigrationData;
+        //                             data['incData'] = incData;
+        //                             data['opportunityData'] = oppData;
+        //                             cb(data);  
+        //                         })
+        //                     })
+        //                 })
+        //             })
+        //         })
+        //     })
+        // })
     },
     processOpportunityData:function(data){
         var scope = this;
@@ -428,10 +428,33 @@ var DataStore = React.createClass({
     immGraph:function(filters){
 		var scope = this;
 		var graphData;
+        console.log("immigration Graph");
+        if(scope.state.immData && scope.state.immData.length > 0){
+            graphData = scope.state.immData;
+            return graphData;  
+        }
+        else{
+            scope.getDataDemo("immData",function(data){
+                scope.setState({"immData":scope.processImmData(data)})
+            });
+            setTimeout(function(){ scope.immGraph(filters) }, 1500);
+        }
 
 
-		graphData = scope.state.immData;
-		return graphData;    	
+  	
+    },
+    getDataDemo:function(reqData,cb){
+        var scope = this;
+
+
+        if(reqData == "immData"){
+            d3.json("/shareImm",function(err,immData){
+                cb(immData);
+            })            
+        }
+
+
+
     },
     incGraph:function(filters){
         var scope = this;
