@@ -492,15 +492,38 @@ var DataStore = React.createClass({
              return ({key:metroArea.key,values:newValues,area:false});                
         })
 
+        var graphRelativeData2 = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2013){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(scope.state.msaPop[metroArea.key]){
+                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});      
+        })
+
 
         var rankedData = scope.rankInc(graphRelativeData);
-
         var polishedData = scope.polishData(rankedData);
 
+        var rankedData2 = scope.rankInc(graphRelativeData2);
+        var polishedData2 = scope.polishData(rankedData2);
 
+        console.log("pol1",polishedData);
+        console.log("pol2",polishedData2);
         var graphData = {};
         graphData["raw"] = graphRawData;
         graphData["relative"] = polishedData;
+        graphData["relative2"] = polishedData2;
 
 
         return graphData;

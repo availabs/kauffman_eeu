@@ -86,7 +86,8 @@ var BarGraph = React.createClass({
                 return filteredMetro;
             })
 
-
+            console.log("data",data);
+            console.log("filtered",filteredData);
 
             var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
@@ -150,19 +151,8 @@ var BarGraph = React.createClass({
                   .attr("transform",function(d){ return "translate(" + x0(d.key) + ",0)";});
 
 
-            if(scope.state.series == "composite"){
-                metroArea.selectAll("rect")
-                      .data(function(d){ return d.values;})
-                    .enter().append("rect")
-                      .attr("id",function(d){return "metroArea"+ d.city.key + d.x;})
-                      .attr("width",x1.rangeBand())
-                      .attr("x",function(d){ return x1(d.x);})
-                      .attr("y",function(d){ return y(d.y);})
-                      .attr("height",function(d){return height- y(d.y);})
-                      .style("fill",function(d){return compColor(d.x);})    
-            }
-            else{
-                metroArea.selectAll("rect")
+
+            metroArea.selectAll("rect")
                   .data(function(d){ return d.values;})
                 .enter().append("rect")
                   .attr("id",function(d){return "metroArea"+ d.city.key + d.x;})
@@ -170,8 +160,15 @@ var BarGraph = React.createClass({
                   .attr("x",function(d){ return x1(d.x);})
                   .attr("y",function(d){ return y(d.y);})
                   .attr("height",function(d){return height- y(d.y);})
-                  .style("fill",function(d){return d.color;})
-            }
+                  .style("fill",function(d){
+                    if(scope.state.series == "composite"){ 
+                        return compColor(d.x);
+                    }
+                    else{
+                        return d.color;
+                    }
+                  })    
+
 
 
             var focus = svg.append("g")
@@ -205,15 +202,20 @@ var BarGraph = React.createClass({
             function mouseover(d) {
                 var popText = "",
                     name;
-
                 name = d.city.name;
            
                 var rect = d3.select("#metroArea"+d.city.key+d.x);
 
                 rect.style("fill","#000000");
                 rect.attr("width",(x1.rangeBand()*5));
+                popText = "Name: " + name
 
-                popText = "Name: " + name + " High Income: " + percFormat(d.city.values[1].y) + " Low Income: " + percFormat(d.city.values[0].y);
+                if(scope.state.series == "composite" || scope.state.series == "highIncome"){
+                    popText += " High Income: " + percFormat(d.city.values[1].y)
+                }
+                if(scope.state.series == "composite" || scope.state.series == "lowIncome"){
+                    popText += " Low Income: " + percFormat(d.city.values[0].y);
+                }
 
 
                 focus.attr("transform", "translate(100,-25)");

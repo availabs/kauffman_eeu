@@ -531,26 +531,27 @@ brush.extent([s[1],s[0]])(d3.select(this));
 
         var rawButton = d3.select('#rawButton');
         var relativeButton = d3.select('#relativeButton')
+        var relativeButton2 = d3.select('#relativeButton2')
         var activeButton;
 
-        if(rawButton.attr("class") == "btn btn-danger"){
-            rawButton.attr("class","btn btn-success") 
-            var active = rawButton.attr('id');
-        }
-        else{
-            rawButton.attr("class","btn btn-danger"); 
-        }
 
-        if(relativeButton.attr("class") == "btn btn-danger"){
-            relativeButton.attr("class","btn btn-success");
-            var active = relativeButton.attr('id');
-        }
-        else{
-            relativeButton.attr("class","btn btn-danger");
-        }
+        console.log(e.target.id);
 
-        if(active == 'relativeButton'){
+        rawButton.attr("class","btn btn-danger"); 
+    
+        relativeButton.attr("class","btn btn-danger");
+    
+        relativeButton2.attr("class","btn btn-danger");
+    
+
+
+        d3.select("#"+e.target.id)[0][0].className = "btn btn-success";
+
+        if(e.target.id == 'relativeButton'){
             scope.setState({dataType:'relative'})
+        }
+        else if(e.target.id == 'relativeButton2'){
+            scope.setState({dataType:'relative2'})
         }
         else{
             scope.setState({dataType:'raw'})
@@ -602,6 +603,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
 
         var rawButton;
         var relativeButton;
+        var relativeButton2
 
         var rankButton;
         var valueButton;
@@ -627,6 +629,12 @@ brush.extent([s[1],s[0]])(d3.select(this));
                 )                
         }
 
+        if(scope.props.graph == "inc5000"){
+            relativeButton2 = (
+                <button id="relativeButton2" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRawRelative}>Relative Values (by Population)</button>
+                )     
+        }
+
 
 
         if(scope.props.data.length != 0){
@@ -634,7 +642,7 @@ brush.extent([s[1],s[0]])(d3.select(this));
             return (
                 <div>
                     <h3>Rankings</h3>
-                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}</div>
+                    <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}{relativeButton2}</div>
                 </div>
             );          
         }
