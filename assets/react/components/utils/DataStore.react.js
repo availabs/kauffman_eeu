@@ -418,12 +418,17 @@ var DataStore = React.createClass({
     opportunityGraph:function(filters){
         var scope = this;
         var graphData;
-
-
-        console.log(scope.state);
-
-        graphData = scope.state.opportunityData;
-        return graphData;  
+        console.log("opportunity Graph");
+        if(scope.state.opportunityData && scope.state.opportunityData.length > 0){
+            graphData = scope.state.opportunityData;
+            return graphData;  
+        }
+        else{
+            scope.getDataDemo("opportunityData",function(data){
+                scope.setState({"opportunityData":scope.processOpportunityData(data)})
+            });
+            setTimeout(function(){ scope.opportunityGraph(filters) }, 1500);
+        }
     },
     immGraph:function(filters){
 		var scope = this;
@@ -450,6 +455,11 @@ var DataStore = React.createClass({
         if(reqData == "immData"){
             d3.json("/shareImm",function(err,immData){
                 cb(immData);
+            })            
+        }
+        if(reqData == "opportunityData"){
+            d3.json("/equalOpp",function(err,oppData){
+                cb(oppData);
             })            
         }
 
