@@ -1220,15 +1220,24 @@ var DataStore = React.createClass({
         return colorGroup;
 
     },
-    colorOppGroup:function(){
+    colorOppGroup:function(group){
         var scope = this;
 
+        if(group == "lowIncome"){
+            var colorGroup = d3.scale.linear()
+                .domain([-.2,.2])
+                .range(['red','green']);
+        }
+        if(group == "highIncome"){
+            var colorGroup = d3.scale.linear()
+               .domain([-.1,.1])
+               .range(['red','green']);           
+        }
 
-        var colorGroup = d3.scale.ordinal()
-            .domain(["lowIncome","highIncome"])
-            .range(['red','green']);
+
         
-
+//low income -20 to 20
+//high income is -10 to 10
 
         return colorGroup;
 
@@ -1251,16 +1260,17 @@ var DataStore = React.createClass({
     colorOppFunction:function(params){
         var scope = this,
             cityColor;
+
         if(params){
             //var valueLength = params.values.length;
             //var curRank = params.values[0].y;
-            var color = scope.colorOppGroup();
+            var color = scope.colorOppGroup(params.x);
                     
 
 
 
 
-            cityColor = color(params);            
+            cityColor = color(params.y);            
         }
 
                 
@@ -1340,7 +1350,7 @@ var DataStore = React.createClass({
                     city.values = data[metroArea].values.map(function(i){
                         return {
                             city:city,
-                            color:scope.colorOppFunction(i.x),
+                            color:scope.colorOppFunction(i),
                             x:i.x,
                             y:i.y,
                             rank:i.rank
