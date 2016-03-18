@@ -92,7 +92,7 @@ var BarGraph = React.createClass({
             metroArea.selectAll("rect")
                   .data(function(d){ return d.values;})
                 .enter().append("rect")
-                  .attr("id",function(d){return "metroArea"+ d.city.key + d.city.x;})
+                  .attr("id",function(d){return "metroArea"+ d.city.key + d.x;})
                   .attr("width",x1.rangeBand())
                   .attr("x",function(d){ return x1(d.x);})
                   .attr("y",function(d){ return y(d.y);})
@@ -133,9 +133,10 @@ var BarGraph = React.createClass({
 
                     name = d.city.name;
                
-                    var rect = d3.select("#metroArea"+d.city.key+d.city.x);
+                    var rect = d3.select("#metroArea"+d.city.key+d.x);
 
                     rect.style("fill","#000000");
+                    rect.attr("width",(x1.rangeBand()*5));
 
                     //console.log(rect);
                 popText = "Name: " + name + " High Income: " + percFormat(d.city.values[1].y) + " Low Income: " + percFormat(d.city.values[0].y);
@@ -152,10 +153,10 @@ var BarGraph = React.createClass({
             }
 
 
-            function mouseout(d) {                              
-                    var rect = d3.select("#metroArea"+d.city.key+d.city.x);
-                    console.log(rect);
-                    rect.style("fill",function(){return "#FFFFFF"})
+            function mouseout(d) {                          
+                    var rect = d3.select("#metroArea"+d.city.key+d.x);
+                    rect.style("fill",function(){return d.color})
+                    rect.attr("width",(x1.rangeBand()));
             }
 
 
