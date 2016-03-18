@@ -424,7 +424,7 @@ var DataStore = React.createClass({
             return graphData;  
         }
         else{
-            scope.getDataDemo("opportunityData",function(data){
+            scope.getDataDemo("equalOpp",function(data){
                 scope.setState({"opportunityData":scope.processOpportunityData(data)})
             });
             setTimeout(function(){ scope.opportunityGraph(filters) }, 1500);
@@ -439,7 +439,7 @@ var DataStore = React.createClass({
             return graphData;  
         }
         else{
-            scope.getDataDemo("immData",function(data){
+            scope.getDataDemo("shareImm",function(data){
                 scope.setState({"immData":scope.processImmData(data)})
             });
             setTimeout(function(){ scope.immGraph(filters) }, 1500);
@@ -451,20 +451,11 @@ var DataStore = React.createClass({
     getDataDemo:function(reqData,cb){
         var scope = this;
 
+        var route = "/" + reqData;
 
-        if(reqData == "immData"){
-            d3.json("/shareImm",function(err,immData){
-                cb(immData);
-            })            
-        }
-        if(reqData == "opportunityData"){
-            d3.json("/equalOpp",function(err,oppData){
-                cb(oppData);
-            })            
-        }
-
-
-
+        d3.json(route,function(err,data){
+            cb(data);
+        })
     },
     incGraph:function(filters){
         var scope = this;
