@@ -11,7 +11,7 @@ var React = require("react"),
 var GraphPage = React.createClass({
 	getInitialState:function(){
 		return({
-			graph:"inc5000",
+			graph:"netMigration",
 			data:[],
 			loading:true,
 			});
@@ -222,9 +222,9 @@ var GraphPage = React.createClass({
 	    		<li className="dropdown active" id="fluidity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
-	    				<li id="inc5000"  className="active" onClick={scope.toggleGraph}><a id="inc5000" >High Growth Firms</a></li>	
+	    				<li id="inc5000"   onClick={scope.toggleGraph}><a id="inc5000" >High Growth Firms</a></li>	
 	    				<li id="irsNet"  onClick={scope.toggleGraph}><a id="irsNet" >Net Migration (IRS)</a></li>
-			    		<li id="netMigration"  onClick={scope.toggleGraph}><a id="netMigration" >Net Migration (ACS)</a></li>
+			    		<li id="netMigration" className="active" onClick={scope.toggleGraph}><a id="netMigration" >Net Migration (ACS)</a></li>
 			    		<li id="totalMigrationFlow"  onClick={scope.toggleGraph}><a id="totalMigrationFlow" >Total Migration (Outflow/Inflow Sum) (IRS)</a></li>
 			    		<li id="inflowMigration"  onClick={scope.toggleGraph}><a id="inflowMigration" >Inflow Migration</a></li>
 			    		<li id="outflowMigration"  onClick={scope.toggleGraph}><a id="outflowMigration" >Outflow Migration</a></li>	
