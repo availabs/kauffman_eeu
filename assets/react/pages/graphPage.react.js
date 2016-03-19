@@ -83,7 +83,7 @@ var GraphPage = React.createClass({
 
         if(!data){
             console.log('reloading')
-            setTimeout(function(){ scope.processData(graph) }, 1500);
+            setTimeout(function(){ scope.processData(graph) }, 10000);
         }
         else{
 			return(data)      	
