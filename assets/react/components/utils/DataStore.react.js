@@ -157,7 +157,42 @@ var DataStore = React.createClass({
                 return a.x - b.x
             })
         })
-        return polishedData;
+
+        var graphData;
+
+
+        var graphRawData = polishedData;
+
+        var graphRelativeData = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2011){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(scope.state.msaPop[metroArea.key]){
+                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});                
+        })
+
+
+        var rankedData2 = scope.rankMigration(graphRelativeData);
+
+        var polishedData2 = scope.polishData(rankedData2);
+
+
+        var graphData = {};
+        graphData["raw"] = graphRawData;
+        graphData["relative"] = polishedData2;
+
+        return graphData;  
     },
     processIncData:function(data){
         var scope = this;
@@ -625,41 +660,19 @@ var DataStore = React.createClass({
     inflowMigrationGraph:function(filters){
         var scope = this;
         var graphData;
+        console.log("net migration Graph");
+        if(scope.state.inflowMigration && Object.keys(scope.state.inflowMigration).length > 0){
+            graphData = scope.state.inflowMigration;
+            return graphData;  
+        }
+        else{
+            scope.getData("detailMigration",function(data){
+                scope.setState({"inflowMigration":scope.processInflowMigration(data)})
+            });
+            setTimeout(function(){ scope.inflowMigrationGraph(filters) }, 1500);
+        }   
 
-
-        var graphRawData = scope.state.inflowMigration;
-
-        var graphRelativeData = graphRawData.map(function(metroArea){
-            var newValues = [];
-            metroArea.values.forEach(function(yearVal){
-                if(yearVal.x <= 2011){
-                    var newCoord = {x:yearVal.x, y:0};
-
-                    if(scope.state.msaPop[metroArea.key]){
-                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
-                        newCoord = {x: yearVal.x, y:newY};
-                    
-                    }
-                    newValues.push(newCoord);                       
-                }
- 
-            })
-
-             return ({key:metroArea.key,values:newValues,area:false});                
-        })
-
-
-        var rankedData = scope.rankMigration(graphRelativeData);
-
-        var polishedData = scope.polishData(rankedData);
-
-
-        var graphData = {};
-        graphData["raw"] = graphRawData;
-        graphData["relative"] = polishedData;
-
-        return graphData;  
-             
+        return graphData; 
     },
     irsNetGraph:function(filters){
         var scope = this;
