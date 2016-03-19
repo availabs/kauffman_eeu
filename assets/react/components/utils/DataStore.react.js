@@ -232,7 +232,8 @@ var DataStore = React.createClass({
                     var valueObject = {};
                     Object.keys(city.values).forEach(function(yearValue){
                         //Want to return: x:year y:percent
-                        valueObject[yearValue.x] = yearValue.raw;
+                        valueObject[city.values[yearValue].x] = 0;
+                        valueObject[city.values[yearValue].x] = city.values[yearValue].raw;
                     })
 
 
@@ -240,16 +241,17 @@ var DataStore = React.createClass({
                     totalEmp[city.key] = {key:city.key,values:valueObject,area:false};                    
                 })
 
+                console.log("raw firms object in inc5000",totalEmp);
                 var graphRawData = polishedData;
 
                 var graphRelativeData = graphRawData.map(function(metroArea){
                     var newValues = [];
                     metroArea.values.forEach(function(yearVal){
-                        if(yearVal.x <= 2011){
+                        if(yearVal.x < 2010){
                             var newCoord = {x:yearVal.x, y:0};
 
-                            if(totalEmp[metroArea.key]){
-                                var newY = yearVal.y / totalEmp[metroArea.key]["values"][yearVal.x];
+                            if(totalEmp[metroArea.key] && totalEmp[metroArea.key]["values"][yearVal.x]){
+                                var newY = +yearVal.y / totalEmp[metroArea.key]["values"][yearVal.x];
                                 newCoord = {x: yearVal.x, y:newY};
                             
                             }
@@ -945,7 +947,6 @@ var DataStore = React.createClass({
 
         var polishedData = scope.polishData(rankedData);
 
-        console.log("new firms", polishedData);
         return polishedData;
 	},
 	processShareValues:function(data){
