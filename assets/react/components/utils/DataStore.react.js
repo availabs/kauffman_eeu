@@ -4,11 +4,9 @@ var React = require("react"),
     msaIdToName = require('../utils/msaIdToName.json');
 
 var DataStore = React.createClass({
-
 	getInitialState:function(){
 		return {
 			loading:true,
-			fullData:{},
             opportunityData:[],
 			immData:[],
             migrationData:{},
@@ -22,15 +20,7 @@ var DataStore = React.createClass({
             densityComposite:[],
             msaPop:{}			
 		}
-
 	},
-    componentWillMountOLD:function(){
-        var scope = this;
-
-        scope.getData(function(data){
-            scope.setState({opportunityData:scope.processOpportunityData(data['opportunityData']),fullData:scope.processData(data['fullData']),msaPop:data['msaPop'],immData:scope.processImmData(data['immData']),migrationData:scope.processMigrationData(data['migrationData']),inflowMigration:scope.processInflowMigration(data['detailMigrationData']),outflowMigration:scope.processOutflowMigration(data['detailMigrationData']),irsNet:scope.processIrsNet(data['detailMigrationData']),incData:scope.processIncData(data['incData']),totalMigrationFlow:scope.processTotalMigrationFlow(data['detailMigrationData']),loading:false});
-        })
-    },
     getData:function(reqData,cb){
         var scope = this;
 
@@ -40,35 +30,6 @@ var DataStore = React.createClass({
         d3.json(route,function(err,data){
             cb(data);
         })
-    },
-    getDataDemo:function(cb){
-        var scope = this;
-
-
-        // d3.json("/allMsa",function(err,msaData){
-        //     d3.json("/countyPop",function(err,popData){
-        //         d3.json("/shareImm",function(err,immData){
-        //             d3.json("/migration",function(err,migrationData){
-        //                 d3.json("/detailMigration",function(err,detailMigrationData){
-        //                     //GREENVILLE/GREENWOOD SC IS A MISMATCH
-        //                     d3.json("/inc5000",function(err,incData){
-        //                         d3.json("/equalOpp",function(err,oppData){
-        //                             var data = {};
-        //                             data['fullData'] = msaData;
-        //                             data['msaPop'] = popData;
-        //                             data['immData'] = immData;
-        //                             data['migrationData'] = migrationData;
-        //                             data['detailMigrationData'] = detailMigrationData;
-        //                             data['incData'] = incData;
-        //                             data['opportunityData'] = oppData;
-        //                             cb(data);  
-        //                         })
-        //                     })
-        //                 })
-        //             })
-        //         })
-        //     })
-        // })
     },
     processOpportunityData:function(data){
         var scope = this;
@@ -627,55 +588,6 @@ var DataStore = React.createClass({
 
     	var polishedData = scope.polishImmData(rankedData);
     	return polishedData;
-    },
-    processData:function(data){
-    	var scope = this;
-
-        var scope = this,
-        	shareData = {},
-        	newFirmData = {},
-            trimmedData = {};
-
-        //Final object will have the following for every msaId
-        //msaId:{1977:{age0:numEmployed,age1:numEmployed...},1978:{age0:numEmployed,age1:numEmployed...}}
-
-        //big object would look like:
-        // {10000:{{},{}...}, 11000:{{},{}...], ...}
-
-        Object.keys(data).forEach(function(firmAge){
-
-            Object.keys(data[firmAge]).forEach(function(metroAreaId){
-                //If we havent gotten to this MSA yet
-                if(!shareData[metroAreaId]){
-                    shareData[metroAreaId] = {};
-                }
-                if(!newFirmData[metroAreaId]){
-                    newFirmData[metroAreaId] = {};
-                }
-
-                //Iterating through every year for a given firm age in a metro area
-                data[firmAge][metroAreaId].forEach(function(rowData){
-                    if(!shareData[metroAreaId][rowData["year2"]]){
-                        shareData[metroAreaId][rowData["year2"]] = {};
-                    }
-                    shareData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
-
-                    if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
-                        if(!newFirmData[metroAreaId][rowData["year2"]]){
-                            newFirmData[metroAreaId][rowData["year2"]] = {};
-                        }
-                        newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"];                       
-                    }
-
-                })
-            })
-        })
-
-		trimmedData['share'] = shareData;
-		trimmedData['new'] = newFirmData;
-
-        return trimmedData;    	
-
     },
     opportunityGraph:function(filters){
         var scope = this;
