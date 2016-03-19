@@ -19,6 +19,7 @@ var DataStore = React.createClass({
             totalMigrationFlow:{},
 			shareValues:[],
 			newValues:[],
+            densityComposite:[],
             msaPop:{}			
 		}
 
@@ -838,7 +839,7 @@ var DataStore = React.createClass({
 	newGraph:function(filters){
         var scope = this;
         var graphData;
-        console.log("new firms per 1000 emp Graph");
+        console.log("new firms per 1000 Graph");
         if(scope.state.newValues && scope.state.newValues.length > 0){
             graphData = scope.state.newValues;
             return graphData;  
@@ -853,47 +854,19 @@ var DataStore = React.createClass({
         return graphData;
 	},
 	densCompGraph:function(filters){
-		var scope = this,
-			cities=[];
-        if(scope.state.loading){
-            console.log('reloading')
-            setTimeout(function(){ scope.densCompGraph(filters) }, 1500);
+        var scope = this;
+        var graphData;
+        console.log("composite density Graph");
+        if(scope.state.densityComposite && scope.state.densityComposite.length > 0){
+            graphData = scope.state.densityComposite;
+            return graphData;  
         }
         else{
-			if(scope.state.shareRanks == undefined || scope.state.shareRanks.length == 0){
-				scope.processShareRanks();
-			}
-			if(scope.state.newRanks == undefined || scope.state.newRanks.length == 0){
-				scope.processNewRanks();
-			}
-        	if(scope.state.compRanks == undefined || scope.state.compRanks.length == 0){
-        		scope.processCompRanks();
-        	}
-			if(scope.state.compRanks.length != 0){
-				//Apply filters
+            scope.setState({"densityComposite":scope.rankComposite()});
+            setTimeout(function(){ scope.densCompGraph(filters) }, 20000);
+        }   
 
-				//Add colors and Names
-				//Nest itself
-				var graphData = scope.polishData(scope.state.compRanks);
-				return graphData;
-			}       
-        }
-	},
-	processCompRanks:function(){
-		var scope = this,
-			rankedCities;
-
-		if(scope.state.shareRanks.length == 0){
-			scope.processShareRanks();
-		}
-		if(scope.state.newRanks.length == 0){
-			scope.processNewRanks();
-		}
-
-		if(scope.state.shareRanks.length != 0 &&  scope.state.newRanks.length != 0){
-			rankedCities = scope.rankComposite();
-		}
-		scope.setState({compRanks:rankedCities});		
+        return graphData;
 	},
 	processNewValues:function(data){
 		var scope = this,
@@ -1065,13 +1038,11 @@ var DataStore = React.createClass({
         		}
         	})        		
     	
-
         	b.values.forEach(function(yearValues){
         		if(yearValues.x == year){
         			bValue = yearValues.y;
         		}
         	})       
-
 
         	if(aValue > bValue){
         		return -1;
@@ -1080,11 +1051,7 @@ var DataStore = React.createClass({
         		return 1;
         	}        		
         	        	
-
-
-
         	return 0;    	
-
     	}
     },
 	rankImm:function(cities){
@@ -1122,7 +1089,6 @@ var DataStore = React.createClass({
 
             //Go through and assign ranks for current year
             cities.forEach(function(city){
-
                 city.values.forEach(function(yearValues){
                     if(yearValues.x == year){
                         yearValues.rank = rank;
@@ -1132,11 +1098,9 @@ var DataStore = React.createClass({
                 rank++;
             })
         })          
-
         return cities; 
     },
     rankOpp:function(cities){
-
         var scope=this,
             incomes = ['highIncome','lowIncome'];
 
@@ -1147,7 +1111,6 @@ var DataStore = React.createClass({
 
             //Go through and assign ranks for current year
             cities.forEach(function(city){
-
                 city.values.forEach(function(yearValues){
                     if(yearValues.x == income){
                         yearValues.rank = rank;
@@ -1159,10 +1122,6 @@ var DataStore = React.createClass({
         })          
 
         return cities; 
-
-
-
-
     },
 	rankShare:function(cities){
 		var scope=this,
@@ -1175,7 +1134,6 @@ var DataStore = React.createClass({
 
         	//Go through and assign ranks for current year
         	cities.forEach(function(city){
-
         		city.values.forEach(function(yearValues){
         			if(yearValues.x == year){
         				yearValues.rank = rank;
@@ -1185,7 +1143,6 @@ var DataStore = React.createClass({
         		rank++;
         	})
         })			
-
 		return cities; 
 	},
     rankMigration:function(cities){
@@ -1199,7 +1156,6 @@ var DataStore = React.createClass({
 
             //Go through and assign ranks for current year
             cities.forEach(function(city){
-
                 city.values.forEach(function(yearValues){
                     if(yearValues.x == year){
                         yearValues.rank = rank;
@@ -1224,7 +1180,6 @@ var DataStore = React.createClass({
 
         	//Go through and assign ranks for current year
         	cities.forEach(function(city){
-
         		city.values.forEach(function(yearValues){
         			if(yearValues.x == year){
         				yearValues.rank = rank;
@@ -1234,65 +1189,85 @@ var DataStore = React.createClass({
         		rank++;
         	})
         })			
-
 		return cities;        
-
 	},
 	rankComposite:function(){
 		var scope = this,
-			years = d3.range(1990,2010);
+			years = d3.range(1990,2010);		
 
-		var newFirms = scope.state.newRanks,
-			share = scope.state.shareRanks;
-		console.log(newFirms,share);
+        if(scope.state.shareValues && scope.state.shareValues.length > 0){
+            if(scope.state.newValues && scope.state.newValues.length > 0){
 
-		var compositeCityRanks = [];
+                var newFirms = scope.state.newValues,
+                    share = scope.state.shareValues;
+                console.log("comp raw data",newFirms,share);
 
-		newFirms.forEach(function(item){
-			for(var i=0; i<share.length;i++){
-				if(item.key == share[i].key){
+                var compositeCityRanks = [];
 
-					var resultValues = [];
+                newFirms.forEach(function(item){
+                    for(var i=0; i<share.length;i++){
+                        if(item.key == share[i].key){
 
-					item.values.forEach(function(itemValues){
-						for(var j=0;j<share[i].values.length;j++){
-							if(itemValues.x == share[i].values[j].x){
-								resultValues.push({x:itemValues.x,y:( ((newFirms.length - itemValues.rank)+1 + (share.length-share[i].values[j].rank)+1)/2 )})
-							}
-						}
-					})
+                            var resultValues = [];
 
-					compositeCityRanks.push({key:item.key,values:resultValues})
-				}
-			}
-		})
+                            item.values.forEach(function(itemValues){
+                                for(var j=0;j<share[i].values.length;j++){
+                                    if(itemValues.x == share[i].values[j].x){
+                                        resultValues.push({x:itemValues.x,y:( ((newFirms.length - itemValues.rank)+1 + (share.length-share[i].values[j].rank)+1)/2 )})
+                                    }
+                                }
+                            })
 
-		//console.log(compositeCityRanks);
+                            compositeCityRanks.push({key:item.key,values:resultValues})
+                        }
+                    }
+                })
 
-		var years = d3.range(1990,2010);
+                //console.log(compositeCityRanks);
 
-		//Rank them
-        years.forEach(function(year){
-        	var rank = 1;
-        	//Sort cities according to each year
-        	compositeCityRanks.sort(scope.sortCities(year));
+                var years = d3.range(1990,2010);
 
-        	//Go through and assign ranks for current year
-        	compositeCityRanks.forEach(function(city){
+                //Rank them
+                years.forEach(function(year){
+                    var rank = 1;
+                    //Sort cities according to each year
+                    compositeCityRanks.sort(scope.sortCities(year));
 
-        		city.values.forEach(function(yearValues){
+                    //Go through and assign ranks for current year
+                    compositeCityRanks.forEach(function(city){
 
-        			if(yearValues.x == year){
-        				yearValues.rank = rank;
-        			}
-        		})
+                        city.values.forEach(function(yearValues){
 
-        		rank++;
-        	})
+                            if(yearValues.x == year){
+                                yearValues.rank = rank;
+                            }
+                        })
 
-        })			
+                        rank++;
+                    })
 
-		return compositeCityRanks;
+                })  
+
+
+                var graphData = scope.polishData(compositeCityRanks);
+                return graphData;
+            }
+            else{
+                scope.getData("allMsa",function(data){
+                    scope.setState({"newValues":scope.processNewValues(data)})
+                });
+                setTimeout(function(){ scope.rankComposite() }, 20000);
+            }  
+        }
+        else{
+            scope.getData("allMsa",function(data){
+                scope.setState({"shareValues":scope.processShareValues(data)})
+            });
+            setTimeout(function(){ scope.rankComposite() }, 20000);
+        }  
+
+
+
 	},
     colorGroup:function(){
         var scope = this;
