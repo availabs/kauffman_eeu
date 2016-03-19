@@ -12,10 +12,10 @@ var DataStore = React.createClass({
             opportunityData:[],
 			immData:[],
             migrationData:{},
-            inflowMigration:[],
+            inflowMigration:{},
             outflowMigration:[],
-            incData:[],
-            irsNet:[],
+            incData:{},
+            irsNet:{},
 			shareValues:[],
 			newValues:[],
             msaPop:{},
@@ -399,8 +399,39 @@ var DataStore = React.createClass({
                 return a.x - b.x
             })
         })
-    
-        return polishedData;
+
+        var graphRawData = polishedData;
+
+        var graphRelativeData = graphRawData.map(function(metroArea){
+            var newValues = [];
+            metroArea.values.forEach(function(yearVal){
+                if(yearVal.x <= 2011){
+                    var newCoord = {x:yearVal.x, y:0};
+
+                    if(scope.state.msaPop[metroArea.key]){
+                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                        newCoord = {x: yearVal.x, y:newY};
+                    
+                    }
+                    newValues.push(newCoord);                       
+                }
+ 
+            })
+
+             return ({key:metroArea.key,values:newValues,area:false});                
+        })
+
+
+        var rankedData2 = scope.rankMigration(graphRelativeData);
+
+        var polishedData2 = scope.polishData(rankedData2);
+
+
+        var graphData = {};
+        graphData["raw"] = graphRawData;
+        graphData["relative"] = polishedData2;
+
+        return graphData;  
     },
     processTotalMigrationFlow:function(data){
         var scope = this; 
@@ -660,7 +691,7 @@ var DataStore = React.createClass({
     inflowMigrationGraph:function(filters){
         var scope = this;
         var graphData;
-        console.log("net migration Graph");
+        console.log("inflow migration Graph");
         if(scope.state.inflowMigration && Object.keys(scope.state.inflowMigration).length > 0){
             graphData = scope.state.inflowMigration;
             return graphData;  
@@ -677,40 +708,19 @@ var DataStore = React.createClass({
     irsNetGraph:function(filters){
         var scope = this;
         var graphData;
+        console.log("net IRS migration Graph");
+        if(scope.state.irsNet && Object.keys(scope.state.irsNet).length > 0){
+            graphData = scope.state.irsNet;
+            return graphData;  
+        }
+        else{
+            scope.getData("detailMigration",function(data){
+                scope.setState({"irsNet":scope.processIrsNet(data)})
+            });
+            setTimeout(function(){ scope.irsNetGraph(filters) }, 1500);
+        }   
 
-
-        var graphRawData = scope.state.irsNet;
-
-        var graphRelativeData = graphRawData.map(function(metroArea){
-            var newValues = [];
-            metroArea.values.forEach(function(yearVal){
-                if(yearVal.x <= 2011){
-                    var newCoord = {x:yearVal.x, y:0};
-
-                    if(scope.state.msaPop[metroArea.key]){
-                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
-                        newCoord = {x: yearVal.x, y:newY};
-                    
-                    }
-                    newValues.push(newCoord);                       
-                }
- 
-            })
-
-             return ({key:metroArea.key,values:newValues,area:false});                
-        })
-
-
-        var rankedData = scope.rankMigration(graphRelativeData);
-
-        var polishedData = scope.polishData(rankedData);
-
-
-        var graphData = {};
-        graphData["raw"] = graphRawData;
-        graphData["relative"] = polishedData;
-
-        return graphData;               
+        return graphData;            
     },
     outflowMigrationGraph:function(filters){
         var scope = this;
