@@ -19,9 +19,7 @@ var DataStore = React.createClass({
             totalMigrationFlow:{},
 			shareValues:[],
 			newValues:[],
-            msaPop:{},
-			newRanks:[],
-			compRanks:[]			
+            msaPop:{}			
 		}
 
 	},
@@ -821,7 +819,6 @@ var DataStore = React.createClass({
         return graphData;
     },
 	shareGraph:function(filters){
-
         var scope = this;
         var graphData;
         console.log("share new emp Graph");
@@ -839,33 +836,21 @@ var DataStore = React.createClass({
         return graphData;
 	},
 	newGraph:function(filters){
-		var scope = this,
-			cities=[];
-
-
-        if(scope.state.loading){
-            console.log('reloading')
-            setTimeout(function(){ scope.newGraph(filters) }, 1500);
+        var scope = this;
+        var graphData;
+        console.log("new firms per 1000 emp Graph");
+        if(scope.state.newValues && scope.state.newValues.length > 0){
+            graphData = scope.state.newValues;
+            return graphData;  
         }
         else{
-			if(scope.state.newValues.length == 0){
-				scope.processNewValues();
-			}
-			if(scope.state.newRanks == undefined || scope.state.newRanks.length == 0){
-				scope.processNewRanks();
-			}
-			if(scope.state.newRanks.length != 0 && scope.state.newValues.length != 0){
-				//Apply filters
+            scope.getData("allMsa",function(data){
+                scope.setState({"newValues":scope.processNewValues(data)})
+            });
+            setTimeout(function(){ scope.newGraph(filters) }, 5000);
+        }   
 
-				//Add colors and Names
-				//Nest itself
-				var graphData = scope.polishData(scope.state.newRanks);
-								return graphData;
-			}
-		}
-
-
-
+        return graphData;
 	},
 	densCompGraph:function(filters){
 		var scope = this,
@@ -893,25 +878,6 @@ var DataStore = React.createClass({
 				return graphData;
 			}       
         }
-
-		
-
-
-	},
-	processNewRanks:function(){
-		var scope = this,
-			rankedCities;
-
-		if(scope.state.newValues.length == 0){
-			scope.processNewValues();
-		}
-
-		if(scope.state.newValues.length != 0){
-			rankedCities = scope.rankNewFirm(scope.state.newValues);
-		}
-
-		scope.setState({newRanks:rankedCities});
-
 	},
 	processCompRanks:function(){
 		var scope = this,
@@ -929,17 +895,44 @@ var DataStore = React.createClass({
 		}
 		scope.setState({compRanks:rankedCities});		
 	},
-	processNewValues:function(){
+	processNewValues:function(data){
 		var scope = this,
 		    ages = d3.range(12),
-			data = scope.state.fullData['new'];
+            newFirmData = {};
+
+        //Final object will have the following for every msaId
+        //msaId:{1977:{age0:numEmployed,age1:numEmployed...},1978:{age0:numEmployed,age1:numEmployed...}}
+
+        //big object would look like:
+        // {10000:{{},{}...}, 11000:{{},{}...], ...}
+
+        Object.keys(data).forEach(function(firmAge){
+
+            Object.keys(data[firmAge]).forEach(function(metroAreaId){
+                //If we havent gotten to this MSA yet
+                if(!newFirmData[metroAreaId]){
+                    newFirmData[metroAreaId] = {};
+                }
+
+                //Iterating through every year for a given firm age in a metro area
+                data[firmAge][metroAreaId].forEach(function(rowData){
+                    if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
+                        if(!newFirmData[metroAreaId][rowData["year2"]]){
+                            newFirmData[metroAreaId][rowData["year2"]] = {};
+                        }
+                        newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"];                       
+                    }
+
+                })
+            })
+        })  
 
         //Every msa represented as:
         //{values:[{x:val,y:val}....],key=msa,}
         //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
-        var chartData = Object.keys(data).map(function(msaId){
+        var chartData = Object.keys(newFirmData).map(function(msaId){
             //Iterating through every year within a metro area
-            var valueArray = Object.keys(data[msaId]).map(function(year){
+            var valueArray = Object.keys(newFirmData[msaId]).map(function(year){
                 var curCoord={"x":+year,"y":0},
                     newFirmSum = 0,
                     newPer1000 = 0,
@@ -950,9 +943,9 @@ var DataStore = React.createClass({
                 //Creates number of new firms for that year
                 ages.forEach(function(age){
 
-                    if(data[msaId][year][age] && (age < 6)){
+                    if(newFirmData[msaId][year][age] && (age < 6)){
                         
-                        newFirmSum = newFirmSum + +data[msaId][year][age];
+                        newFirmSum = newFirmSum + +newFirmData[msaId][year][age];
                     }
                 })
                 //Instead of share, want newFirmSum/(pop/1000)
@@ -984,10 +977,11 @@ var DataStore = React.createClass({
 
 
 
+        var rankedData = scope.rankNewFirm(chartData);
 
+        var polishedData = scope.polishData(rankedData);
 
-
-		scope.setState({newValues:chartData});
+        return polishedData;
 	},
 	processShareValues:function(data){
        var scope = this,
