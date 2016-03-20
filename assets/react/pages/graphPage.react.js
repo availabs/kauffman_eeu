@@ -19,78 +19,67 @@ var GraphPage = React.createClass({
     componentDidMount:function(){
         var scope = this;
 
+        scope.processData(scope.state.graph,function(data){
+        	scope.setState({data:data,loading:false});        	
+        })
 
-        scope.setState({data:scope.processData(scope.state.graph),loading:false});
     },
     componentWillUpdate:function(nextProps,nextState){
     	var scope = this;
 
-    	nextState.data = scope.processData(nextState.graph);
-    	nextState.loading = false;
+    	scope.processData(nextState.graph,function(data){
+			nextState.data = data;
+			nextState.loading = false;
+    	});
+
     },
-    processData:function(graph){
+    processData:function(graph,cb){
     	var scope = this;
-
         var filters = "none"
-
-        var data;
-
 
         if(graph == 'densComposite'){
 
-        	data = scope.refs.store.densCompGraph(filters);
+        	cb(scope.refs.store.densCompGraph(filters));
         }
         if(graph == 'share'){
 
-        	data = scope.refs.store.shareGraph(filters);
+        	cb(scope.refs.store.shareGraph(filters));
         }
         if(graph == 'new'){
 
-        	data = scope.refs.store.newGraph(filters);
+        	cb(scope.refs.store.newGraph(filters));
         }
         if(graph == 'immigrant'){
 
-        	data = scope.refs.store.immGraph(filters);
+        	cb(scope.refs.store.immGraph(filters));
         }
         if(graph == 'netMigration'){
 
-        	data = scope.refs.store.netMigrationGraph(filters);
+        	cb(scope.refs.store.netMigrationGraph(filters));
         }
         if(graph == 'inflowMigration'){
 
-        	data = scope.refs.store.inflowMigrationGraph(filters);
+        	cb(scope.refs.store.inflowMigrationGraph(filters));
         }
         if(graph == 'outflowMigration'){
 
-        	data = scope.refs.store.outflowMigrationGraph(filters);
+        	cb(scope.refs.store.outflowMigrationGraph(filters));
         }
         if(graph == 'irsNet'){
 
-        	data = scope.refs.store.irsNetGraph(filters);
+        	cb(scope.refs.store.irsNetGraph(filters));
         }
         if(graph == 'totalMigrationFlow'){
 
-        	data = scope.refs.store.totalMigrationFlowGraph(filters);
+        	cb(scope.refs.store.totalMigrationFlowGraph(filters));
         }
         if(graph == 'opportunity'){
 
-        	data = scope.refs.store.opportunityGraph(filters);
+        	cb(scope.refs.store.opportunityGraph(filters));
         }        
         if(graph == "inc5000"){
-        	data = scope.refs.store.incGraph(filters);
-        }
-
-
-        if(!data){
-            console.log('reloading')
-            setTimeout(function(){ scope.processData(graph) }, 10000);
-        }
-        else{
-			return(data)      	
-        }
-
-
-    			
+        	cb(scope.refs.store.incGraph(filters));
+        }    			
     },
 	toggleGraph:function(e){
 		var scope = this;
