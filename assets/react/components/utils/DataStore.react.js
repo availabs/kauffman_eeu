@@ -50,115 +50,97 @@ var DataStore = React.createClass({
 
         })
 
-
         var reducedData = {}
-
         var finalData = [];
         Object.keys(msaGains).forEach(function(msaId){
             var valueArray = [];
+
             Object.keys(msaGains[msaId]).forEach(function(income){
-                
                 valueArray.push( {x:income,y:+msaGains[msaId][income]});                    
-                
-
-
-                
             })
 
             if(valueArray.length != 0){
              finalData.push({key:msaId,values:valueArray,area:false});                
             }
-
-
         })
-
 
         var rankedData = scope.rankOpp(finalData);
-
         var polishedData = scope.polishOppData(rankedData);
 
-        console.log(polishedData);
         return polishedData;
-
     },
     processInflowMigration:function(data){
-        var scope = this; 
+        var scope = this, 
+            reducedData = {},
+            finalData = [];
 
-        var reducedData = {}
-
-        var finalData = [];
-        Object.keys(data).forEach(function(msaId){
-            var valueArray = [];
-            Object.keys(data[msaId]).forEach(function(year){
-                if(data[msaId][year]){
-                    if(data[msaId][year]['inflow']){
-                        if(year > 12){
-                            var curYear = "19" + year;
-                        }
-                        else{
-                            var curYear = "20" + year;
-                        }
-                        valueArray.push( {x:+curYear,y:+data[msaId][year]['inflow']['individuals']});                        
+        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
+            Object.keys(data).forEach(function(msaId){
+                var valueArray = [];
+                Object.keys(data[msaId]).forEach(function(year){
+                    if(data[msaId][year]){
+                        if(data[msaId][year]['inflow']){
+                            if(year > 12){
+                                var curYear = "19" + year;
+                            }
+                            else{
+                                var curYear = "20" + year;
+                            }
+                            valueArray.push( {x:+curYear,y:+data[msaId][year]['inflow']['individuals']});                        
+                        }                     
                     }
-                                        
+                })
+
+                if(valueArray.length != 0){
+                 finalData.push({key:msaId,values:valueArray,area:false});                
                 }
-
-
-                
             })
 
-            if(valueArray.length != 0){
-             finalData.push({key:msaId,values:valueArray,area:false});                
-            }
+            var rankedData = scope.rankMigration(finalData);
+            var polishedData = scope.polishData(rankedData);
 
-
-        })
-
-
-        var rankedData = scope.rankMigration(finalData);
-
-        var polishedData = scope.polishData(rankedData);
-        polishedData.forEach(function(metroArea){
-            metroArea.values.sort(function(a,b){
-                return a.x - b.x
+            polishedData.forEach(function(metroArea){
+                metroArea.values.sort(function(a,b){
+                    return a.x - b.x
+                })
             })
-        })
 
-        var graphData;
+            var graphData;
+            var graphRawData = polishedData;
 
+            var graphRelativeData = graphRawData.map(function(metroArea){
+                var newValues = [];
+                metroArea.values.forEach(function(yearVal){
+                    if(yearVal.x <= 2011){
+                        var newCoord = {x:yearVal.x, y:0};
 
-        var graphRawData = polishedData;
-
-        var graphRelativeData = graphRawData.map(function(metroArea){
-            var newValues = [];
-            metroArea.values.forEach(function(yearVal){
-                if(yearVal.x <= 2011){
-                    var newCoord = {x:yearVal.x, y:0};
-
-                    if(scope.state.msaPop[metroArea.key]){
-                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
-                        newCoord = {x: yearVal.x, y:newY};
-                    
+                        if(scope.state.msaPop[metroArea.key]){
+                            var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                            newCoord = {x: yearVal.x, y:newY};
+                        }
+                        newValues.push(newCoord);                       
                     }
-                    newValues.push(newCoord);                       
-                }
- 
+                })
+                 return ({key:metroArea.key,values:newValues,area:false});                
             })
 
-             return ({key:metroArea.key,values:newValues,area:false});                
-        })
 
+            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var polishedData2 = scope.polishData(rankedData2);
 
-        var rankedData2 = scope.rankMigration(graphRelativeData);
+            var graphData = {};
+            graphData["raw"] = graphRawData;
+            graphData["relative"] = polishedData2;
 
-        var polishedData2 = scope.polishData(rankedData2);
+            return graphData;              
+        }
+        else{
+            scope.getData('countyPop',function(msaData){
+                scope.setState({"msaPop":msaData})
+            })
+            setTimeout(function(){ scope.processInflowMigration(data) }, 1500);    
+        }
 
-
-        var graphData = {};
-        graphData["raw"] = graphRawData;
-        graphData["relative"] = polishedData2;
-
-        return graphData;  
     },
     processIncData:function(data){
         var scope = this;
@@ -283,258 +265,43 @@ var DataStore = React.createClass({
                 setTimeout(function(){ scope.processIncData(data) }, 10000);
             }
         }
-
-
-
-        
-       
     },
     processOutflowMigration:function(data){
-        var scope = this; 
-
-        var reducedData = {}
-
-        var finalData = [];
-        Object.keys(data).forEach(function(msaId){
-            var valueArray = [];
-            Object.keys(data[msaId]).forEach(function(year){
-                if(data[msaId][year]){
-                    if(data[msaId][year]['outflow']){
-                        if(year > 12){
-                            var curYear = "19" + year;
-                        }
-                        else{
-                            var curYear = "20" + year;
-                        }
-                        valueArray.push( {x:+curYear,y:+data[msaId][year]['outflow']['individuals']});                        
-                    }
-                                        
-                }
-            })
-
-            if(valueArray.length != 0){
-             finalData.push({key:msaId,values:valueArray,area:false});                
-            }
-
-
-        })
-
-
-        var rankedData = scope.rankMigration(finalData);
-        var polishedData = scope.polishData(rankedData);
-        polishedData.forEach(function(metroArea){
-            metroArea.values.sort(function(a,b){
-                return a.x - b.x
-            })
-        })
-      
-        var graphRawData = polishedData;
-
-        var graphRelativeData = graphRawData.map(function(metroArea){
-            var newValues = [];
-            metroArea.values.forEach(function(yearVal){
-                if(yearVal.x <= 2011){
-                    var newCoord = {x:yearVal.x, y:0};
-
-                    if(scope.state.msaPop[metroArea.key]){
-                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
-                        newCoord = {x: yearVal.x, y:newY};
-                    
-                    }
-                    newValues.push(newCoord);                       
-                }
- 
-            })
-
-             return ({key:metroArea.key,values:newValues,area:false});                
-        })
-
-
-        var rankedData2 = scope.rankMigration(graphRelativeData);
-
-        var polishedData2 = scope.polishData(rankedData2);
-
-
-        var graphData = {};
-        graphData["raw"] = graphRawData;
-        graphData["relative"] = polishedData2;
-
-        return graphData;
-    },
-    processIrsNet:function(data){
-        var scope = this; 
-
-        var reducedData = {}
-
-        var finalData = [];
-        Object.keys(data).forEach(function(msaId){
-            var valueArray = [];
-            Object.keys(data[msaId]).forEach(function(year){
-                if(data[msaId][year]){
-                    if(data[msaId][year]['outflow']){
-                        if(year > 12){
-                            var curYear = "19" + year;
-                        }
-                        else{
-                            var curYear = "20" + year;
-                        }
-                        valueArray.push( {x:+curYear,y:(+data[msaId][year]['inflow']['individuals'] - +data[msaId][year]['outflow']['individuals'])});                        
-                    }
-                                        
-                }
-            })
-
-            if(valueArray.length != 0){
-             finalData.push({key:msaId,values:valueArray,area:false});                
-            }
-
-
-        })
-
-
-        var rankedData = scope.rankMigration(finalData);
-        var polishedData = scope.polishData(rankedData);
-        polishedData.forEach(function(metroArea){
-            metroArea.values.sort(function(a,b){
-                return a.x - b.x
-            })
-        })
-
-        var graphRawData = polishedData;
-
-        var graphRelativeData = graphRawData.map(function(metroArea){
-            var newValues = [];
-            metroArea.values.forEach(function(yearVal){
-                if(yearVal.x <= 2011){
-                    var newCoord = {x:yearVal.x, y:0};
-
-                    if(scope.state.msaPop[metroArea.key]){
-                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
-                        newCoord = {x: yearVal.x, y:newY};
-                    
-                    }
-                    newValues.push(newCoord);                       
-                }
- 
-            })
-
-             return ({key:metroArea.key,values:newValues,area:false});                
-        })
-
-
-        var rankedData2 = scope.rankMigration(graphRelativeData);
-
-        var polishedData2 = scope.polishData(rankedData2);
-
-
-        var graphData = {};
-        graphData["raw"] = graphRawData;
-        graphData["relative"] = polishedData2;
-
-        return graphData;  
-    },
-    processTotalMigrationFlow:function(data){
-        var scope = this; 
-
-        var reducedData = {}
-
-        var finalData = [];
-        Object.keys(data).forEach(function(msaId){
-            var valueArray = [];
-            Object.keys(data[msaId]).forEach(function(year){
-                if(data[msaId][year]){
-                    if(data[msaId][year]['outflow']){
-                        if(year > 12){
-                            var curYear = "19" + year;
-                        }
-                        else{
-                            var curYear = "20" + year;
-                        }
-                        valueArray.push( {x:+curYear,y:(+data[msaId][year]['inflow']['individuals'] + +data[msaId][year]['outflow']['individuals'])});                        
-                    }
-                                        
-                }
-            })
-
-            if(valueArray.length != 0){
-             finalData.push({key:msaId,values:valueArray,area:false});                
-            }
-
-
-        })
-
-
-        var rankedData = scope.rankMigration(finalData);
-        var polishedData = scope.polishData(rankedData);
-        polishedData.forEach(function(metroArea){
-            metroArea.values.sort(function(a,b){
-                return a.x - b.x
-            })
-        })
-
-
-        var graphRawData = polishedData;
-
-        var graphRelativeData = graphRawData.map(function(metroArea){
-            var newValues = [];
-            metroArea.values.forEach(function(yearVal){
-                if(yearVal.x <= 2011){
-                    var newCoord = {x:yearVal.x, y:0};
-
-                    if(scope.state.msaPop[metroArea.key]){
-                        var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
-                        newCoord = {x: yearVal.x, y:newY};
-                    
-                    }
-                    newValues.push(newCoord);                       
-                }
- 
-            })
-
-             return ({key:metroArea.key,values:newValues,area:false});                
-        })
-
-
-        var rankedData2 = scope.rankMigration(graphRelativeData);
-
-        var polishedData2 = scope.polishData(rankedData2);
-
-
-        var graphData = {};
-        graphData["raw"] = graphRawData;
-        graphData["relative"] = polishedData2;
-
-        return graphData;  
-
-    },
-    processMigrationData:function(data){
-        var scope = this;
+        var scope = this, 
+            reducedData = {},
+            finalData = [];
 
         if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
-            var finalData = [];
             Object.keys(data).forEach(function(msaId){
                 var valueArray = [];
                 Object.keys(data[msaId]).forEach(function(year){
-                    if(data[msaId][year] != 0){
-                        valueArray.push( {x:+year,y:+data[msaId][year]});                    
+                    if(data[msaId][year]){
+                        if(data[msaId][year]['outflow']){
+                            if(year > 12){
+                                var curYear = "19" + year;
+                            }
+                            else{
+                                var curYear = "20" + year;
+                            }
+                            valueArray.push( {x:+curYear,y:+data[msaId][year]['outflow']['individuals']});                        
+                        }                
                     }
-
-
-                    
                 })
 
                 if(valueArray.length != 0){
                  finalData.push({key:msaId,values:valueArray,area:false});                
                 }
-
-
             })
 
-
             var rankedData = scope.rankMigration(finalData);
-
             var polishedData = scope.polishData(rankedData);
 
+            polishedData.forEach(function(metroArea){
+                metroArea.values.sort(function(a,b){
+                    return a.x - b.x
+                })
+            })
+          
             var graphRawData = polishedData;
 
             var graphRelativeData = graphRawData.map(function(metroArea){
@@ -550,17 +317,206 @@ var DataStore = React.createClass({
                         }
                         newValues.push(newCoord);                       
                     }
-     
                 })
-
                  return ({key:metroArea.key,values:newValues,area:false});                
             })
 
-
             var rankedData2 = scope.rankMigration(graphRelativeData);
-
             var polishedData2 = scope.polishData(rankedData2);
 
+            var graphData = {};
+            graphData["raw"] = graphRawData;
+            graphData["relative"] = polishedData2;
+
+            return graphData;            
+        }
+        else{
+            scope.getData('countyPop',function(msaData){
+                scope.setState({"msaPop":msaData})
+            })
+            setTimeout(function(){ scope.processOutflowMigration(data) }, 1500);    
+        }
+    },
+    processIrsNet:function(data){
+        var scope = this, 
+            reducedData = {},
+            finalData = [];
+        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
+            Object.keys(data).forEach(function(msaId){
+                var valueArray = [];
+                Object.keys(data[msaId]).forEach(function(year){
+                    if(data[msaId][year]){
+                        if(data[msaId][year]['outflow']){
+                            if(year > 12){
+                                var curYear = "19" + year;
+                            }
+                            else{
+                                var curYear = "20" + year;
+                            }
+                            valueArray.push( {x:+curYear,y:(+data[msaId][year]['inflow']['individuals'] - +data[msaId][year]['outflow']['individuals'])});                        
+                        }                   
+                    }
+                })
+
+                if(valueArray.length != 0){
+                 finalData.push({key:msaId,values:valueArray,area:false});                
+                }
+            })
+
+
+            var rankedData = scope.rankMigration(finalData);
+            var polishedData = scope.polishData(rankedData);
+
+            polishedData.forEach(function(metroArea){
+                metroArea.values.sort(function(a,b){
+                    return a.x - b.x
+                })
+            })
+
+            var graphRawData = polishedData;
+
+            var graphRelativeData = graphRawData.map(function(metroArea){
+                var newValues = [];
+                metroArea.values.forEach(function(yearVal){
+                    if(yearVal.x <= 2011){
+                        var newCoord = {x:yearVal.x, y:0};
+
+                        if(scope.state.msaPop[metroArea.key]){
+                            var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                            newCoord = {x: yearVal.x, y:newY};   
+                        }
+                        newValues.push(newCoord);                       
+                    }
+                })
+                 return ({key:metroArea.key,values:newValues,area:false});                
+            })
+
+            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var polishedData2 = scope.polishData(rankedData2);
+
+            var graphData = {};
+            graphData["raw"] = graphRawData;
+            graphData["relative"] = polishedData2;
+
+            return graphData;             
+        }
+        else{
+            scope.getData('countyPop',function(msaData){
+                scope.setState({"msaPop":msaData})
+            })
+            setTimeout(function(){ scope.processIrsNet(data) }, 1500);    
+        }
+    },
+    processTotalMigrationFlow:function(data){
+        var scope = this, 
+            reducedData = {},
+            finalData = [];
+
+        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
+            Object.keys(data).forEach(function(msaId){
+                var valueArray = [];
+                Object.keys(data[msaId]).forEach(function(year){
+                    if(data[msaId][year]){
+                        if(data[msaId][year]['outflow']){
+                            if(year > 12){
+                                var curYear = "19" + year;
+                            }
+                            else{
+                                var curYear = "20" + year;
+                            }
+                            valueArray.push( {x:+curYear,y:(+data[msaId][year]['inflow']['individuals'] + +data[msaId][year]['outflow']['individuals'])});                        
+                        }                
+                    }
+                })
+
+                if(valueArray.length != 0){
+                 finalData.push({key:msaId,values:valueArray,area:false});                
+                }
+            })
+
+            var rankedData = scope.rankMigration(finalData);
+            var polishedData = scope.polishData(rankedData);
+
+            polishedData.forEach(function(metroArea){
+                metroArea.values.sort(function(a,b){
+                    return a.x - b.x
+                })
+            })
+
+            var graphRawData = polishedData;
+
+            var graphRelativeData = graphRawData.map(function(metroArea){
+                var newValues = [];
+                metroArea.values.forEach(function(yearVal){
+                    if(yearVal.x <= 2011){
+                        var newCoord = {x:yearVal.x, y:0};
+
+                        if(scope.state.msaPop[metroArea.key]){
+                            var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                            newCoord = {x: yearVal.x, y:newY};
+                        }
+                        newValues.push(newCoord);                       
+                    }
+                })
+                 return ({key:metroArea.key,values:newValues,area:false});                
+            })
+
+            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var polishedData2 = scope.polishData(rankedData2);
+
+            var graphData = {};
+            graphData["raw"] = graphRawData;
+            graphData["relative"] = polishedData2;
+
+            return graphData;              
+        }
+        else{
+            scope.getData('countyPop',function(msaData){
+                scope.setState({"msaPop":msaData})
+            })
+            setTimeout(function(){ scope.processTotalMigrationFlow(data) }, 1500);    
+        }
+    },
+    processMigrationData:function(data){
+        var scope = this;
+
+        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
+            var finalData = [];
+            Object.keys(data).forEach(function(msaId){
+                var valueArray = [];
+                Object.keys(data[msaId]).forEach(function(year){
+                    if(data[msaId][year] != 0){
+                        valueArray.push( {x:+year,y:+data[msaId][year]});                    
+                    }
+                })
+
+                if(valueArray.length != 0){
+                 finalData.push({key:msaId,values:valueArray,area:false});                
+                }
+            })
+
+            var rankedData = scope.rankMigration(finalData);
+            var polishedData = scope.polishData(rankedData);
+            var graphRawData = polishedData;
+
+            var graphRelativeData = graphRawData.map(function(metroArea){
+                var newValues = [];
+                metroArea.values.forEach(function(yearVal){
+                    if(yearVal.x <= 2011){
+                        var newCoord = {x:yearVal.x, y:0};
+
+                        if(scope.state.msaPop[metroArea.key]){
+                            var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                            newCoord = {x: yearVal.x, y:newY};
+                        }
+                        newValues.push(newCoord);                       
+                    }
+                })
+                return ({key:metroArea.key,values:newValues,area:false});                
+            })
+
+            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var polishedData2 = scope.polishData(rankedData2);
 
             var graphData = {};
             graphData["raw"] = graphRawData;
@@ -573,15 +529,12 @@ var DataStore = React.createClass({
             })
             setTimeout(function(){ scope.processMigrationData(data) }, 1500);    
         }
-
-
     },
     processImmData:function(data){
-    	var scope = this;
+    	var scope = this,
+    	    reducedData = {},
+            finalData = [];
 
-    	var reducedData = {}
-        
-        var finalData = [];
     	Object.keys(data).forEach(function(msaId){
             var valueArray = [];
     		Object.keys(data[msaId]).forEach(function(year){
@@ -595,10 +548,9 @@ var DataStore = React.createClass({
             }
     	})
 
-
     	var rankedData = scope.rankImm(finalData);
-
     	var polishedData = scope.polishImmData(rankedData);
+
     	return polishedData;
     },
     opportunityGraph:function(filters){
@@ -837,83 +789,92 @@ var DataStore = React.createClass({
         //big object would look like:
         // {10000:{{},{}...}, 11000:{{},{}...], ...}
 
-        Object.keys(data).forEach(function(firmAge){
+        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
+            Object.keys(data).forEach(function(firmAge){
 
-            Object.keys(data[firmAge]).forEach(function(metroAreaId){
-                //If we havent gotten to this MSA yet
-                if(!newFirmData[metroAreaId]){
-                    newFirmData[metroAreaId] = {};
-                }
+                Object.keys(data[firmAge]).forEach(function(metroAreaId){
+                    //If we havent gotten to this MSA yet
+                    if(!newFirmData[metroAreaId]){
+                        newFirmData[metroAreaId] = {};
+                    }
 
-                //Iterating through every year for a given firm age in a metro area
-                data[firmAge][metroAreaId].forEach(function(rowData){
-                    if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
-                        if(!newFirmData[metroAreaId][rowData["year2"]]){
-                            newFirmData[metroAreaId][rowData["year2"]] = {};
+                    //Iterating through every year for a given firm age in a metro area
+                    data[firmAge][metroAreaId].forEach(function(rowData){
+                        if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
+                            if(!newFirmData[metroAreaId][rowData["year2"]]){
+                                newFirmData[metroAreaId][rowData["year2"]] = {};
+                            }
+                            newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"];                       
                         }
-                        newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"];                       
+
+                    })
+                })
+            })  
+
+            //Every msa represented as:
+            //{values:[{x:val,y:val}....],key=msa,}
+            //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
+            var chartData = Object.keys(newFirmData).map(function(msaId){
+                //Iterating through every year within a metro area
+                var valueArray = Object.keys(newFirmData[msaId]).map(function(year){
+                    var curCoord={"x":+year,"y":0,"raw":0},
+                        newFirmSum = 0,
+                        newPer1000 = 0,
+                        pop = 0,
+                        pop1000 = 0;
+
+
+                    //Creates number of new firms for that year
+                    ages.forEach(function(age){
+
+                        if(newFirmData[msaId][year][age] && (age < 6)){
+                            
+                            newFirmSum = newFirmSum + +newFirmData[msaId][year][age];
+                        }
+                    })
+                    //Instead of share, want newFirmSum/(pop/1000)
+
+                    if(scope.state.msaPop[msaId] && scope.state.msaPop[msaId][year]){
+                        pop = scope.state.msaPop[msaId][year];
+                        pop1000 = (pop/1000);                   
+                   
+                    }
+                    else{
+                        pop1000=0;
                     }
 
-                })
-            })
-        })  
-
-        //Every msa represented as:
-        //{values:[{x:val,y:val}....],key=msa,}
-        //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
-        var chartData = Object.keys(newFirmData).map(function(msaId){
-            //Iterating through every year within a metro area
-            var valueArray = Object.keys(newFirmData[msaId]).map(function(year){
-                var curCoord={"x":+year,"y":0,"raw":0},
-                    newFirmSum = 0,
-                    newPer1000 = 0,
-                    pop = 0,
-                    pop1000 = 0;
-
-
-                //Creates number of new firms for that year
-                ages.forEach(function(age){
-
-                    if(newFirmData[msaId][year][age] && (age < 6)){
-                        
-                        newFirmSum = newFirmSum + +newFirmData[msaId][year][age];
+                    if(pop1000 == 0){
+                        newPer1000 = 0;
                     }
+                    else{
+                        newPer1000 = newFirmSum/pop1000;
+                    }
+                    
+                    curCoord["y"] = newPer1000;
+                    curCoord["raw"] = newFirmSum;
+                    //Want to return: x:year y:percent
+                    return curCoord;
                 })
-                //Instead of share, want newFirmSum/(pop/1000)
 
-                if(scope.state.msaPop[msaId] && scope.state.msaPop[msaId][year]){
-                    pop = scope.state.msaPop[msaId][year];
-                    pop1000 = (pop/1000);                   
-               
-                }
-                else{
-                    pop1000=0;
-                }
-
-                if(pop1000 == 0){
-                    newPer1000 = 0;
-                }
-                else{
-                    newPer1000 = newFirmSum/pop1000;
-                }
-                
-                curCoord["y"] = newPer1000;
-                curCoord["raw"] = newFirmSum;
-                //Want to return: x:year y:percent
-                return curCoord;
+                //Only return once per metroArea
+                return {key:msaId,values:valueArray,area:false};
             })
 
-            //Only return once per metroArea
-            return {key:msaId,values:valueArray,area:false};
-        })
 
 
+            var rankedData = scope.rankNewFirm(chartData);
 
-        var rankedData = scope.rankNewFirm(chartData);
+            var polishedData = scope.polishData(rankedData);
 
-        var polishedData = scope.polishData(rankedData);
+            return polishedData;            
+        }
+        else{
+            scope.getData('countyPop',function(msaData){
+                scope.setState({"msaPop":msaData})
+            })
+            setTimeout(function(){ scope.processNewValues(data) }, 1500);    
+        }
 
-        return polishedData;
 	},
 	processShareValues:function(data){
        var scope = this,
@@ -926,64 +887,75 @@ var DataStore = React.createClass({
         //big object would look like:
         // {10000:{{},{}...}, 11000:{{},{}...], ...}
 
-        Object.keys(data).forEach(function(firmAge){
 
-            Object.keys(data[firmAge]).forEach(function(metroAreaId){
-                //If we havent gotten to this MSA yet
-                if(!shareData[metroAreaId]){
-                    shareData[metroAreaId] = {};
-                }
-                //Iterating through every year for a given firm age in a metro area
-                data[firmAge][metroAreaId].forEach(function(rowData){
-                    if(!shareData[metroAreaId][rowData["year2"]]){
-                        shareData[metroAreaId][rowData["year2"]] = {};
+        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
+            Object.keys(data).forEach(function(firmAge){
+
+                Object.keys(data[firmAge]).forEach(function(metroAreaId){
+                    //If we havent gotten to this MSA yet
+                    if(!shareData[metroAreaId]){
+                        shareData[metroAreaId] = {};
                     }
-                    shareData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
+                    //Iterating through every year for a given firm age in a metro area
+                    data[firmAge][metroAreaId].forEach(function(rowData){
+                        if(!shareData[metroAreaId][rowData["year2"]]){
+                            shareData[metroAreaId][rowData["year2"]] = {};
+                        }
+                        shareData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
+                    })
                 })
             })
-        })
 
-        //Every msa represented as:
-        //{values:[{x:val,y:val}....],key=msa,}
-        //Want to return 1 (x,y) object for each year, where x=year and y=percent employed in new firms
-        var chartData = Object.keys(shareData).map(function(msaId){
+            //Every msa represented as:
+            //{values:[{x:val,y:val}....],key=msa,}
+            //Want to return 1 (x,y) object for each year, where x=year and y=percent employed in new firms
+            var chartData = Object.keys(shareData).map(function(msaId){
 
-            //Iterating through every year within a metro area
-            var valueArray = Object.keys(shareData[msaId]).map(function(year){
-                var curCoord={"x":+year,"y":0},
-                    totalEmploySum = 0,
-                    newFirmSum = 0,
-                    share = 0;
+                //Iterating through every year within a metro area
+                var valueArray = Object.keys(shareData[msaId]).map(function(year){
+                    var curCoord={"x":+year,"y":0},
+                        totalEmploySum = 0,
+                        newFirmSum = 0,
+                        share = 0;
 
 
-                //Creates Total Employment number for that year
-                //Creates Employment in new firms for that year
-                ages.forEach(function(age){
-                    if(shareData[msaId][year][age]){
-                        totalEmploySum = totalEmploySum + shareData[msaId][year][age];                   
-                    }
-                    if(shareData[msaId][year][age] && (age < 6)){
-                        newFirmSum = newFirmSum + shareData[msaId][year][age];
-                    }
+                    //Creates Total Employment number for that year
+                    //Creates Employment in new firms for that year
+                    ages.forEach(function(age){
+                        if(shareData[msaId][year][age]){
+                            totalEmploySum = totalEmploySum + shareData[msaId][year][age];                   
+                        }
+                        if(shareData[msaId][year][age] && (age < 6)){
+                            newFirmSum = newFirmSum + shareData[msaId][year][age];
+                        }
+                    })
+                    share = newFirmSum/totalEmploySum;
+
+                    curCoord["y"] = share;
+                    //Want to return: x:year y:percent
+                    return curCoord;
                 })
-                share = newFirmSum/totalEmploySum;
 
-                curCoord["y"] = share;
-                //Want to return: x:year y:percent
-                return curCoord;
+
+                //Only return once per metroArea
+                return {key:msaId,values:valueArray,area:false};
             })
 
 
-            //Only return once per metroArea
-            return {key:msaId,values:valueArray,area:false};
-        })
+            var rankedData = scope.rankShare(chartData);
+
+            var polishedData = scope.polishData(rankedData);
+
+            return polishedData;            
+        }
+        else{
+            scope.getData('countyPop',function(msaData){
+                scope.setState({"msaPop":msaData})
+            })
+            setTimeout(function(){ scope.processShareValues(data) }, 1500);    
+        }
 
 
-        var rankedData = scope.rankShare(chartData);
-
-        var polishedData = scope.polishData(rankedData);
-
-		return polishedData;
 	},
     sortCities:function(year){
         var scope = this;
