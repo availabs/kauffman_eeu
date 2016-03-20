@@ -1167,17 +1167,29 @@ var DataStore = React.createClass({
                 return graphData;
             }
             else{
-                scope.getData("allMsa",function(data){
-                    scope.setState({"newValues":scope.processNewValues(data)})
-                });
-                setTimeout(function(){ scope.processDensityComposite() }, 20000);
+                if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
+                        scope.setState({"newValues":scope.processNewValues(scope.state.allMsa)});
+                        setTimeout(function(){ scope.processDensityComposite() }, 1500);                
+                }
+                else{
+                    scope.getData("allMsa",function(data){
+                        scope.setState({"allMsa":data,"newValues":scope.processNewValues(data)})
+                    });
+                    setTimeout(function(){ scope.processDensityComposite() }, 10000);
+                }
             }  
         }
         else{
-            scope.getData("allMsa",function(data){
-                scope.setState({"shareValues":scope.processShareValues(data)})
-            });
-            setTimeout(function(){ scope.processDensityComposite() }, 20000);
+            if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
+                scope.setState({"shareValues":scope.processShareValues(scope.state.allMsa)});
+                setTimeout(function(){ scope.processDensityComposite() }, 1500);                
+            }
+            else{
+                scope.getData("allMsa",function(data){
+                    scope.setState({"allMsa":data,"shareValues":scope.processShareValues(data)})
+                });
+                setTimeout(function(){ scope.processDensityComposite() }, 10000);
+            }
         }  
 	},
     colorGroup:function(){
