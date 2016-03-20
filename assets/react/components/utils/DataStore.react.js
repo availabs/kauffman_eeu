@@ -9,6 +9,7 @@ var DataStore = React.createClass({
 			loading:true,
             rawOpportunityData:{},
             opportunityData:[],
+            rawImmData:{},
 			immData:[],
             detailMigration:{},
             rawMigrationData:{},
@@ -610,19 +611,25 @@ var DataStore = React.createClass({
         }
     },
     immGraph:function(filters){
-		var scope = this;
-		var graphData;
-        console.log("immigration Graph");
-        if(scope.state.immData && scope.state.immData.length > 0){
-            graphData = scope.state.immData;
-            return graphData;  
+        var scope = this;
+        var graphData;
+        console.log("share of immigration Graph");
+        if(scope.state.rawImmData && Object.keys(scope.state.rawImmData).length > 0){
+            if(scope.state.immData && scope.state.immData.length > 0){
+                graphData = scope.state.immData;        
+                return graphData;          
+            }
+            else{
+                scope.setState({"immData":scope.processImmData(scope.state.rawImmData)});
+                setTimeout(function(){ scope.immGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("shareImm",function(data){
-                scope.setState({"immData":scope.processImmData(data)})
+                scope.setState({"rawImmData":data,"immData":scope.processImmData(data)})
             });
             setTimeout(function(){ scope.immGraph(filters) }, 1500);
-        }  	
+        }
     },
     incGraph:function(filters){
         var scope = this;
