@@ -16,6 +16,7 @@ var DataStore = React.createClass({
             migrationData:{},
             inflowMigration:{},
             outflowMigration:[],
+            rawIncData:{},
             incData:{},
             irsNet:{},
             totalMigrationFlow:{},
@@ -267,15 +268,26 @@ var DataStore = React.createClass({
                 scope.getData('countyPop',function(msaData){
                     scope.setState({"msaPop":msaData})
                 })
-                setTimeout(function(){ scope.processIncData(data) }, 2000);  
+                setTimeout(function(){ scope.processIncData(data) }, 3000);    
             }
         }
         else{
-            scope.getData('allMsa',function(fullData){
-                scope.setState({"newValues":scope.processNewValues(fullData)})
-            })
-            setTimeout(function(){ scope.processIncData(data) }, 10000); 
-        }        
+            if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
+                scope.setState({"newValues":scope.processNewValues(scope.state.allMsa)});
+                setTimeout(function(){ scope.processIncData(data) }, 3000);                
+            }
+            else{
+                scope.getData("allMsa",function(rawMsaData){
+                    scope.setState({"allMsa":rawMsaData,"newValues":scope.processNewValues(rawMsaData)})
+                });
+                setTimeout(function(){ scope.processIncData(data) }, 10000);
+            }
+        }
+
+
+
+        
+       
     },
     processOutflowMigration:function(data){
         var scope = this; 
@@ -635,16 +647,22 @@ var DataStore = React.createClass({
         var scope = this;
         var graphData;
         console.log("inc5000 Graph");
-        if(scope.state.incData && Object.keys(scope.state.incData).length > 0){
-            graphData = scope.state.incData;
-            return graphData;  
+        if(scope.state.rawIncData && Object.keys(scope.state.rawIncData).length > 0){
+            if(scope.state.incData && Object.keys(scope.state.incData).length > 0){
+                graphData = scope.state.incData;
+                return graphData;  
+            }
+            else{
+                scope.setState({"incData":scope.processIncData(scope.state.rawIncData)});
+                setTimeout(function(){ scope.incGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("inc5000",function(data){
-                scope.setState({"incData":scope.processIncData(data)})
+                scope.setState({"rawIncData":data,"incData":scope.processIncData(data)})
             });
             setTimeout(function(){ scope.incGraph(filters) }, 5000);
-        }   
+        } 
     },
     netMigrationGraph:function(filters){
         var scope = this;
