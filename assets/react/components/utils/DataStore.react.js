@@ -7,6 +7,7 @@ var DataStore = React.createClass({
 	getInitialState:function(){
 		return {
 			loading:true,
+            rawOpportunityData:{},
             opportunityData:[],
 			immData:[],
             migrationData:{},
@@ -570,17 +571,12 @@ var DataStore = React.createClass({
     		Object.keys(data[msaId]).forEach(function(year){
                 if(data[msaId][year] != 0){
                     valueArray.push( {x:+year,y:+data[msaId][year]});                    
-                }
-
-
-    			
+                }	
     		})
 
             if(valueArray.length != 0){
              finalData.push({key:msaId,values:valueArray,area:false});                
             }
-
-
     	})
 
 
@@ -593,13 +589,19 @@ var DataStore = React.createClass({
         var scope = this;
         var graphData;
         console.log("opportunity Graph");
-        if(scope.state.opportunityData && scope.state.opportunityData.length > 0){
-            graphData = scope.state.opportunityData;
-            return graphData;  
+        if(scope.state.rawOpportunityData && Object.keys(scope.state.rawOpportunityData).length > 0){
+            if(scope.state.opportunityData && scope.state.opportunityData.length > 0){
+                graphData = scope.state.opportunityData;        
+                return graphData;          
+            }
+            else{
+                scope.setState({"opportunityData":scope.processOpportunityData(scope.state.rawOpportunityData)});
+                setTimeout(function(){ scope.opportunityGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("equalOpp",function(data){
-                scope.setState({"opportunityData":scope.processOpportunityData(data)})
+                scope.setState({"rawOpportunityData":data,"opportunityData":scope.processOpportunityData(data)})
             });
             setTimeout(function(){ scope.opportunityGraph(filters) }, 1500);
         }
