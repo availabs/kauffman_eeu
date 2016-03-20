@@ -11,6 +11,7 @@ var DataStore = React.createClass({
             opportunityData:[],
 			immData:[],
             detailMigration:{},
+            rawMigrationData:{},
             migrationData:{},
             inflowMigration:{},
             outflowMigration:[],
@@ -637,27 +638,27 @@ var DataStore = React.createClass({
             });
             setTimeout(function(){ scope.incGraph(filters) }, 5000);
         }   
-
-
     },
     netMigrationGraph:function(filters){
         var scope = this;
         var graphData;
-        console.log("net migration Graph");
-        if(scope.state.migrationData && Object.keys(scope.state.migrationData).length > 0){
-            graphData = scope.state.migrationData;
-            return graphData;  
+        console.log("ACS net migration Graph");
+        if(scope.state.rawMigrationData && Object.keys(scope.state.rawMigrationData).length > 0){
+            if(scope.state.migrationData && Object.keys(scope.state.migrationData).length > 0){
+                graphData = scope.state.migrationData;
+                return graphData;  
+            }
+            else{
+                scope.setState({"migrationData":scope.processMigrationData(scope.state.rawMigrationData)});
+                setTimeout(function(){ scope.netMigrationGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("migration",function(data){
-                scope.setState({"migrationData":scope.processMigrationData(data)})
+                scope.setState({"rawMigrationData":data,"migrationData":scope.processMigrationData(data)})
             });
-            setTimeout(function(){ scope.netMigrationGraph(filters) }, 1500);
-        }   
-
-
-
-        return graphData;               
+            setTimeout(function(){ scope.netMigrationGraph(filters) }, 5000);
+        }               
     },
     inflowMigrationGraph:function(filters){
         var scope = this;
