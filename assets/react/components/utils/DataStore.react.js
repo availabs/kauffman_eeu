@@ -16,6 +16,7 @@ var DataStore = React.createClass({
             incData:{},
             irsNet:{},
             totalMigrationFlow:{},
+            allMsa:{},
 			shareValues:[],
 			newValues:[],
             densityComposite:[],
@@ -729,35 +730,43 @@ var DataStore = React.createClass({
         var scope = this;
         var graphData;
         console.log("share new emp Graph");
-        if(scope.state.shareValues && scope.state.shareValues.length > 0){
-            graphData = scope.state.shareValues;
-            return graphData;  
+        if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
+            if(scope.state.shareValues && scope.state.shareValues.length > 0){
+                graphData = scope.state.shareValues;
+                return graphData;  
+            }
+            else{
+                scope.setState({"shareValues":scope.processShareValues(scope.state.allMsa)});
+                setTimeout(function(){ scope.shareGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("allMsa",function(data){
-                scope.setState({"shareValues":scope.processShareValues(data)})
+                scope.setState({"allMsa":data,"shareValues":scope.processShareValues(data)})
             });
             setTimeout(function(){ scope.shareGraph(filters) }, 5000);
-        }   
-
-        return graphData;
+        }
 	},
 	newGraph:function(filters){
         var scope = this;
         var graphData;
         console.log("new firms per 1000 Graph");
-        if(scope.state.newValues && scope.state.newValues.length > 0){
-            graphData = scope.state.newValues;
-            return graphData;  
+        if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
+            if(scope.state.newValues && scope.state.newValues.length > 0){
+                graphData = scope.state.newValues;
+                return graphData;  
+            }
+            else{
+                scope.setState({"newValues":scope.processNewValues(scope.state.allMsa)});
+                setTimeout(function(){ scope.newGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("allMsa",function(data){
-                scope.setState({"newValues":scope.processNewValues(data)})
+                scope.setState({"allMsa":data,"newValues":scope.processNewValues(data)})
             });
             setTimeout(function(){ scope.newGraph(filters) }, 5000);
-        }   
-
-        return graphData;
+        }
 	},
 	densCompGraph:function(filters){
         var scope = this;
