@@ -10,6 +10,7 @@ var DataStore = React.createClass({
             rawOpportunityData:{},
             opportunityData:[],
 			immData:[],
+            detailMigration:{},
             migrationData:{},
             inflowMigration:{},
             outflowMigration:[],
@@ -661,70 +662,86 @@ var DataStore = React.createClass({
     inflowMigrationGraph:function(filters){
         var scope = this;
         var graphData;
-        console.log("inflow migration Graph");
-        if(scope.state.inflowMigration && Object.keys(scope.state.inflowMigration).length > 0){
-            graphData = scope.state.inflowMigration;
-            return graphData;  
+        console.log("inflowMigration Graph");
+        if(scope.state.detailMigration && Object.keys(scope.state.detailMigration).length > 0){
+            if(scope.state.inflowMigration && Object.keys(scope.state.inflowMigration).length > 0){
+                graphData = scope.state.inflowMigration;
+                return graphData;  
+            }
+            else{
+                scope.setState({"inflowMigration":scope.processInflowMigration(scope.state.detailMigration)});
+                setTimeout(function(){ scope.inflowMigrationGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("detailMigration",function(data){
-                scope.setState({"inflowMigration":scope.processInflowMigration(data)})
+                scope.setState({"detailMigration":data,"inflowMigration":scope.processInflowMigration(data)})
             });
-            setTimeout(function(){ scope.inflowMigrationGraph(filters) }, 1500);
-        }   
-
-        return graphData; 
+            setTimeout(function(){ scope.inflowMigrationGraph(filters) }, 5000);
+        } 
     },
     irsNetGraph:function(filters){
         var scope = this;
         var graphData;
-        console.log("net IRS migration Graph");
-        if(scope.state.irsNet && Object.keys(scope.state.irsNet).length > 0){
-            graphData = scope.state.irsNet;
-            return graphData;  
+        console.log("irsNet Graph");
+        if(scope.state.detailMigration && Object.keys(scope.state.detailMigration).length > 0){
+            if(scope.state.irsNet && Object.keys(scope.state.irsNet).length > 0){
+                graphData = scope.state.irsNet;
+                return graphData;  
+            }
+            else{
+                scope.setState({"irsNet":scope.processIrsNet(scope.state.detailMigration)});
+                setTimeout(function(){ scope.irsNetGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("detailMigration",function(data){
-                scope.setState({"irsNet":scope.processIrsNet(data)})
+                scope.setState({"detailMigration":data,"irsNet":scope.processIrsNet(data)})
             });
-            setTimeout(function(){ scope.irsNetGraph(filters) }, 1500);
-        }   
-
-        return graphData;            
+            setTimeout(function(){ scope.irsNetGraph(filters) }, 5000);
+        }             
     },
     outflowMigrationGraph:function(filters){
         var scope = this;
         var graphData;
-        console.log("outflow migration Graph");
-        if(scope.state.outflowMigration && Object.keys(scope.state.outflowMigration).length > 0){
-            graphData = scope.state.outflowMigration;
-            return graphData;  
+        console.log("outflowMigration Graph");
+        if(scope.state.detailMigration && Object.keys(scope.state.detailMigration).length > 0){
+            if(scope.state.outflowMigration && Object.keys(scope.state.outflowMigration).length > 0){
+                graphData = scope.state.outflowMigration;
+                return graphData;  
+            }
+            else{
+                scope.setState({"outflowMigration":scope.processOutflowMigration(scope.state.detailMigration)});
+                setTimeout(function(){ scope.outflowMigrationGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("detailMigration",function(data){
-                scope.setState({"outflowMigration":scope.processOutflowMigration(data)})
+                scope.setState({"detailMigration":data,"outflowMigration":scope.processOutflowMigration(data)})
             });
-            setTimeout(function(){ scope.outflowMigrationGraph(filters) }, 1500);
-        }   
-
-        return graphData;           
+            setTimeout(function(){ scope.outflowMigrationGraph(filters) }, 5000);
+        }        
     },
     totalMigrationFlowGraph:function(filters){
         var scope = this;
         var graphData;
         console.log("totalMigrationFlow Graph");
-        if(scope.state.totalMigrationFlow && Object.keys(scope.state.totalMigrationFlow).length > 0){
-            graphData = scope.state.totalMigrationFlow;
-            return graphData;  
+        if(scope.state.detailMigration && Object.keys(scope.state.detailMigration).length > 0){
+            if(scope.state.totalMigrationFlow && Object.keys(scope.state.totalMigrationFlow).length > 0){
+                graphData = scope.state.totalMigrationFlow;
+                return graphData;  
+            }
+            else{
+                scope.setState({"totalMigrationFlow":scope.processTotalMigrationFlow(scope.state.detailMigration)});
+                setTimeout(function(){ scope.totalMigrationFlowGraph(filters) }, 1500);                
+            }
         }
         else{
             scope.getData("detailMigration",function(data){
-                scope.setState({"totalMigrationFlow":scope.processTotalMigrationFlow(data)})
+                scope.setState({"detailMigration":data,"totalMigrationFlow":scope.processTotalMigrationFlow(data)})
             });
-            setTimeout(function(){ scope.totalMigrationFlowGraph(filters) }, 1500);
-        }   
-
-        return graphData;
+            setTimeout(function(){ scope.totalMigrationFlowGraph(filters) }, 5000);
+        }
     },
 	shareGraph:function(filters){
         var scope = this;
