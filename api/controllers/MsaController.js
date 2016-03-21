@@ -787,15 +787,7 @@ function combineEqualOpp(lowIncome,highIncome,cb){
 }
 
 function combineMigration(data1990,data2000,data2010){
-
-
 		var combinedData = {};
-
-
-
-
-
-
 
 		Object.keys(data1990).forEach(function(item){
 			if(!combinedData[item]){

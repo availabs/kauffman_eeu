@@ -50,7 +50,6 @@ var DataStore = React.createClass({
 
         })
 
-        var reducedData = {}
         var finalData = [];
         Object.keys(msaGains).forEach(function(msaId){
             var valueArray = [];
@@ -275,29 +274,11 @@ var DataStore = React.createClass({
             setTimeout(function(){ scope.processDetailMigration(data,dataset) }, 1500);    
         }
     },
-    processGeneral:function(data,dataset){
-    	var scope = this,
-            finalData = [];
-
-        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
-        	Object.keys(data).forEach(function(msaId){
-                var valueArray = [];
-        		Object.keys(data[msaId]).forEach(function(year){
-                    if(data[msaId][year] != 0){
-                        valueArray.push( {x:+year,y:Math.round(+data[msaId][year])});                    
-                    }	
-        		})
-
-                if(valueArray.length != 0){
-                 finalData.push({key:msaId,values:valueArray,area:false});                
-                }
-        	})
-
-            var rankedData = scope.rankCities(finalData);
-            var polishedData = scope.polishData(rankedData,dataset);
-            var graphRawData = polishedData;
-
-            var maxYear = d3.max(graphRawData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
+    relativeAgainstPopulation:function(graphRawData){
+        var scope = this,
+            maxYear = d3.max(graphRawData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
+        
+        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){        
             var graphRelativeData = graphRawData.map(function(metroArea){
                 var newValues = [];
                 metroArea.values.forEach(function(yearVal){
@@ -314,19 +295,48 @@ var DataStore = React.createClass({
                 return ({key:metroArea.key,values:newValues,area:false});                
             })
 
+            return graphRelativeData;
+        }
+        else{
+            scope.getData('countyPop',function(msaData){
+                scope.setState({"msaPop":msaData})
+            })
+            setTimeout(function(){ scope.relativeAgainstPopulation(data) }, 1500);    
+        }
+
+    },
+    processGeneral:function(data,dataset){
+    	var scope = this,
+            finalData = [];
+
+    	Object.keys(data).forEach(function(msaId){
+            var valueArray = [];
+    		Object.keys(data[msaId]).forEach(function(year){
+                if(data[msaId][year] != 0){
+                    valueArray.push( {x:+year,y:Math.round(+data[msaId][year])});                    
+                }	
+    		})
+
+            if(valueArray.length != 0){
+             finalData.push({key:msaId,values:valueArray,area:false});                
+            }
+    	})
+
+        var rankedData = scope.rankCities(finalData);
+        var polishedData = scope.polishData(rankedData,dataset);
+        var graphRawData = polishedData;
+
+        var graphRelativeData = [];
+        graphRelativeData = scope.relativeAgainstPopulation(graphRawData);
+
+        if(graphRelativeData && graphRelativeData.length > 0){
             var rankedData2 = scope.rankCities(graphRelativeData);
             var polishedData2 = scope.polishData(rankedData2,("relative"+dataset));
 
             var graphData = {};
             graphData["raw"] = graphRawData;
             graphData["relative"] = polishedData2;
-            return graphData;
-        }
-        else{
-            scope.getData('countyPop',function(msaData){
-                scope.setState({"msaPop":msaData})
-            })
-            setTimeout(function(){ scope.processGeneral(data,dataset) }, 1500);    
+            return graphData;                
         }
     },
     processFullMsa:function(data,dataset){
