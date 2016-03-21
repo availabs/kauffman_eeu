@@ -275,62 +275,8 @@ var DataStore = React.createClass({
             setTimeout(function(){ scope.processDetailMigration(data,dataset) }, 1500);    
         }
     },
-    processMigrationData:function(data){
-        var scope = this;
-
-        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
-            var finalData = [];
-            Object.keys(data).forEach(function(msaId){
-                var valueArray = [];
-                Object.keys(data[msaId]).forEach(function(year){
-                    if(data[msaId][year] != 0){
-                        valueArray.push( {x:+year,y:+data[msaId][year]});                    
-                    }
-                })
-
-                if(valueArray.length != 0){
-                 finalData.push({key:msaId,values:valueArray,area:false});                
-                }
-            })
-
-            var rankedData = scope.rankCities(finalData);
-            var polishedData = scope.polishData(rankedData,"migrationData");
-            var graphRawData = polishedData;
-
-            var graphRelativeData = graphRawData.map(function(metroArea){
-                var newValues = [];
-                metroArea.values.forEach(function(yearVal){
-                    if(yearVal.x <= 2011){
-                        var newCoord = {x:yearVal.x, y:0};
-
-                        if(scope.state.msaPop[metroArea.key]){
-                            var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
-                            newCoord = {x: yearVal.x, y:newY};
-                        }
-                        newValues.push(newCoord);                       
-                    }
-                })
-                return ({key:metroArea.key,values:newValues,area:false});                
-            })
-
-            var rankedData2 = scope.rankCities(graphRelativeData);
-            var polishedData2 = scope.polishData(rankedData2,"relativeMigrationData");
-
-            var graphData = {};
-            graphData["raw"] = graphRawData;
-            graphData["relative"] = polishedData2;
-            return graphData;
-        }
-        else{
-            scope.getData('countyPop',function(msaData){
-                scope.setState({"msaPop":msaData})
-            })
-            setTimeout(function(){ scope.processMigrationData(data) }, 1500);    
-        }
-    },
-    processImmData:function(data){
+    processGeneral:function(data,dataset){
     	var scope = this,
-    	    reducedData = {},
             finalData = [];
 
         if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
@@ -348,14 +294,14 @@ var DataStore = React.createClass({
         	})
 
             var rankedData = scope.rankCities(finalData);
-            var polishedData = scope.polishData(rankedData,"immData");
-
+            var polishedData = scope.polishData(rankedData,dataset);
             var graphRawData = polishedData;
 
+            var maxYear = d3.max(graphRawData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
             var graphRelativeData = graphRawData.map(function(metroArea){
                 var newValues = [];
                 metroArea.values.forEach(function(yearVal){
-                    if(yearVal.x <= 2014){
+                    if(yearVal.x <= maxYear){
                         var newCoord = {x:yearVal.x, y:0};
 
                         if(scope.state.msaPop[metroArea.key]){
@@ -369,21 +315,19 @@ var DataStore = React.createClass({
             })
 
             var rankedData2 = scope.rankCities(graphRelativeData);
-            var polishedData2 = scope.polishData(rankedData2,"relativeImmData");
+            var polishedData2 = scope.polishData(rankedData2,("relative"+dataset));
 
             var graphData = {};
             graphData["raw"] = graphRawData;
             graphData["relative"] = polishedData2;
-            console.log("immdata",graphData)
             return graphData;
         }
         else{
             scope.getData('countyPop',function(msaData){
                 scope.setState({"msaPop":msaData})
             })
-            setTimeout(function(){ scope.processImmData(data) }, 1500);    
+            setTimeout(function(){ scope.processGeneral(data,dataset) }, 1500);    
         }
-
     },
     processFullMsa:function(data,dataset){
         var scope = this,
@@ -621,13 +565,13 @@ var DataStore = React.createClass({
                 return graphData;          
             }
             else{
-                scope.setState({"immData":scope.processImmData(scope.state.rawImmData)});
+                scope.setState({"immData":scope.processGeneral(scope.state.rawImmData,"immData")});
                 setTimeout(function(){ scope.immGraph(filters) }, 1500);                
             }
         }
         else{
             scope.getData("shareImm",function(data){
-                scope.setState({"rawImmData":data,"immData":scope.processImmData(data)})
+                scope.setState({"rawImmData":data,"immData":scope.processGeneral(data,"immData")})
             });
             setTimeout(function(){ scope.immGraph(filters) }, 1500);
         }
@@ -663,13 +607,13 @@ var DataStore = React.createClass({
                 return graphData;  
             }
             else{
-                scope.setState({"migrationData":scope.processMigrationData(scope.state.rawMigrationData)});
+                scope.setState({"migrationData":scope.processGeneral(scope.state.rawMigrationData,"migrationData")});
                 setTimeout(function(){ scope.netMigrationGraph(filters) }, 1500);                
             }
         }
         else{
             scope.getData("migration",function(data){
-                scope.setState({"rawMigrationData":data,"migrationData":scope.processMigrationData(data)})
+                scope.setState({"rawMigrationData":data,"migrationData":scope.processGeneral(data,"migrationData")})
             });
             setTimeout(function(){ scope.netMigrationGraph(filters) }, 5000);
         }               
