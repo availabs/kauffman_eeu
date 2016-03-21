@@ -182,12 +182,12 @@ var DataStore = React.createClass({
         }
         else{
             if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
-                scope.setState({"newValues":scope.processNewValues(scope.state.allMsa)});
+                scope.setState({"newValues":scope.processFullMsa(scope.state.allMsa,"newValues")});
                 setTimeout(function(){ scope.processIncData(data) }, 3000);                
             }
             else{
                 scope.getData("allMsa",function(rawMsaData){
-                    scope.setState({"allMsa":rawMsaData,"newValues":scope.processNewValues(rawMsaData)})
+                    scope.setState({"allMsa":rawMsaData,"newValues":scope.processFullMsa(rawMsaData,"newValues")})
                 });
                 setTimeout(function(){ scope.processIncData(data) }, 10000);
             }
@@ -355,7 +355,7 @@ var DataStore = React.createClass({
 
     	return polishedData;
     },
-    processNewValues:function(data){
+    processFullMsa:function(data,dataset){
         var scope = this,
             ages = d3.range(12),
             newFirmData = {};
@@ -365,7 +365,7 @@ var DataStore = React.createClass({
 
         //big object would look like:
         // {10000:{{},{}...}, 11000:{{},{}...], ...}
-
+        console.log("processNew function",dataset)
         if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
             Object.keys(data).forEach(function(firmAge){
 
@@ -377,13 +377,20 @@ var DataStore = React.createClass({
 
                     //Iterating through every year for a given firm age in a metro area
                     data[firmAge][metroAreaId].forEach(function(rowData){
-                        if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
+                        if(dataset == "newValues"){
+                            if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
+                                if(!newFirmData[metroAreaId][rowData["year2"]]){
+                                    newFirmData[metroAreaId][rowData["year2"]] = {};
+                                }
+                                newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"]; 
+                            }                      
+                        }
+                        else{
                             if(!newFirmData[metroAreaId][rowData["year2"]]){
                                 newFirmData[metroAreaId][rowData["year2"]] = {};
-                            }
-                            newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"];                       
+                            }                        
+                            newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
                         }
-
                     })
                 })
             })  
@@ -398,39 +405,54 @@ var DataStore = React.createClass({
                         newFirmSum = 0,
                         newPer1000 = 0,
                         pop = 0,
-                        pop1000 = 0;
+                        pop1000 = 0,
+                        totalEmploySum = 0,
+                        share = 0;
 
 
                     //Creates number of new firms for that year
                     ages.forEach(function(age){
-
                         if(newFirmData[msaId][year][age] && (age < 6)){
-                            
                             newFirmSum = newFirmSum + +newFirmData[msaId][year][age];
+                        }
+
+                        if(dataset == "shareValues"){
+                            if(newFirmData[msaId][year][age]){
+                                totalEmploySum = totalEmploySum + +newFirmData[msaId][year][age];                   
+                            }                            
                         }
                     })
                     //Instead of share, want newFirmSum/(pop/1000)
 
-                    if(scope.state.msaPop[msaId] && scope.state.msaPop[msaId][year]){
-                        pop = scope.state.msaPop[msaId][year];
-                        pop1000 = (pop/1000);                   
-                   
-                    }
-                    else{
-                        pop1000=0;
-                    }
+                    if(dataset == "shareValues"){
+                        share = newFirmSum/totalEmploySum;
 
-                    if(pop1000 == 0){
-                        newPer1000 = 0;
+                        curCoord["raw"] = newFirmSum
+                        curCoord["y"] = share;
+                        //Want to return: x:year y:percent
+                        return curCoord;
                     }
                     else{
-                        newPer1000 = newFirmSum/pop1000;
+                        if(scope.state.msaPop[msaId] && scope.state.msaPop[msaId][year]){
+                            pop = scope.state.msaPop[msaId][year];
+                            pop1000 = (pop/1000);                   
+                        }
+                        else{
+                            pop1000=0;
+                        }
+
+                        if(pop1000 == 0){
+                            newPer1000 = 0;
+                        }
+                        else{
+                            newPer1000 = newFirmSum/pop1000;
+                        }
+                        
+                        curCoord["y"] = newPer1000;
+                        curCoord["raw"] = newFirmSum;
+                        //Want to return: x:year y:percent
+                        return curCoord;                        
                     }
-                    
-                    curCoord["y"] = newPer1000;
-                    curCoord["raw"] = newFirmSum;
-                    //Want to return: x:year y:percent
-                    return curCoord;
                 })
 
                 //Only return once per metroArea
@@ -441,7 +463,7 @@ var DataStore = React.createClass({
 
             var rankedData = scope.rankCities(chartData);
 
-            var polishedData = scope.polishData(rankedData,"newFirms");
+            var polishedData = scope.polishData(rankedData,dataset);
 
             return polishedData;            
         }
@@ -449,90 +471,11 @@ var DataStore = React.createClass({
             scope.getData('countyPop',function(msaData){
                 scope.setState({"msaPop":msaData})
             })
-            setTimeout(function(){ scope.processNewValues(data) }, 1500);    
+            setTimeout(function(){ scope.processFullMsa(data,dataset) }, 1500);    
         }
 
     },
-    processShareValues:function(data){
-       var scope = this,
-            ages = d3.range(12),
-            shareData = {};
-
-        //Final object will have the following for every msaId
-        //msaId:{1977:{age0:numEmployed,age1:numEmployed...},1978:{age0:numEmployed,age1:numEmployed...}}
-
-        //big object would look like:
-        // {10000:{{},{}...}, 11000:{{},{}...], ...}
-
-
-        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
-            Object.keys(data).forEach(function(firmAge){
-
-                Object.keys(data[firmAge]).forEach(function(metroAreaId){
-                    //If we havent gotten to this MSA yet
-                    if(!shareData[metroAreaId]){
-                        shareData[metroAreaId] = {};
-                    }
-                    //Iterating through every year for a given firm age in a metro area
-                    data[firmAge][metroAreaId].forEach(function(rowData){
-                        if(!shareData[metroAreaId][rowData["year2"]]){
-                            shareData[metroAreaId][rowData["year2"]] = {};
-                        }
-                        shareData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
-                    })
-                })
-            })
-
-            //Every msa represented as:
-            //{values:[{x:val,y:val}....],key=msa,}
-            //Want to return 1 (x,y) object for each year, where x=year and y=percent employed in new firms
-            var chartData = Object.keys(shareData).map(function(msaId){
-
-                //Iterating through every year within a metro area
-                var valueArray = Object.keys(shareData[msaId]).map(function(year){
-                    var curCoord={"x":+year,"y":0},
-                        totalEmploySum = 0,
-                        newFirmSum = 0,
-                        share = 0;
-
-
-                    //Creates Total Employment number for that year
-                    //Creates Employment in new firms for that year
-                    ages.forEach(function(age){
-                        if(shareData[msaId][year][age]){
-                            totalEmploySum = totalEmploySum + shareData[msaId][year][age];                   
-                        }
-                        if(shareData[msaId][year][age] && (age < 6)){
-                            newFirmSum = newFirmSum + shareData[msaId][year][age];
-                        }
-                    })
-                    share = newFirmSum/totalEmploySum;
-
-                    curCoord["y"] = share;
-                    //Want to return: x:year y:percent
-                    return curCoord;
-                })
-
-
-                //Only return once per metroArea
-                return {key:msaId,values:valueArray,area:false};
-            })
-
-
-            var rankedData = scope.rankCities(chartData);
-
-            var polishedData = scope.polishData(rankedData,"shareEmp");
-
-            return polishedData;            
-        }
-        else{
-            scope.getData('countyPop',function(msaData){
-                scope.setState({"msaPop":msaData})
-            })
-            setTimeout(function(){ scope.processShareValues(data) }, 1500);    
-        }
-    },
-    processDensityComposite:function(){
+    processDensityComposite:function(dataset){
         var scope = this,
             years = d3.range(1990,2010);        
 
@@ -593,27 +536,27 @@ var DataStore = React.createClass({
             }
             else{
                 if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
-                        scope.setState({"newValues":scope.processNewValues(scope.state.allMsa)});
-                        setTimeout(function(){ scope.processDensityComposite() }, 1500);                
+                        scope.setState({"newValues":scope.processFullMsa(scope.state.allMsa,"newValues")});
+                        setTimeout(function(){ scope.processDensityComposite(dataset) }, 1500);                
                 }
                 else{
                     scope.getData("allMsa",function(data){
-                        scope.setState({"allMsa":data,"newValues":scope.processNewValues(data)})
+                        scope.setState({"allMsa":data,"newValues":scope.processFullMsa(data,"newValues")})
                     });
-                    setTimeout(function(){ scope.processDensityComposite() }, 10000);
+                    setTimeout(function(){ scope.processDensityComposite(dataset) }, 10000);
                 }
             }  
         }
         else{
             if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
-                scope.setState({"shareValues":scope.processShareValues(scope.state.allMsa)});
-                setTimeout(function(){ scope.processDensityComposite() }, 1500);                
+                scope.setState({"shareValues":scope.processFullMsa(scope.state.allMsa,"shareValues")});
+                setTimeout(function(){ scope.processDensityComposite(dataset) }, 1500);                
             }
             else{
                 scope.getData("allMsa",function(data){
-                    scope.setState({"allMsa":data,"shareValues":scope.processShareValues(data)})
+                    scope.setState({"allMsa":data,"shareValues":scope.processFullMsa(data,"shareValues")})
                 });
-                setTimeout(function(){ scope.processDensityComposite() }, 10000);
+                setTimeout(function(){ scope.processDensityComposite(dataset) }, 10000);
             }
         }  
     },
@@ -795,13 +738,13 @@ var DataStore = React.createClass({
                 return graphData;  
             }
             else{
-                scope.setState({"shareValues":scope.processShareValues(scope.state.allMsa)});
+                scope.setState({"shareValues":scope.processFullMsa(scope.state.allMsa,"shareValues")});
                 setTimeout(function(){ scope.shareGraph(filters) }, 1500);                
             }
         }
         else{
             scope.getData("allMsa",function(data){
-                scope.setState({"allMsa":data,"shareValues":scope.processShareValues(data)})
+                scope.setState({"allMsa":data,"shareValues":scope.processFullMsa(data,"shareValues")})
             });
             setTimeout(function(){ scope.shareGraph(filters) }, 5000);
         }
@@ -816,13 +759,13 @@ var DataStore = React.createClass({
                 return graphData;  
             }
             else{
-                scope.setState({"newValues":scope.processNewValues(scope.state.allMsa)});
+                scope.setState({"newValues":scope.processFullMsa(scope.state.allMsa,"newValues")});
                 setTimeout(function(){ scope.newGraph(filters) }, 1500);                
             }
         }
         else{
             scope.getData("allMsa",function(data){
-                scope.setState({"allMsa":data,"newValues":scope.processNewValues(data)})
+                scope.setState({"allMsa":data,"newValues":scope.processFullMsa(data,"newValues")})
             });
             setTimeout(function(){ scope.newGraph(filters) }, 5000);
         }
@@ -836,7 +779,7 @@ var DataStore = React.createClass({
             return graphData;  
         }
         else{
-            scope.setState({"densityComposite":scope.processDensityComposite()});
+            scope.setState({"densityComposite":scope.processDensityComposite("densityComposite")});
             setTimeout(function(){ scope.densCompGraph(filters) }, 20000);
         }   
 
