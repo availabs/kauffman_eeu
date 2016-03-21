@@ -10,7 +10,7 @@ var DataStore = React.createClass({
             rawOpportunityData:{},
             opportunityData:[],
             rawImmData:{},
-			immData:[],
+			immData:{},
             detailMigration:{},
             rawMigrationData:{},
             migrationData:{},
@@ -70,14 +70,10 @@ var DataStore = React.createClass({
         return polishedData;
     },
     processIncData:function(data){
-        var scope = this;
-
-        var reducedData = {}
-
-        var graphData;
-
-        var ages = d3.range(12);
-
+        var scope = this,
+            reducedData = {},
+            graphData,
+            ages = d3.range(12);
 
         if(scope.state.newValues && scope.state.newValues.length > 0){
             if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
@@ -337,23 +333,57 @@ var DataStore = React.createClass({
     	    reducedData = {},
             finalData = [];
 
-    	Object.keys(data).forEach(function(msaId){
-            var valueArray = [];
-    		Object.keys(data[msaId]).forEach(function(year){
-                if(data[msaId][year] != 0){
-                    valueArray.push( {x:+year,y:+data[msaId][year]});                    
-                }	
-    		})
+        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
+        	Object.keys(data).forEach(function(msaId){
+                var valueArray = [];
+        		Object.keys(data[msaId]).forEach(function(year){
+                    if(data[msaId][year] != 0){
+                        valueArray.push( {x:+year,y:Math.round(+data[msaId][year])});                    
+                    }	
+        		})
 
-            if(valueArray.length != 0){
-             finalData.push({key:msaId,values:valueArray,area:false});                
-            }
-    	})
+                if(valueArray.length != 0){
+                 finalData.push({key:msaId,values:valueArray,area:false});                
+                }
+        	})
 
-    	var rankedData = scope.rankCities(finalData);
-    	var polishedData = scope.polishData(rankedData,"immData");
+            var rankedData = scope.rankCities(finalData);
+            var polishedData = scope.polishData(rankedData,"immData");
 
-    	return polishedData;
+            var graphRawData = polishedData;
+
+            var graphRelativeData = graphRawData.map(function(metroArea){
+                var newValues = [];
+                metroArea.values.forEach(function(yearVal){
+                    if(yearVal.x <= 2014){
+                        var newCoord = {x:yearVal.x, y:0};
+
+                        if(scope.state.msaPop[metroArea.key]){
+                            var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
+                            newCoord = {x: yearVal.x, y:newY};
+                        }
+                        newValues.push(newCoord);                       
+                    }
+                })
+                return ({key:metroArea.key,values:newValues,area:false});                
+            })
+
+            var rankedData2 = scope.rankCities(graphRelativeData);
+            var polishedData2 = scope.polishData(rankedData2,"relativeImmData");
+
+            var graphData = {};
+            graphData["raw"] = graphRawData;
+            graphData["relative"] = polishedData2;
+            console.log("immdata",graphData)
+            return graphData;
+        }
+        else{
+            scope.getData('countyPop',function(msaData){
+                scope.setState({"msaPop":msaData})
+            })
+            setTimeout(function(){ scope.processImmData(data) }, 1500);    
+        }
+
     },
     processFullMsa:function(data,dataset){
         var scope = this,
@@ -586,7 +616,7 @@ var DataStore = React.createClass({
         var graphData;
         console.log("share of immigration Graph");
         if(scope.state.rawImmData && Object.keys(scope.state.rawImmData).length > 0){
-            if(scope.state.immData && scope.state.immData.length > 0){
+            if(scope.state.immData && Object.keys(scope.state.immData).length){
                 graphData = scope.state.immData;        
                 return graphData;          
             }

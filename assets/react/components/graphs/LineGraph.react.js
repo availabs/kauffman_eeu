@@ -46,7 +46,7 @@ var LineGraph = React.createClass({
             //Get rid of everything already in the svg
             d3.selectAll("svg").remove();
 
-            if(scope.props.graph != "totalMigrationFlow" && scope.props.graph != "inc5000" && scope.props.graph != "netMigration" && scope.props.graph != "inflowMigration" && scope.props.graph != "outflowMigration" && scope.props.graph != "irsNet"){
+            if(scope.props.graph != "immigrant" && scope.props.graph != "totalMigrationFlow" && scope.props.graph != "inc5000" && scope.props.graph != "netMigration" && scope.props.graph != "inflowMigration" && scope.props.graph != "outflowMigration" && scope.props.graph != "irsNet"){
                 var data = scope.props.data;
             }
             else{
@@ -446,7 +446,7 @@ var LineGraph = React.createClass({
         var scope = this;
 
 
-        if(scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc5000" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
+        if(scope.props.graph == "immigrant" || scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc5000" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
             var data = scope.props.data[scope.state.dataType];
         }
         else{
@@ -469,7 +469,7 @@ var LineGraph = React.createClass({
         console.log("toggle rank/val");
         var scope = this;
 
-        if(scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc5000" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
+        if(scope.props.graph == "immigrant" || scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc5000" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
             var data = scope.props.data[scope.state.dataType];
         }
         else{
@@ -555,7 +555,7 @@ var LineGraph = React.createClass({
         d3.selectAll("svg").remove();
 
         var tables;
-        console.log("linegraph render state",scope.state);
+        console.log("linegraph render state",scope);
         var rowStyle = {
             overflow:'hidden'
         }
@@ -608,7 +608,7 @@ var LineGraph = React.createClass({
         }
 
 
-        if(scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc5000" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
+        if(scope.props.graph == "immigrant" || scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc5000" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
             rawButton = (
                 <button id="rawButton" style={buttonStyle} className="btn btn-success" onClick={scope.toggleRawRelative}>Raw Values</button>
                 )

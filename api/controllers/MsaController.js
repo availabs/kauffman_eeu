@@ -295,36 +295,19 @@ module.exports = {
 	        var curPop = 0;
 	        var curImmPop = 0;
 	        msaCounties[msaId].forEach(function(county){
-
-	            //console.log(countypopagg[county]);
-
-	            if(countypopagg[county]){
+		        if(countypopagg[county]){
 	                years.forEach(function(year){
 	                    if(!msaImmPop[msaId][year]){
-	                        msaImmPop[msaId][year] = {};
-	                        msaImmPop[msaId][year]['imm']=0;
-							msaImmPop[msaId][year]['tot']=0;
+	                        msaImmPop[msaId][year] = 0
 	                    }
 
-	                    msaImmPop[msaId][year]['imm'] += numImmCounties[county][year];
-	                    msaImmPop[msaId][year]['tot'] += countypopagg[county][year];
-	                })                    
-	            }
+	                    msaImmPop[msaId][year] += numImmCounties[county][year];
+	                })  	        	
+		        }                
 	        })
 	    })
 
-		var msaImmShare = {};
-
-		Object.keys(msaImmPop).forEach(function(msaId){
-			msaImmShare[msaId] = {};
-			years.forEach(function(year){
-				msaImmShare[msaId][year] = 0;
-				if(msaImmPop[msaId][year] != undefined){
-					msaImmShare[msaId][year] = msaImmPop[msaId][year]['imm'] / msaImmPop[msaId][year]['tot'];
-				}	
-			})
-		})
-        res.json(msaImmShare)
+        res.json(msaImmPop)
     },
     inc5000:function(req,res){
 
