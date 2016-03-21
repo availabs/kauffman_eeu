@@ -63,9 +63,9 @@ var DataStore = React.createClass({
              finalData.push({key:msaId,values:valueArray,area:false});                
             }
         })
-
-        var rankedData = scope.rankOpp(finalData);
-        var polishedData = scope.polishData(rankedData,"opportunity");
+        
+        finalData.sort(scope.sortCities("lowIncome"));
+        var polishedData = scope.polishData(finalData,"opportunity");
 
         return polishedData;
     },
@@ -96,7 +96,7 @@ var DataStore = React.createClass({
                 }
             })
 
-            var rankedData = scope.rankMigration(finalData);
+            var rankedData = scope.rankCities(finalData);
             var polishedData = scope.polishData(rankedData,"inflowMigration");
 
             polishedData.forEach(function(metroArea){
@@ -125,7 +125,7 @@ var DataStore = React.createClass({
             })
 
 
-            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var rankedData2 = scope.rankCities(graphRelativeData);
             var polishedData2 = scope.polishData(rankedData2,"relativeInflowMigration");
 
             var graphData = {};
@@ -167,7 +167,7 @@ var DataStore = React.createClass({
                 })
 
 
-                var rankedData = scope.rankInc(finalData);
+                var rankedData = scope.rankCities(finalData);
 
                 var polishedData = scope.polishData(rankedData,"inc5000");
 
@@ -232,10 +232,10 @@ var DataStore = React.createClass({
                 })
 
 
-                var rankedData2 = scope.rankInc(graphRelativeData);
+                var rankedData2 = scope.rankCities(graphRelativeData);
                 var polishedData2 = scope.polishData(rankedData2,"relativeInc5000");
 
-                var rankedData3 = scope.rankInc(graphRelativeData2);
+                var rankedData3 = scope.rankCities(graphRelativeData2);
                 var polishedData3 = scope.polishData(rankedData3,"relativeInc5000");
 
                 var graphData = {};
@@ -293,7 +293,7 @@ var DataStore = React.createClass({
                 }
             })
 
-            var rankedData = scope.rankMigration(finalData);
+            var rankedData = scope.rankCities(finalData);
             var polishedData = scope.polishData(rankedData,"outflowMigration");
 
             polishedData.forEach(function(metroArea){
@@ -321,7 +321,7 @@ var DataStore = React.createClass({
                  return ({key:metroArea.key,values:newValues,area:false});                
             })
 
-            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var rankedData2 = scope.rankCities(graphRelativeData);
             var polishedData2 = scope.polishData(rankedData2,"outflowMigration");
 
             var graphData = {};
@@ -364,7 +364,7 @@ var DataStore = React.createClass({
             })
 
 
-            var rankedData = scope.rankMigration(finalData);
+            var rankedData = scope.rankCities(finalData);
             var polishedData = scope.polishData(rankedData,"irsNet");
 
             polishedData.forEach(function(metroArea){
@@ -391,7 +391,7 @@ var DataStore = React.createClass({
                  return ({key:metroArea.key,values:newValues,area:false});                
             })
 
-            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var rankedData2 = scope.rankCities(graphRelativeData);
             var polishedData2 = scope.polishData(rankedData2,"relativeIrsNet");
 
             var graphData = {};
@@ -434,7 +434,7 @@ var DataStore = React.createClass({
                 }
             })
 
-            var rankedData = scope.rankMigration(finalData);
+            var rankedData = scope.rankCities(finalData);
             var polishedData = scope.polishData(rankedData,"totalMigrationFlow");
 
             polishedData.forEach(function(metroArea){
@@ -461,7 +461,7 @@ var DataStore = React.createClass({
                  return ({key:metroArea.key,values:newValues,area:false});                
             })
 
-            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var rankedData2 = scope.rankCities(graphRelativeData);
             var polishedData2 = scope.polishData(rankedData2,"relativeTotalMigrationFlow");
 
             var graphData = {};
@@ -495,7 +495,7 @@ var DataStore = React.createClass({
                 }
             })
 
-            var rankedData = scope.rankMigration(finalData);
+            var rankedData = scope.rankCities(finalData);
             var polishedData = scope.polishData(rankedData,"migrationData");
             var graphRawData = polishedData;
 
@@ -515,7 +515,7 @@ var DataStore = React.createClass({
                 return ({key:metroArea.key,values:newValues,area:false});                
             })
 
-            var rankedData2 = scope.rankMigration(graphRelativeData);
+            var rankedData2 = scope.rankCities(graphRelativeData);
             var polishedData2 = scope.polishData(rankedData2,"relativeMigrationData");
 
             var graphData = {};
@@ -548,7 +548,7 @@ var DataStore = React.createClass({
             }
     	})
 
-    	var rankedData = scope.rankImm(finalData);
+    	var rankedData = scope.rankCities(finalData);
     	var polishedData = scope.polishData(rankedData,"immData");
 
     	return polishedData;
@@ -637,7 +637,7 @@ var DataStore = React.createClass({
 
 
 
-            var rankedData = scope.rankNewFirm(chartData);
+            var rankedData = scope.rankCities(chartData);
 
             var polishedData = scope.polishData(rankedData,"newFirms");
 
@@ -717,7 +717,7 @@ var DataStore = React.createClass({
             })
 
 
-            var rankedData = scope.rankShare(chartData);
+            var rankedData = scope.rankCities(chartData);
 
             var polishedData = scope.polishData(rankedData,"shareEmp");
 
@@ -1068,33 +1068,12 @@ var DataStore = React.createClass({
         	return 0;    	
     	}
     },
-	rankImm:function(cities){
-		var scope=this,
-            years = d3.range(2009,2015);
-
-        years.forEach(function(year){
-        	var rank = 1;
-        	//Sort cities according to each year
-        	cities.sort(scope.sortCities(year));
-
-        	//Go through and assign ranks for current year
-        	cities.forEach(function(city){
-
-        		city.values.forEach(function(yearValues){
-        			if(yearValues.x == year){
-        				yearValues.rank = rank;
-        			}
-        		})
-
-        		rank++;
-        	})
-        })			
-
-		return cities; 
-	},
-    rankInc:function(cities){
+    rankCities:function(cities){
         var scope=this,
-            years = d3.range(2007,2016);
+            years = d3.range(
+                [d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.x }); })],
+                [d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.x }); })+1]
+            );
 
         years.forEach(function(year){
             var rank = 1;
@@ -1112,99 +1091,8 @@ var DataStore = React.createClass({
                 rank++;
             })
         })          
-        return cities; 
+        return cities;   
     },
-    rankOpp:function(cities){
-        var scope=this,
-            incomes = ['highIncome','lowIncome'];
-
-        incomes.forEach(function(income){
-            var rank = 1;
-            //Sort cities according to each year
-            cities.sort(scope.sortCities(income));
-
-            //Go through and assign ranks for current year
-            cities.forEach(function(city){
-                city.values.forEach(function(yearValues){
-                    if(yearValues.x == income){
-                        yearValues.rank = rank;
-                    }
-                })
-
-                rank++;
-            })
-        })          
-
-        return cities; 
-    },
-	rankShare:function(cities){
-		var scope=this,
-            years = d3.range(1977,2013);
-
-        years.forEach(function(year){
-        	var rank = 1;
-        	//Sort cities according to each year
-        	cities.sort(scope.sortCities(year));
-
-        	//Go through and assign ranks for current year
-        	cities.forEach(function(city){
-        		city.values.forEach(function(yearValues){
-        			if(yearValues.x == year){
-        				yearValues.rank = rank;
-        			}
-        		})
-
-        		rank++;
-        	})
-        })			
-		return cities; 
-	},
-    rankMigration:function(cities){
-        var scope=this,
-            years = d3.range(1990,2015);
-
-        years.forEach(function(year){
-            var rank = 1;
-            //Sort cities according to each year
-            cities.sort(scope.sortCities(year));
-
-            //Go through and assign ranks for current year
-            cities.forEach(function(city){
-                city.values.forEach(function(yearValues){
-                    if(yearValues.x == year){
-                        yearValues.rank = rank;
-                    }
-                })
-
-                rank++;
-            })
-        })          
-
-        return cities; 
-    },    
-	rankNewFirm:function(cities){
-		var scope=this,
-            years = d3.range(1990,2010);
-
-
-        years.forEach(function(year){
-        	var rank = 1;
-        	//Sort cities according to each year
-        	cities.sort(scope.sortCities(year));
-
-        	//Go through and assign ranks for current year
-        	cities.forEach(function(city){
-        		city.values.forEach(function(yearValues){
-        			if(yearValues.x == year){
-        				yearValues.rank = rank;
-        			}
-        		})
-
-        		rank++;
-        	})
-        })			
-		return cities;        
-	},
     colorGroup:function(){
         var scope = this;
 
