@@ -1,0 +1,13 @@
+{
+	"opportunity":"equalOpp",
+	"imm":"shareImm",
+	"inc":"inc5000",
+	"netMigration":"migration",
+	"inflowMigration":"detailMigration",
+	"irsNet":"detailMigration",
+	"outflowMigration":"detailMigration",
+	"totalMigrationFlow":"detailMigration",
+	"share":"allMsa",
+	"newValues":"allMsa",
+	"densityComposite":"allMsa"
+}

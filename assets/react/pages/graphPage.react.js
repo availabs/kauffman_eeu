@@ -37,49 +37,8 @@ var GraphPage = React.createClass({
     	var scope = this;
         var filters = "none"
 
-        if(graph == 'densComposite'){
-
-        	cb(scope.refs.store.densCompGraph(filters));
-        }
-        if(graph == 'share'){
-
-        	cb(scope.refs.store.shareGraph(filters));
-        }
-        if(graph == 'new'){
-
-        	cb(scope.refs.store.newGraph(filters));
-        }
-        if(graph == 'immigrant'){
-
-        	cb(scope.refs.store.immGraph(filters));
-        }
-        if(graph == 'netMigration'){
-
-        	cb(scope.refs.store.netMigrationGraph(filters));
-        }
-        if(graph == 'inflowMigration'){
-
-        	cb(scope.refs.store.inflowMigrationGraph(filters));
-        }
-        if(graph == 'outflowMigration'){
-
-        	cb(scope.refs.store.outflowMigrationGraph(filters));
-        }
-        if(graph == 'irsNet'){
-
-        	cb(scope.refs.store.irsNetGraph(filters));
-        }
-        if(graph == 'totalMigrationFlow'){
-
-        	cb(scope.refs.store.totalMigrationFlowGraph(filters));
-        }
-        if(graph == 'opportunity'){
-
-        	cb(scope.refs.store.opportunityGraph(filters));
-        }        
-        if(graph == "inc5000"){
-        	cb(scope.refs.store.incGraph(filters));
-        }    			
+        cb(scope.refs.store.getGraphData(graph,filters));
+   			
     },
 	toggleGraph:function(e){
 		var scope = this;
@@ -89,85 +48,58 @@ var GraphPage = React.createClass({
 		headerItems.forEach(function(items){
 			items.forEach(function(item){
 				item.className = "";
-			})
 			
+				if(item.id == e.target.id){
+					console.log(item.id);
+					item.className += ' active';			
+				}
+			})	
 		})
+		//console.log(e.target.id);
 
-		if(e.target.id == "new"){
-			scope.setState({graph:"new",loading:true});
-			d3.select('#newList')
-				.attr('class',"active");
+		scope.setState({graph:e.target.id,loading:true});
+
+		if(e.target.id == "newValues"){
 			d3.select('#density')
 				.attr('class',"active");
-
 		}
 		else if(e.target.id == "share"){
-			scope.setState({graph:"share",loading:true});
-			d3.select('#shareList')
-				.attr('class',"active");
 			d3.select('#density')
 				.attr('class',"active");
 		}
-		else if(e.target.id == "immigrant"){
-			scope.setState({graph:"immigrant",loading:true});
-			d3.select('#immigrant')
-				.attr('class',"active");
+		else if(e.target.id == "imm"){
 			d3.select('#diversity')
 				.attr('class',"active");
 		}	
 		else if(e.target.id == "netMigration"){
-			scope.setState({graph:"netMigration",loading:true});
-			d3.select('#netMigration')
-				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
 		}
 		else if(e.target.id == "inflowMigration"){
-			scope.setState({graph:"inflowMigration",loading:true});
-			d3.select('#inflowMigration')
-				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
 		}
 		else if(e.target.id == "outflowMigration"){
-			scope.setState({graph:"outflowMigration",loading:true});
-			d3.select('#outflowMigration')
-				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
 		}	
 		else if(e.target.id == "irsNet"){
-			scope.setState({graph:"irsNet",loading:true});
-			d3.select('#irsNet')
-				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
 		}	
-		else if(e.target.id == "inc5000"){
-			scope.setState({graph:"inc5000",loading:true});
-			d3.select('#inc5000')
-				.attr('class',"active");
+		else if(e.target.id == "inc"){
 			d3.select('#fluidity')
 				.attr('class',"active");
 		}
 		else if(e.target.id == "totalMigrationFlow"){
-			scope.setState({graph:"totalMigrationFlow",loading:true});
-			d3.select('#totalMigrationFlow')
-				.attr('class',"active");
 			d3.select('#fluidity')
 				.attr('class',"active");
 		}	
 		else if(e.target.id == "opportunity"){
-			scope.setState({graph:"opportunity",loading:true});
-			d3.select('#opportunity')
-				.attr('class',"active");
 			d3.select('#diversity')
 				.attr('class',"active");
 		}					
 		else{
-			scope.setState({graph:"densComposite",loading:true});
-			d3.select('#densComposite')
-				.attr('class',"active");
 			d3.select('#density')
 				.attr('class',"active");
 		}
@@ -187,31 +119,27 @@ var GraphPage = React.createClass({
 	    var graph,
 	    	divs;
 
-
-
-
-
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
 	    		<li className="dropdown" id="density">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Density Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
-			    		<li id="shareList"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in New Firms</a></li>
-			    		<li id="newList"  onClick={scope.toggleGraph} ><a id="new" >New firms per 1000 people</a></li>
-	    				<li id="densComposite"  onClick={scope.toggleGraph}><a id="densComposite" >Density Composite Rank</a></li>
+			    		<li id="share"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in new Firms</a></li>
+			    		<li id="newValues"  onClick={scope.toggleGraph} ><a id="newValues" >New firms per 1000 people</a></li>
+	    				<li id="densityComposite"  onClick={scope.toggleGraph}><a id="densityComposite" >Density Composite Rank</a></li>
 	    			</ul>
 	    		</li>
 	    		<li className="dropdown" id="diversity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Diversity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
-			    		<li id="immigrant" onClick={scope.toggleGraph} ><a id="immigrant" >Share of Immigrant Population</a></li>		
+			    		<li id="imm" onClick={scope.toggleGraph} ><a id="imm" >Share of Immigrant Population</a></li>		
 			    		<li id="opportunity" onClick={scope.toggleGraph} ><a id="opportunity" >Income Gain/Loss from Childhood Residence</a></li>		
 	    			</ul>
 	    		</li>
 	    		<li className="dropdown active" id="fluidity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
-	    				<li id="inc5000"   onClick={scope.toggleGraph}><a id="inc5000" >High Growth Firms</a></li>	
+	    				<li id="inc"   onClick={scope.toggleGraph}><a id="inc" >High Growth Firms</a></li>	
 	    				<li id="irsNet"  onClick={scope.toggleGraph}><a id="irsNet" >Net Migration (IRS)</a></li>
 			    		<li id="netMigration" className="active" onClick={scope.toggleGraph}><a id="netMigration" >Net Migration (ACS)</a></li>
 			    		<li id="totalMigrationFlow"  onClick={scope.toggleGraph}><a id="totalMigrationFlow" >Total Migration (Outflow/Inflow Sum) (IRS)</a></li>

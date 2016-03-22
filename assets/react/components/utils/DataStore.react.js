@@ -1,27 +1,28 @@
 var React = require("react"),
 	d3 = require("d3"),
     colorbrewer = require('colorbrewer'),
-    msaIdToName = require('../utils/msaIdToName.json');
+    msaIdToName = require('../utils/msaIdToName.json'),
+    graphNametoRoute = require('../utils/graphNametoRoute.json');
 
 var DataStore = React.createClass({
 	getInitialState:function(){
 		return {
 			loading:true,
-            rawOpportunityData:{},
-            opportunityData:[],
-            rawImmData:{},
-			immData:{},
+            equalOpp:{},
+            opportunity:[],
+            shareImm:{},
+			imm:{},
             detailMigration:{},
-            rawMigrationData:{},
-            migrationData:{},
+            migration:{},
+            netMigration:{},
             inflowMigration:{},
             outflowMigration:[],
-            rawIncData:{},
-            incData:{},
+            inc5000:{},
+            inc:{},
             irsNet:{},
             totalMigrationFlow:{},
             allMsa:{},
-			shareValues:[],
+			share:[],
 			newValues:[],
             densityComposite:[],
             msaPop:{}			
@@ -98,10 +99,11 @@ var DataStore = React.createClass({
 
         return finalData;
     },
-    processOpportunityData:function(data){
+    processequalOpp:function(data){
         var scope = this;
         var msaGains = {};
 
+        console.log("processequalOpp");
         //filter out null rows
         Object.keys(data).forEach(function(msaId){
             if(data[msaId]["highIncome"] != null && data[msaId]["lowIncome"] != null){
@@ -118,9 +120,9 @@ var DataStore = React.createClass({
 
         return polishedData;
     },
-    processIncData:function(data){
+    processinc:function(data){
         var scope = this;
-
+        console.log("processinc");
         if(scope.state.newValues && scope.state.newValues.length > 0){
 
             var finalData = scope.convertToCoordinateArray(data,"inc5000");
@@ -183,20 +185,20 @@ var DataStore = React.createClass({
         }
         else{
             if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
-                scope.setState({"newValues":scope.processFullMsa(scope.state.allMsa,"newValues")});
-                setTimeout(function(){ scope.processIncData(data) }, 3000);                
+                scope.setState({"newValues":scope.processallMsa(scope.state.allMsa,"newValues")});
+                setTimeout(function(){ scope.processinc(data) }, 3000);                
             }
             else{
                 scope.getData("allMsa",function(rawMsaData){
-                    scope.setState({"allMsa":rawMsaData,"newValues":scope.processFullMsa(rawMsaData,"newValues")})
+                    scope.setState({"allMsa":rawMsaData,"newValues":scope.processallMsa(rawMsaData,"newValues")})
                 });
-                setTimeout(function(){ scope.processIncData(data) }, 10000);
+                setTimeout(function(){ scope.processinc(data) }, 10000);
             }
         }
     },   
     processGeneral:function(data,dataset){
         var scope = this;
-
+        console.log("processgeneral");
         var finalData = scope.convertToCoordinateArray(data);
 
         var rankedData = scope.rankCities(finalData);
@@ -216,11 +218,21 @@ var DataStore = React.createClass({
             return graphData;                
         }
     },
-    processDetailMigration:function(data,dataset){
+    processmigration:function(data,dataset){
+        var scope = this;
+        console.log("processmigration");
+        return scope.processGeneral(data,dataset);
+    },
+    processshareImm:function(data,dataset){
+        var scope = this;
+        console.log("processshareImm");
+        return scope.processGeneral(data,dataset);
+    },
+    processdetailMigration:function(data,dataset){
         var scope = this, 
             reducedData = {},
             finalData = [];
-
+            console.log("processdetailMigration")
         Object.keys(data).forEach(function(msaId){
             var valueArray = [];
             Object.keys(data[msaId]).forEach(function(year){
@@ -282,7 +294,7 @@ var DataStore = React.createClass({
             return graphData;                
         }             
     },
-    processFullMsa:function(data,dataset){
+    processallMsa:function(data,dataset){
         var scope = this,
             ages = d3.range(12),
             newFirmData = {};
@@ -292,121 +304,124 @@ var DataStore = React.createClass({
 
         //big object would look like:
         // {10000:{{},{}...}, 11000:{{},{}...], ...}
-        console.log("processNew function",dataset)
-        if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
-            Object.keys(data).forEach(function(firmAge){
-
-                Object.keys(data[firmAge]).forEach(function(metroAreaId){
-                    //If we havent gotten to this MSA yet
-                    if(!newFirmData[metroAreaId]){
-                        newFirmData[metroAreaId] = {};
-                    }
-
-                    //Iterating through every year for a given firm age in a metro area
-                    data[firmAge][metroAreaId].forEach(function(rowData){
-                        if(dataset == "newValues"){
-                            if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
-                                if(!newFirmData[metroAreaId][rowData["year2"]]){
-                                    newFirmData[metroAreaId][rowData["year2"]] = {};
-                                }
-                                newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"]; 
-                            }                      
-                        }
-                        else{
-                            if(!newFirmData[metroAreaId][rowData["year2"]]){
-                                newFirmData[metroAreaId][rowData["year2"]] = {};
-                            }                        
-                            newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
-                        }
-                    })
-                })
-            })  
-
-            //Every msa represented as:
-            //{values:[{x:val,y:val}....],key=msa,}
-            //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
-            var chartData = Object.keys(newFirmData).map(function(msaId){
-                //Iterating through every year within a metro area
-                var valueArray = Object.keys(newFirmData[msaId]).map(function(year){
-                    var curCoord={"x":+year,"y":0,"raw":0},
-                        newFirmSum = 0,
-                        newPer1000 = 0,
-                        pop = 0,
-                        pop1000 = 0,
-                        totalEmploySum = 0,
-                        share = 0;
-
-                    //Creates number of new firms for that year
-                    ages.forEach(function(age){
-                        if(newFirmData[msaId][year][age] && (age < 6)){
-                            newFirmSum = newFirmSum + +newFirmData[msaId][year][age];
-                        }
-
-                        if(dataset == "shareValues"){
-                            if(newFirmData[msaId][year][age]){
-                                totalEmploySum = totalEmploySum + +newFirmData[msaId][year][age];                   
-                            }                            
-                        }
-                    })
-
-                    if(dataset == "shareValues"){
-                        share = newFirmSum/totalEmploySum;
-
-                        curCoord["raw"] = newFirmSum
-                        curCoord["y"] = share;
-                        //Want to return: x:year y:percent
-                        return curCoord;
-                    }
-                    else{
-                        if(scope.state.msaPop[msaId] && scope.state.msaPop[msaId][year]){
-                            pop = scope.state.msaPop[msaId][year];
-                            pop1000 = (pop/1000);                   
-                        }
-                        else{
-                            pop1000=0;
-                        }
-
-                        if(pop1000 == 0){
-                            newPer1000 = 0;
-                        }
-                        else{
-                            newPer1000 = newFirmSum/pop1000;
-                        }
-                        
-                        curCoord["y"] = newPer1000;
-                        curCoord["raw"] = newFirmSum;
-                        //Want to return: x:year y:percent
-                        return curCoord;                        
-                    }
-                })
-
-                //Only return once per metroArea
-                return {key:msaId,values:valueArray,area:false};
-            })
-
-            var rankedData = scope.rankCities(chartData);
-            var polishedData = scope.polishData(rankedData,dataset);
-
-            return polishedData;            
+        console.log("processallMsa " + dataset);
+        if(dataset == "densityComposite"){
+            return scope.processdensityComposite(dataset)
         }
         else{
-            scope.getData('countyPop',function(msaData){
-                scope.setState({"msaPop":msaData})
-            })
-            setTimeout(function(){ scope.processFullMsa(data,dataset) }, 1500);    
-        }
+            if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){
+                Object.keys(data).forEach(function(firmAge){
 
+                    Object.keys(data[firmAge]).forEach(function(metroAreaId){
+                        //If we havent gotten to this MSA yet
+                        if(!newFirmData[metroAreaId]){
+                            newFirmData[metroAreaId] = {};
+                        }
+
+                        //Iterating through every year for a given firm age in a metro area
+                        data[firmAge][metroAreaId].forEach(function(rowData){
+                            if(dataset == "newValues"){
+                                if(rowData["year2"]>= 1990 && rowData["year2"]<= 2009){
+                                    if(!newFirmData[metroAreaId][rowData["year2"]]){
+                                        newFirmData[metroAreaId][rowData["year2"]] = {};
+                                    }
+                                    newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["firms"]; 
+                                }                      
+                            }
+                            else{
+                                if(!newFirmData[metroAreaId][rowData["year2"]]){
+                                    newFirmData[metroAreaId][rowData["year2"]] = {};
+                                }                        
+                                newFirmData[metroAreaId][rowData["year2"]][firmAge] = rowData["emp"];
+                            }
+                        })
+                    })
+                })  
+
+                //Every msa represented as:
+                //{values:[{x:val,y:val}....],key=msa,}
+                //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
+                var chartData = Object.keys(newFirmData).map(function(msaId){
+                    //Iterating through every year within a metro area
+                    var valueArray = Object.keys(newFirmData[msaId]).map(function(year){
+                        var curCoord={"x":+year,"y":0,"raw":0},
+                            newFirmSum = 0,
+                            newPer1000 = 0,
+                            pop = 0,
+                            pop1000 = 0,
+                            totalEmploySum = 0,
+                            share = 0;
+
+                        //Creates number of new firms for that year
+                        ages.forEach(function(age){
+                            if(newFirmData[msaId][year][age] && (age < 6)){
+                                newFirmSum = newFirmSum + +newFirmData[msaId][year][age];
+                            }
+
+                            if(dataset == "share"){
+                                if(newFirmData[msaId][year][age]){
+                                    totalEmploySum = totalEmploySum + +newFirmData[msaId][year][age];                   
+                                }                            
+                            }
+                        })
+
+                        if(dataset == "share"){
+                            share = newFirmSum/totalEmploySum;
+
+                            curCoord["raw"] = newFirmSum
+                            curCoord["y"] = share;
+                            //Want to return: x:year y:percent
+                            return curCoord;
+                        }
+                        else{
+                            if(scope.state.msaPop[msaId] && scope.state.msaPop[msaId][year]){
+                                pop = scope.state.msaPop[msaId][year];
+                                pop1000 = (pop/1000);                   
+                            }
+                            else{
+                                pop1000=0;
+                            }
+
+                            if(pop1000 == 0){
+                                newPer1000 = 0;
+                            }
+                            else{
+                                newPer1000 = newFirmSum/pop1000;
+                            }
+                            
+                            curCoord["y"] = newPer1000;
+                            curCoord["raw"] = newFirmSum;
+                            //Want to return: x:year y:percent
+                            return curCoord;                        
+                        }
+                    })
+
+                    //Only return once per metroArea
+                    return {key:msaId,values:valueArray,area:false};
+                })
+
+                var rankedData = scope.rankCities(chartData);
+                var polishedData = scope.polishData(rankedData,dataset);
+
+                return polishedData;            
+            }
+            else{
+                scope.getData('countyPop',function(msaData){
+                    scope.setState({"msaPop":msaData})
+                })
+                setTimeout(function(){ scope.processallMsa(data,dataset) }, 1500);    
+            }
+        }
     },
-    processDensityComposite:function(dataset){
+    processdensityComposite:function(dataset){
         var scope = this,
             years = d3.range(1990,2010);        
-
-        if(scope.state.shareValues && scope.state.shareValues.length > 0){
+        console.log("processdensityComposite");
+        if(scope.state.share && scope.state.share.length > 0){
             if(scope.state.newValues && scope.state.newValues.length > 0){
 
                 var newFirms = scope.state.newValues,
-                    share = scope.state.shareValues;
-                console.log("comp raw data",newFirms,share);
+                    share = scope.state.share;
 
                 var compositeCityRanks = [];
 
@@ -434,255 +449,54 @@ var DataStore = React.createClass({
             }
             else{
                 if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
-                        scope.setState({"newValues":scope.processFullMsa(scope.state.allMsa,"newValues")});
-                        setTimeout(function(){ scope.processDensityComposite(dataset) }, 1500);                
+                        scope.setState({"newValues":scope.processallMsa(scope.state.allMsa,"newValues")});
+                        setTimeout(function(){ scope.processdensityComposite(dataset) }, 1500);                
                 }
                 else{
                     scope.getData("allMsa",function(data){
-                        scope.setState({"allMsa":data,"newValues":scope.processFullMsa(data,"newValues")})
+                        scope.setState({"allMsa":data,"newValues":scope.processallMsa(data,"newValues")})
                     });
-                    setTimeout(function(){ scope.processDensityComposite(dataset) }, 10000);
+                    setTimeout(function(){ scope.processdensityComposite(dataset) }, 10000);
                 }
             }  
         }
         else{
             if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
-                scope.setState({"shareValues":scope.processFullMsa(scope.state.allMsa,"shareValues")});
-                setTimeout(function(){ scope.processDensityComposite(dataset) }, 1500);                
+                scope.setState({"share":scope.processallMsa(scope.state.allMsa,"share")});
+                setTimeout(function(){ scope.processdensityComposite(dataset) }, 1500);                
             }
             else{
                 scope.getData("allMsa",function(data){
-                    scope.setState({"allMsa":data,"shareValues":scope.processFullMsa(data,"shareValues")})
+                    scope.setState({"allMsa":data,"share":scope.processallMsa(data,"share")})
                 });
-                setTimeout(function(){ scope.processDensityComposite(dataset) }, 10000);
+                setTimeout(function(){ scope.processdensityComposite(dataset) }, 10000);
             }
         }  
     },
-    opportunityGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("opportunity Graph");
-        if(scope.state.rawOpportunityData && Object.keys(scope.state.rawOpportunityData).length > 0){
-            if(scope.state.opportunityData && scope.state.opportunityData.length > 0){
-                graphData = scope.state.opportunityData;        
-                return graphData;          
-            }
-            else{
-                scope.setState({"opportunityData":scope.processOpportunityData(scope.state.rawOpportunityData)});
-                setTimeout(function(){ scope.opportunityGraph(filters) }, 1500);                
-            }
-        }
-        else{
-            scope.getData("equalOpp",function(data){
-                scope.setState({"rawOpportunityData":data,"opportunityData":scope.processOpportunityData(data)})
-            });
-            setTimeout(function(){ scope.opportunityGraph(filters) }, 1500);
-        }
-    },
-    immGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("share of immigration Graph");
-        if(scope.state.rawImmData && Object.keys(scope.state.rawImmData).length > 0){
-            if(scope.state.immData && Object.keys(scope.state.immData).length){
-                graphData = scope.state.immData;        
-                return graphData;          
-            }
-            else{
-                scope.setState({"immData":scope.processGeneral(scope.state.rawImmData,"immData")});
-                setTimeout(function(){ scope.immGraph(filters) }, 1500);                
-            }
-        }
-        else{
-            scope.getData("shareImm",function(data){
-                scope.setState({"rawImmData":data,"immData":scope.processGeneral(data,"immData")})
-            });
-            setTimeout(function(){ scope.immGraph(filters) }, 1500);
-        }
-    },
-    incGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("inc5000 Graph");
-        if(scope.state.rawIncData && Object.keys(scope.state.rawIncData).length > 0){
-            if(scope.state.incData && Object.keys(scope.state.incData).length > 0){
-                graphData = scope.state.incData;
-                return graphData;  
-            }
-            else{
-                scope.setState({"incData":scope.processIncData(scope.state.rawIncData)});
-                setTimeout(function(){ scope.incGraph(filters) }, 5000);                
-            }
-        }
-        else{
-            scope.getData("inc5000",function(data){
-                scope.setState({"rawIncData":data,"incData":scope.processIncData(data)})
-            });
-            setTimeout(function(){ scope.incGraph(filters) }, 10000);
-        } 
-    },
-    netMigrationGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("ACS net migration Graph");
-        if(scope.state.rawMigrationData && Object.keys(scope.state.rawMigrationData).length > 0){
-            if(scope.state.migrationData && Object.keys(scope.state.migrationData).length > 0){
-                graphData = scope.state.migrationData;
-                return graphData;  
-            }
-            else{
-                scope.setState({"migrationData":scope.processGeneral(scope.state.rawMigrationData,"migrationData")});
-                setTimeout(function(){ scope.netMigrationGraph(filters) }, 1500);                
-            }
-        }
-        else{
-            scope.getData("migration",function(data){
-                scope.setState({"rawMigrationData":data,"migrationData":scope.processGeneral(data,"migrationData")})
-            });
-            setTimeout(function(){ scope.netMigrationGraph(filters) }, 5000);
-        }               
-    },
-    inflowMigrationGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("inflowMigration Graph");
-        if(scope.state.detailMigration && Object.keys(scope.state.detailMigration).length > 0){
-            if(scope.state.inflowMigration && Object.keys(scope.state.inflowMigration).length > 0){
-                graphData = scope.state.inflowMigration;
-                return graphData;  
-            }
-            else{
-                scope.setState({"inflowMigration":scope.processDetailMigration(scope.state.detailMigration,"inflowMigration")});
-                setTimeout(function(){ scope.inflowMigrationGraph(filters) }, 1500);                
-            }
-        }
-        else{
-            scope.getData("detailMigration",function(data){
-                scope.setState({"detailMigration":data,"inflowMigration":scope.processDetailMigration(data,"inflowMigration")})
-            });
-            setTimeout(function(){ scope.inflowMigrationGraph(filters) }, 5000);
-        } 
-    },
-    irsNetGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("irsNet Graph");
-        if(scope.state.detailMigration && Object.keys(scope.state.detailMigration).length > 0){
-            if(scope.state.irsNet && Object.keys(scope.state.irsNet).length > 0){
-                graphData = scope.state.irsNet;
-                return graphData;  
-            }
-            else{
-                scope.setState({"irsNet":scope.processDetailMigration(scope.state.detailMigration,"irsNet")});
-                setTimeout(function(){ scope.irsNetGraph(filters) }, 1500);                
-            }
-        }
-        else{
-            scope.getData("detailMigration",function(data){
-                scope.setState({"detailMigration":data,"irsNet":scope.processDetailMigration(data,"irsNet")})
-            });
-            setTimeout(function(){ scope.irsNetGraph(filters) }, 5000);
-        }             
-    },
-    outflowMigrationGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("outflowMigration Graph");
-        if(scope.state.detailMigration && Object.keys(scope.state.detailMigration).length > 0){
-            if(scope.state.outflowMigration && Object.keys(scope.state.outflowMigration).length > 0){
-                graphData = scope.state.outflowMigration;
-                return graphData;  
-            }
-            else{
-                scope.setState({"outflowMigration":scope.processDetailMigration(scope.state.detailMigration,"outflowMigration")});
-                setTimeout(function(){ scope.outflowMigrationGraph(filters) }, 1500);                
-            }
-        }
-        else{
-            scope.getData("detailMigration",function(data){
-                scope.setState({"detailMigration":data,"outflowMigration":scope.processDetailMigration(data,"outflowMigration")})
-            });
-            setTimeout(function(){ scope.outflowMigrationGraph(filters) }, 5000);
-        }        
-    },
-    totalMigrationFlowGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("totalMigrationFlow Graph");
-        if(scope.state.detailMigration && Object.keys(scope.state.detailMigration).length > 0){
-            if(scope.state.totalMigrationFlow && Object.keys(scope.state.totalMigrationFlow).length > 0){
-                graphData = scope.state.totalMigrationFlow;
-                return graphData;  
-            }
-            else{
-                scope.setState({"totalMigrationFlow":scope.processDetailMigration(scope.state.detailMigration,"totalMigrationFlow")});
-                setTimeout(function(){ scope.totalMigrationFlowGraph(filters) }, 1500);                
-            }
-        }
-        else{
-            scope.getData("detailMigration",function(data){
-                scope.setState({"detailMigration":data,"totalMigrationFlow":scope.processDetailMigration(data,"totalMigrationFlow")})
-            });
-            setTimeout(function(){ scope.totalMigrationFlowGraph(filters) }, 5000);
-        }
-    },
-	shareGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("share new emp Graph");
-        if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
-            if(scope.state.shareValues && scope.state.shareValues.length > 0){
-                graphData = scope.state.shareValues;
-                return graphData;  
-            }
-            else{
-                scope.setState({"shareValues":scope.processFullMsa(scope.state.allMsa,"shareValues")});
-                setTimeout(function(){ scope.shareGraph(filters) }, 5000);                
-            }
-        }
-        else{
-            scope.getData("allMsa",function(data){
-                scope.setState({"allMsa":data,"shareValues":scope.processFullMsa(data,"shareValues")})
-            });
-            setTimeout(function(){ scope.shareGraph(filters) }, 10000);
-        }
-	},
-	newGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("new firms per 1000 Graph");
-        if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
-            if(scope.state.newValues && scope.state.newValues.length > 0){
-                graphData = scope.state.newValues;
-                return graphData;  
-            }
-            else{
-                scope.setState({"newValues":scope.processFullMsa(scope.state.allMsa,"newValues")});
-                setTimeout(function(){ scope.newGraph(filters) }, 5000);                
-            }
-        }
-        else{
-            scope.getData("allMsa",function(data){
-                scope.setState({"allMsa":data,"newValues":scope.processFullMsa(data,"newValues")})
-            });
-            setTimeout(function(){ scope.newGraph(filters) }, 10000);
-        }
-	},
-	densCompGraph:function(filters){
-        var scope = this;
-        var graphData;
-        console.log("composite density Graph");
-        if(scope.state.densityComposite && scope.state.densityComposite.length > 0){
-            graphData = scope.state.densityComposite;
-            return graphData;  
-        }
-        else{
-            scope.setState({"densityComposite":scope.processDensityComposite("densityComposite")});
-            setTimeout(function(){ scope.densCompGraph(filters) }, 20000);
-        }   
+    getGraphData:function(graphName,filters){
+        var scope = this,
+            graphData,
+            route = graphNametoRoute[graphName];
 
-        return graphData;
-	},
+        console.log("getGraphData || graphName:" + graphName, " Route:" +route);
+        console.log(scope.state);
+        if(scope.state[route] && Object.keys(scope.state[route]).length > 0){
+            if(scope.state[graphName] && Object.keys(scope.state[graphName]).length > 0){
+                graphData = scope.state[graphName];
+                return graphData;  
+            }
+            else{
+                scope.setState({[graphName]:scope[('process'+[route])](scope.state[route],graphName)})
+                setTimeout(function(){ scope.getGraphData(graphName,filters) }, 1500);                
+            }
+        }
+        else{
+            scope.getData(route,function(data){
+                scope.setState({[route]:data,[graphName]:scope[('process'+route)](data,graphName)})                
+            });
+            setTimeout(function(){ scope.getGraphData(graphName,filters) }, 5000);
+        }  
+    }, 
     sortCities:function(year){
         var scope = this;
         return function(a,b){
