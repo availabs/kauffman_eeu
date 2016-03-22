@@ -47,63 +47,27 @@ var GraphPage = React.createClass({
 
 		headerItems.forEach(function(items){
 			items.forEach(function(item){
-				item.className = "";
-			
-				if(item.id == e.target.id){
-					console.log(item.id);
-					item.className += ' active';			
+				if(item.className.substr(0,15) == "dropdown header"){
+					console.log('header');
+					console.log(item.children[1].children[e.target.id]);
+					item.className = "dropdown header"
+					if(item.children[1].children[e.target.id]){
+						item.children[1].children[e.target.id].className += 'active'
+						item.className = "dropdown header active";
+					}
+				}
+				else{
+					item.className = "";
+
+					if(item.id == e.target.id){
+						//console.log(item.id);
+						item.className += ' active';			
+					}					
 				}
 			})	
 		})
-		//console.log(e.target.id);
 
 		scope.setState({graph:e.target.id,loading:true});
-
-		if(e.target.id == "newValues"){
-			d3.select('#density')
-				.attr('class',"active");
-		}
-		else if(e.target.id == "share"){
-			d3.select('#density')
-				.attr('class',"active");
-		}
-		else if(e.target.id == "imm"){
-			d3.select('#diversity')
-				.attr('class',"active");
-		}	
-		else if(e.target.id == "netMigration"){
-			d3.select('#fluidity')
-				.attr('class',"active");
-		}
-		else if(e.target.id == "inflowMigration"){
-			d3.select('#fluidity')
-				.attr('class',"active");
-		}
-		else if(e.target.id == "outflowMigration"){
-			d3.select('#fluidity')
-				.attr('class',"active");
-		}	
-		else if(e.target.id == "irsNet"){
-			d3.select('#fluidity')
-				.attr('class',"active");
-		}	
-		else if(e.target.id == "inc"){
-			d3.select('#fluidity')
-				.attr('class',"active");
-		}
-		else if(e.target.id == "totalMigrationFlow"){
-			d3.select('#fluidity')
-				.attr('class',"active");
-		}	
-		else if(e.target.id == "opportunity"){
-			d3.select('#diversity')
-				.attr('class',"active");
-		}					
-		else{
-			d3.select('#density')
-				.attr('class',"active");
-		}
-
 	},
     toggleColor:function(e){
     	var scope = this;
@@ -121,7 +85,7 @@ var GraphPage = React.createClass({
 
 	    var graphHeader = (
 	    	<ul className="nav nav-tabs">
-	    		<li className="dropdown" id="density">
+	    		<li className="dropdown header" id="density">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Density Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
 			    		<li id="share"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in new Firms</a></li>
@@ -129,14 +93,14 @@ var GraphPage = React.createClass({
 	    				<li id="densityComposite"  onClick={scope.toggleGraph}><a id="densityComposite" >Density Composite Rank</a></li>
 	    			</ul>
 	    		</li>
-	    		<li className="dropdown" id="diversity">
+	    		<li className="dropdown header" id="diversity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Diversity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
 			    		<li id="imm" onClick={scope.toggleGraph} ><a id="imm" >Share of Immigrant Population</a></li>		
 			    		<li id="opportunity" onClick={scope.toggleGraph} ><a id="opportunity" >Income Gain/Loss from Childhood Residence</a></li>		
 	    			</ul>
 	    		</li>
-	    		<li className="dropdown active" id="fluidity">
+	    		<li className="dropdown header active" id="fluidity">
 	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
 	    			<ul className="dropdown-menu">
 	    				<li id="inc"   onClick={scope.toggleGraph}><a id="inc" >High Growth Firms</a></li>	
