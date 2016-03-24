@@ -52,11 +52,8 @@ var GraphPage = React.createClass({
 			})	
 		})
 
-		scope.setState({data:undefined})
-		scope.processData(e.target.id,function(data){
-			console.log("togglegraph",data);
-			scope.setState({data:data,graph:e.target.id,metric:metricName});
-		})
+		scope.setState({data:undefined,graph:e.target.id,metric:metricName})
+		scope.processData(e.target.id);
 		
 	},
 	render:function() {
