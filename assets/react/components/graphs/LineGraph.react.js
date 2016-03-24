@@ -187,7 +187,6 @@ var LineGraph = React.createClass({
                     .x(function(d) { return x(d.x); })
                     .y(function(d) { return y(d.y); });
 
-
                 heightVal = 200             
             }
     
@@ -209,19 +208,14 @@ var LineGraph = React.createClass({
               .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
-
             filteredData.sort(function(a,b){
 
                 return b.values[0].rank - a.values[0].rank
             })
    
-
             //For each city
             //Draw a path from (x1,y1) to (x2,y2)
             //Where x goes from year[0] to year[end]
-
-
             filteredData.forEach(function(b,i){
 
                     svg.append("g")
@@ -395,14 +389,12 @@ var LineGraph = React.createClass({
     resetBrush:function(){
         var scope = this;
 
-
-        if(Array.isArray(scope.props.data)){
+        if(!Array.isArray(scope.props.data)){
             var data = scope.props.data[scope.state.dataType];
         }
         else{
             var data = scope.props.data;
         }
-
 
         if(scope.state.plot == "rank"){
             var extent = [d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]              
@@ -410,8 +402,7 @@ var LineGraph = React.createClass({
         else{
             var extent = [d3.min(data, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]            
         }
-         
-        
+             
         console.log("reset",extent)
         scope.setState({extent:extent})
     },
@@ -447,21 +438,14 @@ var LineGraph = React.createClass({
         }
 
         if(active == 'rankButton'){
-            //scope.setState({plot:'rank',extent:[363,0]});
             var extent = [d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]
             scope.setState({plot:'rank',extent:extent})
-
         }
         else{
-
             var extent = [0,d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]
 
             scope.setState({plot:'value',extent:extent})
-
         }
-
-
-
     },
     toggleRawRelative:function(e){
         console.log("toggle rank/val",e.target.id);
@@ -536,40 +520,35 @@ var LineGraph = React.createClass({
         var rankButton;
         var valueButton;
 
-        if(scope.props.graph.slice(-9) != "Composite"){
+        if(!Array.isArray(scope.props.data)){
             valueButton = (
                 <button id="valueButton" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRankValue}>Value</button>
                 )
 
             rankButton = (
                 <button id="rankButton" style={buttonStyle} className="btn btn-success" onClick={scope.toggleRankValue}>Rank</button>
-                )            
-        }
+                )     
 
-
-        if(!Array.isArray(scope.props.data)){
             rawButton = (
                 <button id="rawButton" style={buttonStyle} className="btn btn-success" onClick={scope.toggleRawRelative}>Raw Values</button>
                 )
 
             relativeButton = (
-                <button id="relativeButton" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRawRelative}>Relative Values</button>
+                <button id="relativeButton" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRawRelative}>{graphInfo[scope.props.graph].relTitle}</button>
                 )                
+            if(Object.keys(scope.props.data).length>2){
+                relativeButton2 = (
+                    <button id="relativeButton2" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRawRelative}>{graphInfo[scope.props.graph].relTitle2}</button>
+                    )     
+            }
+
         }
-
-        if(scope.props.graph == "inc"){
-            relativeButton2 = (
-                <button id="relativeButton2" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRawRelative}>Relative Values (by Population)</button>
-                )     
-        }
-
-
 
         if(scope.props.data.length != 0){
             scope.renderGraph();
             return (
                 <div>
-                    <h3>{graphInfo[scope.props.graph].title}</h3>
+                    <h3>{graphInfo[scope.props.graph].title} </h3>
                     <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}{relativeButton2}</div>
                 </div>
             );          

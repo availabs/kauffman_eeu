@@ -22,8 +22,8 @@ var DataStore = React.createClass({
             irsNet:{},
             totalMigrationFlow:{},
             allMsa:{},
-			share:[],
-			newValues:[],
+			share:{},
+			newValues:{},
             densityComposite:[],
             msaPop:{}			
 		}
@@ -66,6 +66,11 @@ var DataStore = React.createClass({
         var scope = this,
             maxYear = d3.max(graphRawData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
         
+        //Current Population dataset only goes to 2014        
+        if(maxYear > 2014){
+            maxYear = 2014;
+        }
+
         if(scope.state.msaPop && Object.keys(scope.state.msaPop).length > 0){        
             var graphRelativeData = graphRawData.map(function(metroArea){
                 var newValues = [];
@@ -76,10 +81,10 @@ var DataStore = React.createClass({
                         if(scope.state.msaPop[metroArea.key]){
                             if(scope.state.msaPop[metroArea.key][yearVal.x]){
                                 var newY = yearVal.y / scope.state.msaPop[metroArea.key][yearVal.x];
-                                newCoord = {x: yearVal.x, y:newY};                               
+                                newCoord = {x: yearVal.x, y:newY};                                
                             }
                         }
-                        newValues.push(newCoord);                       
+                        newValues.push(newCoord);   
                     }
                 })
                 return ({key:metroArea.key,values:newValues,area:false});                
@@ -147,13 +152,13 @@ var DataStore = React.createClass({
     processinc5000:function(data){
         var scope = this;
         console.log("processinc5000");
-        if(scope.state.newValues && scope.state.newValues.length > 0){
+        if(scope.state.newValues && Object.keys(scope.state.newValues).length > 0){
 
             var finalData = scope.convertToCoordinateArray(data,"inc5000");
             var rankedData = scope.rankCities(finalData);
             var polishedData = scope.polishData(rankedData,"inc5000");
 
-            var newFirms = scope.state.newValues;
+            var newFirms = scope.state.newValues['raw'];
             var totalEmp = {};
 
             newFirms.forEach(function(city){
@@ -163,7 +168,7 @@ var DataStore = React.createClass({
                 Object.keys(city.values).forEach(function(yearValue){
                     //Want to return: x:year y:percent
                     valueObject[city.values[yearValue].x] = 0;
-                    valueObject[city.values[yearValue].x] = city.values[yearValue].raw;
+                    valueObject[city.values[yearValue].x] = city.values[yearValue].y;
                 })
 
                 //Only return once per metroArea
@@ -362,13 +367,17 @@ var DataStore = React.createClass({
                     })
                 })  
 
+                var rawChartData = [];
+
                 //Every msa represented as:
                 //{values:[{x:val,y:val}....],key=msa,}
                 //Want to return 1 (x,y) object for each year, where x=year and y=new firms per 1000 people
-                var chartData = Object.keys(newFirmData).map(function(msaId){
+                var relativeChartData = Object.keys(newFirmData).map(function(msaId){
                     //Iterating through every year within a metro area
-                    var valueArray = Object.keys(newFirmData[msaId]).map(function(year){
-                        var curCoord={"x":+year,"y":0,"raw":0},
+                    var rawValueArray = [];
+                    var relativeValueArray = Object.keys(newFirmData[msaId]).map(function(year){
+                        var curRelativeCoord={"x":+year,"y":0},
+                            curRawCoord={"x":+year,"y":0},
                             newFirmSum = 0,
                             newPer1000 = 0,
                             pop = 0,
@@ -392,10 +401,12 @@ var DataStore = React.createClass({
                         if(dataset == "share"){
                             share = newFirmSum/totalEmploySum;
 
-                            curCoord["raw"] = newFirmSum
-                            curCoord["y"] = share;
+                            curRawCoord["y"] = newFirmSum
+                            curRelativeCoord["y"] = share;
+
                             //Want to return: x:year y:percent
-                            return curCoord;
+                            rawValueArray.push(curRawCoord);
+                            return curRelativeCoord;
                         }
                         else{
                             if(scope.state.msaPop[msaId] && scope.state.msaPop[msaId][year]){
@@ -413,21 +424,31 @@ var DataStore = React.createClass({
                                 newPer1000 = newFirmSum/pop1000;
                             }
                             
-                            curCoord["y"] = newPer1000;
-                            curCoord["raw"] = newFirmSum;
+                            curRelativeCoord["y"] = newPer1000;
+                            curRawCoord["y"] = newFirmSum;
+
                             //Want to return: x:year y:percent
-                            return curCoord;                        
+                            rawValueArray.push(curRawCoord);                            
+                            return curRelativeCoord;                        
                         }
                     })
 
                     //Only return once per metroArea
-                    return {key:msaId,values:valueArray,area:false};
+                    rawChartData.push({key:msaId,values:rawValueArray,area:false})
+                    return {key:msaId,values:relativeValueArray,area:false};
                 })
 
-                var rankedData = scope.rankCities(chartData);
-                var polishedData = scope.polishData(rankedData,dataset);
+                var rankedData = scope.rankCities(relativeChartData);
+                var polishedData = scope.polishData(rankedData,("relative"+dataset));
 
-                return polishedData;            
+                var rankedData2 = scope.rankCities(rawChartData);
+                var polishedData2 = scope.polishData(rankedData2,dataset);
+
+                var graphData = {};
+                graphData['raw'] = polishedData2;
+                graphData['relative'] = polishedData;
+
+                return graphData;            
             }
             else{
                 scope.getData('countyPop',function(msaData){
@@ -441,11 +462,11 @@ var DataStore = React.createClass({
         var scope = this,
             years = d3.range(1990,2010);        
         console.log("processdensityComposite");
-        if(scope.state.share && scope.state.share.length > 0){
-            if(scope.state.newValues && scope.state.newValues.length > 0){
+        if(scope.state.share && Object.keys(scope.state.share).length > 0){
+            if(scope.state.newValues && Object.keys(scope.state.newValues).length > 0){
 
-                var newFirms = scope.state.newValues,
-                    share = scope.state.share;
+                var newFirms = scope.state.newValues['relative'],
+                    share = scope.state.share['relative'];
 
                 var compositeCityRanks = [];
 

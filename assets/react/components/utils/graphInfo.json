@@ -1,13 +1,13 @@
 {
-	"share":{"id":"share","title":"Share of Employment in New Firms","metric":"Density","route":"allMsa"},
-	"newValues":{"id":"newValues","title":"New Firms per 1000 People","metric":"Density","route":"allMsa"},
+	"share":{"id":"share","title":"Employment in New Firms","metric":"Density","route":"allMsa","relTitle":"Share employed in New Firms"},
+	"newValues":{"id":"newValues","title":"New Firms","metric":"Density","route":"allMsa","relTitle":"Firms per 1000 people"},
 	"densityComposite":{"id":"densityComposite","title":"Density Composite Rank","metric":"Density","route":"allMsa"},
-	"imm":{"id":"imm","title":"Percentage of Population that is Foriegn Born","metric":"Diversity","route":"shareImm"},
+	"imm":{"id":"imm","title":"Foriegn Born Population","metric":"Diversity","route":"shareImm","relTitle":"Percentage of Foriegn Born"},
 	"opportunity":{"id":"opportunity","title":"Income Gain/Loss from Childhood Residence","metric":"Diversity","route":"equalOpp"},
-	"inc":{"id":"inc","title":"High Growth Firms","metric":"Fluidity","route":"inc5000"},
-	"irsNet":{"id":"irsNet","title":"Net Migration (IRS)","metric":"Fluidity","route":"detailMigration"},
-	"netMigration":{"id":"netMigration","title":"Net Migration (ACS)","metric":"Fluidity","route":"migration"},
-	"totalMigrationFlow":{"id":"totalMigrationFlow","title":"Total Migration (Outflow/Inflow Sum) (IRS)","metric":"Fluidity","route":"detailMigration"},
-	"inflowMigration":{"id":"inflowMigration","title":"Inflow Migration","metric":"Fluidity","route":"detailMigration"},
-	"outflowMigration":{"id":"outflowMigration","title":"Outflow Migration","metric":"Fluidity","route":"detailMigration"}
+	"inc":{"id":"inc","title":"High Growth Firms","metric":"Fluidity","route":"inc5000","relTitle":"Relative by Total Number of Firms","relTitle2":"Relative By Total Population"},
+	"irsNet":{"id":"irsNet","title":"Net Migration (IRS)","metric":"Fluidity","route":"detailMigration","relTitle":"Relative By Total Population"},
+	"netMigration":{"id":"netMigration","title":"Net Migration (ACS)","metric":"Fluidity","route":"migration","relTitle":"Relative By Total Population"},
+	"totalMigrationFlow":{"id":"totalMigrationFlow","title":"Total Migration (Outflow/Inflow Sum) (IRS)","metric":"Fluidity","route":"detailMigration","relTitle":"Relative By Total Population"},
+	"inflowMigration":{"id":"inflowMigration","title":"Inflow Migration","metric":"Fluidity","route":"detailMigration","relTitle":"Relative By Total Population"},
+	"outflowMigration":{"id":"outflowMigration","title":"Outflow Migration","metric":"Fluidity","route":"detailMigration","relTitle":"Relative By Total Population"}
 }
