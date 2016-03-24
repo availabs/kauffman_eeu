@@ -38,6 +38,30 @@ var DataStore = React.createClass({
             cb(data);
         })
     },
+    getGraphData:function(graphName,filters){
+        var scope = this,
+            graphData,
+            route = graphInfo[graphName].route;
+
+        console.log("getGraphData || graphName:" + graphName, " Route:" +route);
+        console.log(scope.state);
+        if(scope.state[route] && Object.keys(scope.state[route]).length > 0){
+            if(scope.state[graphName] && Object.keys(scope.state[graphName]).length > 0){
+                graphData = scope.state[graphName];
+                return graphData;  
+            }
+            else{
+                scope.setState({[graphName]:scope[('process'+[route])](scope.state[route],graphName)})
+                setTimeout(function(){ scope.getGraphData(graphName,filters) }, 1500);                
+            }
+        }
+        else{
+            scope.getData(route,function(data){
+                scope.setState({[route]:data,[graphName]:scope[('process'+route)](data,graphName)})                
+            });
+            setTimeout(function(){ scope.getGraphData(graphName,filters) }, 5000);
+        }  
+    }, 
     relativeAgainstPopulation:function(graphRawData){
         var scope = this,
             maxYear = d3.max(graphRawData, function(c) { return d3.max(c.values, function(v) { return v.x }); })
@@ -120,9 +144,9 @@ var DataStore = React.createClass({
 
         return polishedData;
     },
-    processinc:function(data){
+    processinc5000:function(data){
         var scope = this;
-        console.log("processinc");
+        console.log("processinc5000");
         if(scope.state.newValues && scope.state.newValues.length > 0){
 
             var finalData = scope.convertToCoordinateArray(data,"inc5000");
@@ -186,13 +210,13 @@ var DataStore = React.createClass({
         else{
             if(scope.state.allMsa && Object.keys(scope.state.allMsa).length > 0){
                 scope.setState({"newValues":scope.processallMsa(scope.state.allMsa,"newValues")});
-                setTimeout(function(){ scope.processinc(data) }, 3000);                
+                setTimeout(function(){ scope.processinc5000(data) }, 3000);                
             }
             else{
                 scope.getData("allMsa",function(rawMsaData){
                     scope.setState({"allMsa":rawMsaData,"newValues":scope.processallMsa(rawMsaData,"newValues")})
                 });
-                setTimeout(function(){ scope.processinc(data) }, 10000);
+                setTimeout(function(){ scope.processinc5000(data) }, 10000);
             }
         }
     },   
@@ -473,30 +497,6 @@ var DataStore = React.createClass({
             }
         }  
     },
-    getGraphData:function(graphName,filters){
-        var scope = this,
-            graphData,
-            route = graphInfo[graphName].route;
-
-        console.log("getGraphData || graphName:" + graphName, " Route:" +route);
-        console.log(scope.state);
-        if(scope.state[route] && Object.keys(scope.state[route]).length > 0){
-            if(scope.state[graphName] && Object.keys(scope.state[graphName]).length > 0){
-                graphData = scope.state[graphName];
-                return graphData;  
-            }
-            else{
-                scope.setState({[graphName]:scope[('process'+[route])](scope.state[route],graphName)})
-                setTimeout(function(){ scope.getGraphData(graphName,filters) }, 1500);                
-            }
-        }
-        else{
-            scope.getData(route,function(data){
-                scope.setState({[route]:data,[graphName]:scope[('process'+route)](data,graphName)})                
-            });
-            setTimeout(function(){ scope.getGraphData(graphName,filters) }, 5000);
-        }  
-    }, 
     sortCities:function(year){
         var scope = this;
         return function(a,b){

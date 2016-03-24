@@ -3,6 +3,7 @@ var React = require("react"),
     metroPop20002009 = require("../utils/metroAreaPop2000_2009.json"),
     msaIdToName = require('../utils/msaIdToName.json'),
     RankTable = require('../graphs/RankTable.react'),
+    graphInfo = require('../utils/graphInfo.json'),
     abbrToFips = require('../utils/abbrToFips.json');
 
 var LineGraph = React.createClass({
@@ -630,7 +631,7 @@ var LineGraph = React.createClass({
             scope.renderGraph();
             return (
                 <div>
-                    <h3>Rankings</h3>
+                    <h3>{graphInfo[scope.props.graph].title}</h3>
                     <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}{relativeButton2}</div>
                 </div>
             );          
@@ -638,6 +639,7 @@ var LineGraph = React.createClass({
         else{
             return (
                 <div>
+                <h3>Loading...</h3>
                 </div>
             );          
         }
