@@ -12,6 +12,7 @@ var GraphPage = React.createClass({
 	getInitialState:function(){
 		return({
 			graph:"netMigration",
+			metric:"Fluidity",
 			data:[],
 			loading:true,
 			});
@@ -19,10 +20,12 @@ var GraphPage = React.createClass({
     componentDidMount:function(){
         var scope = this;
 
+		d3.select('#' + scope.state.graph)[0][0].className = "active";
+		d3.select('#' + scope.state.metric)[0][0].className = "dropdown header active";
+
         scope.processData(scope.state.graph,function(data){
         	scope.setState({data:data,loading:false});        	
         })
-
     },
     componentWillUpdate:function(nextProps,nextState){
     	var scope = this;
@@ -31,28 +34,26 @@ var GraphPage = React.createClass({
 			nextState.data = data;
 			nextState.loading = false;
     	});
-
     },
     processData:function(graph,cb){
     	var scope = this;
         var filters = "none"
 
-        cb(scope.refs.store.getGraphData(graph,filters));
-   			
+        cb(scope.refs.store.getGraphData(graph,filters));	
     },
 	toggleGraph:function(e){
 		var scope = this;
 
 		var headerItems = d3.selectAll('li');
 
+		var metricName;
+
 		headerItems.forEach(function(items){
 			items.forEach(function(item){
 				if(item.className.substr(0,15) == "dropdown header"){
-					console.log('header');
-					console.log(item.children[1].children[e.target.id]);
 					item.className = "dropdown header"
 					if(item.children[1].children[e.target.id]){
-						item.children[1].children[e.target.id].className += 'active'
+						metricName = item.id;
 						item.className = "dropdown header active";
 					}
 				}
@@ -67,52 +68,56 @@ var GraphPage = React.createClass({
 			})	
 		})
 
-		scope.setState({graph:e.target.id,loading:true});
+		scope.setState({graph:e.target.id,metric:metricName,loading:true});
 	},
-    toggleColor:function(e){
-    	var scope = this;
-    	scope.setState({color:e.target.id});
-    },
-    toggleGroup:function(e){
-    	var scope = this;
-    	scope.setState({group:e.target.id});
-    },
 	render:function() {
 		var scope = this;
 
 	    var graph,
 	    	divs;
 
-	    var graphHeader = (
+	    var densityGraphs = [
+	    	{id:'share','title':'Share of Employment in New Firms'},
+	    	{id:'newValues','title':'New Firms per 1000 People'},
+	    	{id:'densityComposite',title:'Density Composite Rank'}],
+	    	diversityGraphs = [
+	    	{id:'imm','title':'Percentage of Population that is Foriegn Born'},
+	    	{id:'opportunity','title':'Income Gain/Loss from Childhood Residence'}],
+	    	fluidityGraphs = [
+	    	{id:'inc',title:'High Growth Firms'},
+	    	{id:'irsNet',title:'Net Migration (IRS)'},
+	    	{id:'netMigration',title:'Net Migration (ACS)'},
+	    	{id:'totalMigrationFlow',title:'Total Migration (Outflow/Inflow Sum) (IRS)'},
+	    	{id:'inflowMigration',title:'Inflow Migration'},
+	    	{id:'outflowMigration',title:'Outflow Migration'}];
+
+	    var metrics = {
+	    	'Density':densityGraphs,
+	    	'Diversity':diversityGraphs,
+	    	'Fluidity':fluidityGraphs
+	    }
+
+	    var graphHeader = Object.keys(metrics).map(function(metricName){
+	    	var metricItems = metrics[metricName].map(function(graph){
+	    		return (<li id={graph.id}  onClick={scope.toggleGraph}><a id={graph.id} >{graph.title}</a></li>)
+	    	})
+	    	return (
+    			<li className="dropdown header" id={metricName}>
+	    			<a className="dropdown-toggle" data-toggle="dropdown">{metricName} Metrics<span className="caret"></span></a>	    			
+	    			<ul className="dropdown-menu">
+	    				{metricItems}
+	    			</ul>
+    			</li>
+    		)
+	    })
+
+	    var graphTabs = (
 	    	<ul className="nav nav-tabs">
-	    		<li className="dropdown header" id="density">
-	    			<a className="dropdown-toggle" data-toggle="dropdown">Density Metrics<span className="caret"></span></a>
-	    			<ul className="dropdown-menu">
-			    		<li id="share"  onClick={scope.toggleGraph}><a id="share" >Share of Employment in new Firms</a></li>
-			    		<li id="newValues"  onClick={scope.toggleGraph} ><a id="newValues" >New firms per 1000 people</a></li>
-	    				<li id="densityComposite"  onClick={scope.toggleGraph}><a id="densityComposite" >Density Composite Rank</a></li>
-	    			</ul>
-	    		</li>
-	    		<li className="dropdown header" id="diversity">
-	    			<a className="dropdown-toggle" data-toggle="dropdown">Diversity Metrics<span className="caret"></span></a>
-	    			<ul className="dropdown-menu">
-			    		<li id="imm" onClick={scope.toggleGraph} ><a id="imm" >Share of Immigrant Population</a></li>		
-			    		<li id="opportunity" onClick={scope.toggleGraph} ><a id="opportunity" >Income Gain/Loss from Childhood Residence</a></li>		
-	    			</ul>
-	    		</li>
-	    		<li className="dropdown header active" id="fluidity">
-	    			<a className="dropdown-toggle" data-toggle="dropdown">Fluidity Metrics<span className="caret"></span></a>
-	    			<ul className="dropdown-menu">
-	    				<li id="inc"   onClick={scope.toggleGraph}><a id="inc" >High Growth Firms</a></li>	
-	    				<li id="irsNet"  onClick={scope.toggleGraph}><a id="irsNet" >Net Migration (IRS)</a></li>
-			    		<li id="netMigration" className="active" onClick={scope.toggleGraph}><a id="netMigration" >Net Migration (ACS)</a></li>
-			    		<li id="totalMigrationFlow"  onClick={scope.toggleGraph}><a id="totalMigrationFlow" >Total Migration (Outflow/Inflow Sum) (IRS)</a></li>
-			    		<li id="inflowMigration"  onClick={scope.toggleGraph}><a id="inflowMigration" >Inflow Migration</a></li>
-			    		<li id="outflowMigration"  onClick={scope.toggleGraph}><a id="outflowMigration" >Outflow Migration</a></li>	
-	    			</ul>
-	    		</li>
+				{graphHeader}
 	    	</ul>
-	    	);
+	    	)
+
+
         var buttonStyle = {
             marginTop:'30px',
             marginLeft:'10px'
@@ -120,6 +125,7 @@ var GraphPage = React.createClass({
 
 
 	    var store = (<DataStore ref='store' />);
+
 	    if(scope.state.graph != "opportunity"){
 	    	var graph = (<LineGraph data={scope.state.data} graph={scope.state.graph} />)
 	    }
@@ -128,12 +134,13 @@ var GraphPage = React.createClass({
 	    }
 	    var filters = "none"
 	    console.log("graphapge render state",scope.state);
+
 	    if(!scope.state.loading){
 		    return (
 		    	<div>
 		    		<div>
 		    		<a id="downloadAnchorElem"></a>
-		    			{graphHeader}
+		    			{graphTabs}
 		    		</div>
 		    			{store}
 		    		<div>
@@ -141,16 +148,14 @@ var GraphPage = React.createClass({
 		    		</div>
 
 		    	</div>
-
-
-		    	)
+		    )
 	    }
 	    else{
 		    return (
 		    	<div>
 		    		<div>
 		    		<a id="downloadAnchorElem"></a>
-		    			{graphHeader}
+		    			{graphTabs}
 		    		</div>
 		    			{store}
 		    		<div>
@@ -158,15 +163,8 @@ var GraphPage = React.createClass({
 		    		</div>
 
 		    	</div>
-
-
-		    	)
+		    )
 	    }
-
-
-
-
-
 	}
 });
 
