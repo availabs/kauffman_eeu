@@ -38,7 +38,6 @@ var LineGraph = React.createClass({
 
         var selected = "false";
 
-
         //Get rid of everything already in the svg
         d3.selectAll("svg").remove();
 

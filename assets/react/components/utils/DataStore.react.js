@@ -52,7 +52,7 @@ var DataStore = React.createClass({
             }
             else{
                 scope.setState({[graphName]:scope[('process'+[route])](scope.state[route],graphName)})
-                setTimeout(function(){ scope.getGraphData(graphName,filters,cb) }, 1500);                
+                setTimeout(function(){ scope.getGraphData(graphName,filters,cb) }, 3000);                
             }
         }
         else{
