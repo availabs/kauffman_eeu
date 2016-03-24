@@ -29,10 +29,8 @@ var LineGraph = React.createClass({
         }
     },
     renderGraph:function(){
-
-        //1 - Share of employmment in new firms OVER TIME
-        //One line per metro area -- line graph
         var percFormat = d3.format(".3%"),
+            axisPercFormat = d3.format("%"),
             scope = this;
 
         var selected = "false";
@@ -54,7 +52,6 @@ var LineGraph = React.createClass({
 
 
             console.log(data);
-
 
             var filteredData = [];
 
@@ -198,6 +195,11 @@ var LineGraph = React.createClass({
                 .scale(y)
                 .orient("left");
 
+            if(scope.state.dataType != "raw" && scope.props.graph != "newValues"){
+                yAxis.tickFormat(axisPercFormat);
+            }
+
+
             var yAxisBrush = d3.svg.axis()
                 .scale(yBrush)
                 .orient("right");
@@ -217,14 +219,13 @@ var LineGraph = React.createClass({
             //Draw a path from (x1,y1) to (x2,y2)
             //Where x goes from year[0] to year[end]
             filteredData.forEach(function(b,i){
-
-                    svg.append("g")
-                        .append("path")
-                        .attr("d",function(){b.border = this; return line(b.values)})
-                        .style("stroke","black")
-                        .style("stroke-width",((height)/(heightVal))-1.5)
-                        .style("fill","none")
-                        .style("opacity",".4");     
+                svg.append("g")
+                    .append("path")
+                    .attr("d",function(){b.border = this; return line(b.values)})
+                    .style("stroke","black")
+                    .style("stroke-width",((height)/(heightVal))-1.5)
+                    .style("fill","none")
+                    .style("opacity",".4");     
 
                 svg.append("g")
                         .append("path")
@@ -240,9 +241,9 @@ var LineGraph = React.createClass({
                   .attr("transform", "translate(-100,-100)")
                   .attr("class", "focus");
 
-                focus.append("text")
-                  .attr("y", -10)
-                  .style("font-weight","bold");
+            focus.append("text")
+              .attr("y", -10)
+              .style("font-weight","bold");
 
             var voronoiGroup = svg.append("g")
                   .attr("class", "voronoi")
@@ -277,7 +278,12 @@ var LineGraph = React.createClass({
                     popText += name + ' | ' + d.x +':  '+ d.rank;                    
                 }
                 else{
-                    popText += name + ' | ' + d.x +':  '+ d.y;
+                    if(scope.state.dataType != "raw" && scope.props.graph != "newValues"){
+                        popText += name + ' | ' + d.x +':  '+ percFormat(d.y);
+                    }
+                    else{
+                        popText += name + ' | ' + d.x +':  '+ d.y;                        
+                    }
                 }
 
                 d.city.line.parentNode.appendChild(d.city.line);
@@ -373,7 +379,7 @@ var LineGraph = React.createClass({
               .attr("dy", "2em")
               .attr("x","-15em")
               .style("text-anchor", "end")
-              .text("Rank");   
+              .text(scope.state.plot);   
 
             svg.append("g")
               .attr("class", "y axis")
