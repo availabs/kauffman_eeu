@@ -4,7 +4,6 @@ var React = require("react"),
     msaIdToName = require('../utils/msaIdToName.json'),
     RankTable = require('../graphs/RankTable.react'),
     graphInfo = require('../utils/graphInfo.json'),
-    Loading = require("../layout/Loading.react"),
     abbrToFips = require('../utils/abbrToFips.json');
 
 var LineGraph = React.createClass({
@@ -35,9 +34,9 @@ var LineGraph = React.createClass({
 
         var selected = "false";
 
-        if(scope.props.data.length == 0){
-            console.log('reloading')
-            setTimeout(function(){ scope.renderGraph() }, 2000);
+        if(!scope.props.data || Object.keys(scope.props.data).length == 0){
+            console.log('render graph reloading')
+            setTimeout(function(){ scope.renderGraph() }, 10000);
         }
         else{
             //Get rid of everything already in the svg
@@ -49,7 +48,6 @@ var LineGraph = React.createClass({
             else{
                 var data = scope.props.data[scope.state.dataType];
             }
-
 
             console.log(data);
 
@@ -96,45 +94,6 @@ var LineGraph = React.createClass({
 
                 y.domain([scope.state.extent[1],scope.state.extent[0]]);
 
-            }
-            else{
-
-                filteredData = data.filter(function(city){
-                    var withinBounds;
-
-                    city.values.forEach(function(yearVal){
-                        if(yearVal.x == 2009){
-                            if(yearVal.y >= scope.state.extent[0] && yearVal.y <= scope.state.extent[1]){
-                                withinBounds = true;
-                            }
-                            else{
-                                withinBounds = false;
-                            }
-                        }
-                    })
-
-                    if(withinBounds){
-                        return city;
-                    }
-                })
-
-                var voronoi = d3.geom.voronoi()
-                    .x(function(d) { return x(d.x); })
-                    .y(function(d) { return y(d.y); })
-                    .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
-
-                var y = d3.scale.linear()
-                .range([height,0]);
-
-                var yBrush = d3.scale.linear()
-                .range([height,0]);
-
-                yBrush.domain([d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]);
-
-                y.domain([scope.state.extent[0],scope.state.extent[1]]);
-            }
-
-            if(scope.state.plot == "rank"){
 
                 var x = d3.scale.ordinal()
                     .domain(d3.range(
@@ -171,6 +130,40 @@ var LineGraph = React.createClass({
                 var heightVal = y.domain()[1]-y.domain()[0];
             }
             else{
+                filteredData = data.filter(function(city){
+                    var withinBounds;
+
+                    city.values.forEach(function(yearVal){
+                        if(yearVal.x == 2009){
+                            if(yearVal.y >= scope.state.extent[0] && yearVal.y <= scope.state.extent[1]){
+                                withinBounds = true;
+                            }
+                            else{
+                                withinBounds = false;
+                            }
+                        }
+                    })
+
+                    if(withinBounds){
+                        return city;
+                    }
+                })
+
+                var voronoi = d3.geom.voronoi()
+                    .x(function(d) { return x(d.x); })
+                    .y(function(d) { return y(d.y); })
+                    .clipExtent([[-margin.left, -margin.top], [width + margin.right, height + margin.bottom]])
+
+                var y = d3.scale.linear()
+                .range([height,0]);
+
+                var yBrush = d3.scale.linear()
+                .range([height,0]);
+
+                yBrush.domain([d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]);
+
+                y.domain([scope.state.extent[0],scope.state.extent[1]]);
+
                 var x = d3.scale.linear()
                     .range([0, width]);
 
@@ -184,9 +177,9 @@ var LineGraph = React.createClass({
                     .x(function(d) { return x(d.x); })
                     .y(function(d) { return y(d.y); });
 
-                heightVal = 200             
+                heightVal = 200;
             }
-    
+
             var xAxis = d3.svg.axis()
                 .scale(x)
                 .orient("bottom");
@@ -199,7 +192,6 @@ var LineGraph = React.createClass({
                 yAxis.tickFormat(axisPercFormat);
             }
 
-
             var yAxisBrush = d3.svg.axis()
                 .scale(yBrush)
                 .orient("right");
@@ -211,7 +203,6 @@ var LineGraph = React.createClass({
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             filteredData.sort(function(a,b){
-
                 return b.values[0].rank - a.values[0].rank
             })
    
@@ -294,7 +285,6 @@ var LineGraph = React.createClass({
             function click(d){ 
                 console.log("d.city",d.city);
             }
-
 
             function mouseout(d) {                              
                 d3.select(d.city.line).style("stroke-width",( ((height-74)/(heightVal)-2 )))
@@ -449,7 +439,6 @@ var LineGraph = React.createClass({
         }
         else{
             var extent = [0,d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]
-
             scope.setState({plot:'value',extent:extent})
         }
     },
@@ -481,40 +470,9 @@ var LineGraph = React.createClass({
     render:function() {
         var scope = this;
 
-        d3.selectAll("svg").remove();
-
-        var tables;
         console.log("linegraph render state",scope);
-        var rowStyle = {
-            overflow:'hidden'
-        }
 
-        var tableStyle = {
-            overflow:'hidden',
-            height:window.innerHeight*.4 - 10,
-            width:window.innerWidth
-        }
-
-        var lockStyle = {
-            width:window.innerWidth*.1 - 50,
-            float:'left',
-            display:'inline-block',
-            paddingRight:'300px'
-        }
-
-        var scrollStyle = {
-            display:'inline-block' ,
-            width:window.innerWidth*.8 - 50         
-        }
-
-        var divStyle = {
-            width:window.innerWidth*.8 - 50
-        }
-
-        var currentRowStyle = {
-            width:window.innerWidth*.8-50
-        }
-            var buttonStyle = {
+        var buttonStyle = {
             marginTop:'10px',
             marginLeft:'10px'
         }
@@ -547,14 +505,13 @@ var LineGraph = React.createClass({
                     <button id="relativeButton2" style={buttonStyle} className="btn btn-danger" onClick={scope.toggleRawRelative}>{graphInfo[scope.props.graph].relTitle2}</button>
                     )     
             }
-
         }
 
         if(scope.props.data.length != 0){
             scope.renderGraph();
             return (
                 <div>
-                    <h3>{graphInfo[scope.props.graph].title} </h3>
+                    <h3 style={buttonStyle}>{graphInfo[scope.props.graph].title} </h3>
                     <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}{relativeButton2}</div>
                 </div>
             );          
@@ -566,7 +523,6 @@ var LineGraph = React.createClass({
                 </div>
             );          
         }
-
     }
 });
 

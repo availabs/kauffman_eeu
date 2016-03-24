@@ -38,7 +38,7 @@ var DataStore = React.createClass({
             cb(data);
         })
     },
-    getGraphData:function(graphName,filters){
+    getGraphData:function(graphName,filters,cb){
         var scope = this,
             graphData,
             route = graphInfo[graphName].route;
@@ -48,18 +48,18 @@ var DataStore = React.createClass({
         if(scope.state[route] && Object.keys(scope.state[route]).length > 0){
             if(scope.state[graphName] && Object.keys(scope.state[graphName]).length > 0){
                 graphData = scope.state[graphName];
-                return graphData;  
+                cb(graphData) ;  
             }
             else{
                 scope.setState({[graphName]:scope[('process'+[route])](scope.state[route],graphName)})
-                setTimeout(function(){ scope.getGraphData(graphName,filters) }, 1500);                
+                setTimeout(function(){ scope.getGraphData(graphName,filters,cb) }, 1500);                
             }
         }
         else{
             scope.getData(route,function(data){
                 scope.setState({[route]:data,[graphName]:scope[('process'+route)](data,graphName)})                
             });
-            setTimeout(function(){ scope.getGraphData(graphName,filters) }, 5000);
+            setTimeout(function(){ scope.getGraphData(graphName,filters,cb) }, 5000);
         }  
     }, 
     relativeAgainstPopulation:function(graphRawData){

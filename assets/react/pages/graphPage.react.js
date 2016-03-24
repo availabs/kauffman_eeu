@@ -5,6 +5,7 @@ var React = require("react"),
 	LineGraph = require("../components/graphs/LineGraph.react"),
 	BarGraph = require("../components/graphs/BarGraph.react"),	
 	graphInfo = require("../components/utils/graphInfo.json"),
+	Loading = require("../components/layout/Loading.react"),
 	DataStore = require("../components/utils/DataStore.react");
 
 
@@ -13,8 +14,7 @@ var GraphPage = React.createClass({
 		return({
 			graph:"netMigration",
 			metric:"Fluidity",
-			data:[],
-			loading:true,
+			data:undefined
 			});
 	},
     componentDidMount:function(){
@@ -23,23 +23,15 @@ var GraphPage = React.createClass({
 		d3.select('#' + scope.state.graph)[0][0].className = "active";
 		d3.select('#' + scope.state.metric)[0][0].className = "dropdown header active";
 
-        scope.processData(scope.state.graph,function(data){
-        	scope.setState({data:data,loading:false});        	
-        })
+        scope.processData(scope.state.graph)
     },
-    componentWillUpdate:function(nextProps,nextState){
-    	var scope = this;
-
-    	scope.processData(nextState.graph,function(data){
-			nextState.data = data;
-			nextState.loading = false;
-    	});
-    },
-    processData:function(graph,cb){
+    processData:function(graph){
     	var scope = this;
         var filters = "none"
 
-        cb(scope.refs.store.getGraphData(graph,filters));	
+        scope.refs.store.getGraphData(graph,filters,function(data){
+        	scope.setState({data:data})
+        });	
     },
 	toggleGraph:function(e){
 		var scope = this;
@@ -60,7 +52,12 @@ var GraphPage = React.createClass({
 			})	
 		})
 
-		scope.setState({graph:e.target.id,metric:metricName,loading:true});
+		scope.setState({data:undefined})
+		scope.processData(e.target.id,function(data){
+			console.log("togglegraph",data);
+			scope.setState({data:data,graph:e.target.id,metric:metricName});
+		})
+		
 	},
 	render:function() {
 		var scope = this;
@@ -101,20 +98,20 @@ var GraphPage = React.createClass({
 
 	    var store = (<DataStore ref='store' />);
 
-	    if(scope.state.graph != "opportunity"){
-	    	var graph = (<LineGraph data={scope.state.data} graph={scope.state.graph} />)
-	    }
-	    else{
-	    	var graph = (<BarGraph data={scope.state.data} graph={scope.state.graph} />)
-	    }
-	    var filters = "none"
+
 	    console.log("graphapge render state",scope.state);
 
-	    if(!scope.state.loading){
+	    if(scope.state.data){
+		    if(scope.state.graph != "opportunity"){
+		    	var graph = (<LineGraph data={scope.state.data} graph={scope.state.graph} />)
+		    }
+		    else{
+		    	var graph = (<BarGraph data={scope.state.data} graph={scope.state.graph} />)
+		    }
+		    var filters = "none"
 		    return (
 		    	<div>
 		    		<div>
-		    		<a id="downloadAnchorElem"></a>
 		    			{graphTabs}
 		    		</div>
 		    			{store}
@@ -129,10 +126,10 @@ var GraphPage = React.createClass({
 		    return (
 		    	<div>
 		    		<div>
-		    		<a id="downloadAnchorElem"></a>
 		    			{graphTabs}
 		    		</div>
 		    			{store}
+		    		<Loading />
 		    	</div>
 		    )
 	    }
