@@ -11,7 +11,8 @@ var LineGraph = React.createClass({
         return {
             extent:[363,0],
             plot:"rank",
-            dataType:"raw"
+            dataType:"raw",
+            title:""
         }
     },
     getDefaultProps:function(){
@@ -22,11 +23,12 @@ var LineGraph = React.createClass({
     },
     componentDidMount:function(){
         var scope = this;
-        scope.renderGraph();
+        scope.setState({title:graphInfo[scope.props.graph].title});
     },
     componentWillUpdate:function(nextProps,nextState){
         var scope = this;
-
+        scope.renderGraph();
+        nextState.title = graphInfo[nextProps.graph].title
         if(nextProps.graph.slice(-9) == "Composite"){
             nextState.plot = "rank";
         }
@@ -506,10 +508,9 @@ var LineGraph = React.createClass({
             }
         }
 
-        scope.renderGraph();
         return (
             <div>
-                <h3 style={buttonStyle}>{graphInfo[scope.props.graph].title} </h3>
+                <h3 style={buttonStyle}>{scope.state.title} </h3>
                 <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}{relativeButton2}</div>
             </div>
         );          
