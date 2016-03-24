@@ -2,7 +2,7 @@ var React = require("react"),
 	d3 = require("d3"),
     colorbrewer = require('colorbrewer'),
     msaIdToName = require('../utils/msaIdToName.json'),
-    graphNametoRoute = require('../utils/graphNametoRoute.json');
+    graphInfo = require('../utils/graphInfo.json');
 
 var DataStore = React.createClass({
 	getInitialState:function(){
@@ -476,7 +476,7 @@ var DataStore = React.createClass({
     getGraphData:function(graphName,filters){
         var scope = this,
             graphData,
-            route = graphNametoRoute[graphName];
+            route = graphInfo[graphName].route;
 
         console.log("getGraphData || graphName:" + graphName, " Route:" +route);
         console.log(scope.state);
