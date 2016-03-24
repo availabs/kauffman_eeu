@@ -4,6 +4,7 @@ var React = require("react"),
     msaIdToName = require('../utils/msaIdToName.json'),
     RankTable = require('../graphs/RankTable.react'),
     graphInfo = require('../utils/graphInfo.json'),
+    Loading = require("../layout/Loading.react"),
     abbrToFips = require('../utils/abbrToFips.json');
 
 var LineGraph = React.createClass({
@@ -23,12 +24,9 @@ var LineGraph = React.createClass({
     componentWillUpdate:function(nextProps,nextState){
         var scope = this;
 
-
         if(nextProps.graph.slice(-9) == "Composite"){
             nextState.plot = "rank";
         }
-
-
     },
     renderGraph:function(){
 
@@ -47,7 +45,7 @@ var LineGraph = React.createClass({
             //Get rid of everything already in the svg
             d3.selectAll("svg").remove();
 
-            if(scope.props.graph != "imm" && scope.props.graph != "totalMigrationFlow" && scope.props.graph != "inc" && scope.props.graph != "netMigration" && scope.props.graph != "inflowMigration" && scope.props.graph != "outflowMigration" && scope.props.graph != "irsNet"){
+            if(Array.isArray(scope.props.data)){
                 var data = scope.props.data;
             }
             else{
@@ -60,12 +58,9 @@ var LineGraph = React.createClass({
 
             var filteredData = [];
 
-
-
             var margin = {top: 100, right: 40, bottom: 50, left: 55},
                 width = window.innerWidth*.98 - margin.left - margin.right,
                 height = window.innerHeight - margin.top - margin.bottom;
-
 
             if(scope.state.plot == "rank"){
 
@@ -89,7 +84,6 @@ var LineGraph = React.createClass({
 
                 })
 
-
                 var voronoi = d3.geom.voronoi()
                     .x(function(d) { return x(d.x); })
                     .y(function(d) { return y(d.rank); })
@@ -97,7 +91,6 @@ var LineGraph = React.createClass({
 
                 var y = d3.scale.linear()
                     .range([0,height]);
-
 
                 var yBrush = d3.scale.linear()
                     .range([0,height]);
@@ -126,7 +119,6 @@ var LineGraph = React.createClass({
                     if(withinBounds){
                         return city;
                     }
-
                 })
 
                 var voronoi = d3.geom.voronoi()
@@ -137,20 +129,13 @@ var LineGraph = React.createClass({
                 var y = d3.scale.linear()
                 .range([height,0]);
 
-
                 var yBrush = d3.scale.linear()
                 .range([height,0]);
-
-
 
                 yBrush.domain([d3.min(filteredData, function(c) { return d3.min(c.values, function(v) { return v.y }); }),d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]);
 
                 y.domain([scope.state.extent[0],scope.state.extent[1]]);
             }
-
-
-
-
 
             if(scope.state.plot == "rank"){
 
@@ -165,15 +150,10 @@ var LineGraph = React.createClass({
 
                 var line = function line(d) {
                   var path = [];
-                    var once = 0;
 
                   x.domain().slice(1).forEach(function(b, i) {
                     var a = x.domain()[i];
 
-                    if(once < 2){
-                        //console.log(curve(a, b, i, d))
-                        once++;
-                    }
                     if(d[i+1] != undefined){
                         path.push("L", x(a), ",", y(d[i].rank), "h", x.rangeBand(), curve(a, b, i, d));    
                     }
@@ -184,7 +164,6 @@ var LineGraph = React.createClass({
                   return path.join("");
                 }
 
-
                 var curve = function curve(a, b, i, d) {
                 
                   return "C" + (x(a) + xTangent + x.rangeBand()) + "," + y(d[i].rank)+ " "
@@ -192,11 +171,7 @@ var LineGraph = React.createClass({
                       + x(b) + "," + y(d[i+1].rank);
                 }  
 
-
-
                 var heightVal = y.domain()[1]-y.domain()[0];
-
-
             }
             else{
                 var x = d3.scale.linear()
@@ -215,11 +190,7 @@ var LineGraph = React.createClass({
 
                 heightVal = 200             
             }
-
-
-
-
-                
+    
             var xAxis = d3.svg.axis()
                 .scale(x)
                 .orient("bottom");
@@ -231,7 +202,6 @@ var LineGraph = React.createClass({
             var yAxisBrush = d3.svg.axis()
                 .scale(yBrush)
                 .orient("right");
-
 
             var svg = d3.select("#rankGraph").append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -270,16 +240,11 @@ var LineGraph = React.createClass({
                         .style("stroke-width",((height-85)/(heightVal))-2)
                         .style("fill","none")
                         .style("opacity",".6");                    
-                
-
-
             })
-
 
             var focus = svg.append("g")
                   .attr("transform", "translate(-100,-100)")
                   .attr("class", "focus");
-
 
                 focus.append("text")
                   .attr("y", -10)
@@ -290,8 +255,6 @@ var LineGraph = React.createClass({
                   .style("fill","#FFFFFF")
                   .style("stroke","#000000")
                   .style("opacity","0")
-
-
 
             voronoiGroup.selectAll("path")
                     .data(voronoi(d3.nest()
@@ -306,7 +269,6 @@ var LineGraph = React.createClass({
                     .on("mouseout", mouseout)
                     .on("click",click);
 
-
             function mouseover(d) {
                 d3.select(d.city.line).style("stroke-width",( (height/(heightVal) )+1))
                 d3.select(d.city.line).style("stroke","#000000")
@@ -317,7 +279,6 @@ var LineGraph = React.createClass({
 
                     name = d.city.name;
                
-
                 if(scope.state.plot == "rank"){
                     popText += name + ' | ' + d.x +':  '+ d.rank;                    
                 }
@@ -325,15 +286,12 @@ var LineGraph = React.createClass({
                     popText += name + ' | ' + d.x +':  '+ d.y;
                 }
 
-
                 d.city.line.parentNode.appendChild(d.city.line);
                 focus.attr("transform", "translate(100,-25)");
                 focus.select("text").text(popText);
             }
 
-            function click(d){
-                var years = d3.range(1977,2013);
-     
+            function click(d){ 
                 console.log("d.city",d.city);
             }
 
@@ -345,10 +303,8 @@ var LineGraph = React.createClass({
                 focus.attr("transform", "translate(-100,-100)");
             }
 
-                var startValue = scope.state.extent[1];
-                var endValue = scope.state.extent[0];             
-
-
+            var startValue = scope.state.extent[1];
+            var endValue = scope.state.extent[0];             
 
             var brush = d3.svg.brush()
                 .y(yBrush)
@@ -362,10 +318,6 @@ var LineGraph = React.createClass({
                     .startAngle(0)
                     .endAngle(function(d, i) { return i ? -Math.PI : Math.PI; });
 
-
-
-
-
             var brushg = svg.append("g")
                 .attr("class", "brush")
                 .attr("transform", "translate("+(width+20)+",0)")
@@ -375,7 +327,6 @@ var LineGraph = React.createClass({
             brushg.selectAll(".resize").append("path")
                 .attr("transform", "rotate(-90)")
                 .attr("d", arc);
-
 
             brushg.selectAll("rect")
                 .attr("transform","translate(-20,0)")
@@ -439,15 +390,13 @@ var LineGraph = React.createClass({
               .attr("y", "-5em")
               .attr("dy", "2em")
               .attr("x","-15em")          
-
         }
-
     },
     resetBrush:function(){
         var scope = this;
 
 
-        if(scope.props.graph == "imm" || scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
+        if(Array.isArray(scope.props.data)){
             var data = scope.props.data[scope.state.dataType];
         }
         else{
@@ -470,7 +419,7 @@ var LineGraph = React.createClass({
         console.log("toggle rank/val");
         var scope = this;
 
-        if(scope.props.graph == "imm" || scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
+        if(!Array.isArray(scope.props.data)){
             var data = scope.props.data[scope.state.dataType];
         }
         else{
@@ -515,26 +464,18 @@ var LineGraph = React.createClass({
 
     },
     toggleRawRelative:function(e){
-        console.log("toggle rank/val");
+        console.log("toggle rank/val",e.target.id);
         var scope = this;
 
-
-        var rawButton = d3.select('#rawButton');
-        var relativeButton = d3.select('#relativeButton')
-        var relativeButton2 = d3.select('#relativeButton2')
-        var activeButton;
-
-
-        console.log(e.target.id);
+        var rawButton = d3.select('#rawButton'),
+            relativeButton = d3.select('#relativeButton'),
+            relativeButton2 = d3.select('#relativeButton2'),
+            activeButton;
 
         rawButton.attr("class","btn btn-danger"); 
-    
         relativeButton.attr("class","btn btn-danger");
-    
         relativeButton2.attr("class","btn btn-danger");
     
-
-
         d3.select("#"+e.target.id)[0][0].className = "btn btn-success";
 
         if(e.target.id == 'relativeButton'){
@@ -546,9 +487,6 @@ var LineGraph = React.createClass({
         else{
             scope.setState({dataType:'raw'})
         }
-
-
-
     },
     render:function() {
         var scope = this;
@@ -609,7 +547,7 @@ var LineGraph = React.createClass({
         }
 
 
-        if(scope.props.graph == "imm" || scope.props.graph == "totalMigrationFlow" || scope.props.graph == "inc" || scope.props.graph == "netMigration" || scope.props.graph == "inflowMigration" || scope.props.graph == "outflowMigration" || scope.props.graph == "irsNet"){
+        if(!Array.isArray(scope.props.data)){
             rawButton = (
                 <button id="rawButton" style={buttonStyle} className="btn btn-success" onClick={scope.toggleRawRelative}>Raw Values</button>
                 )
@@ -639,7 +577,7 @@ var LineGraph = React.createClass({
         else{
             return (
                 <div>
-                <h3>Loading...</h3>
+                    <Loading />
                 </div>
             );          
         }

@@ -2,7 +2,6 @@ var React = require("react"),
 	ShareNewEmploymentByTimeGraph = require("../components/graphs/ShareNewEmploymentByTimeGraph.react"),
 	NewFirmPer1000Graph = require("../components/graphs/NewFirmPer1000Graph.react"),
 	RankingsGraph = require("../components/graphs/RankingsGraph.react"),
-	Loading = require("../components/layout/Loading.react"),
 	LineGraph = require("../components/graphs/LineGraph.react"),
 	BarGraph = require("../components/graphs/BarGraph.react"),	
 	graphInfo = require("../components/utils/graphInfo.json"),
@@ -134,10 +133,6 @@ var GraphPage = React.createClass({
 		    			{graphTabs}
 		    		</div>
 		    			{store}
-		    		<div>
-		    			<Loading />
-		    		</div>
-
 		    	</div>
 		    )
 	    }
