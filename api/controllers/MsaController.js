@@ -143,15 +143,7 @@ module.exports = {
 		        	}
 		        })
         	}
-        })
-
-
-                    
-
-
-                       
-            
-    
+        })           
     },
     migration:function(req,res){
 
@@ -165,9 +157,6 @@ module.exports = {
     	var migration2010data = migration2010();
 
     	var countyMigration = combineMigration(migration1990data,migration2000data,migration2010data);
-
-
-
     	var msaMigration = {};
 
 
@@ -179,10 +168,8 @@ module.exports = {
         		console.timeEnd('send cache');
     		}
     		else{
-			    fileCache.checkCache({type:"aggregate",id:"msaCounties"},function(data){
-			    	if(data){
-			    		var msaCounties = data;
-
+			    fileCache.checkCache({type:"aggregate",id:"msaCounties"},function(msaCountyStruct){
+			    	if(msaCountyStruct){
 					    msatocounty.forEach(function(countyMap){
 
 					        msaMigration[Object.keys(countyMap)] = {};
@@ -191,7 +178,7 @@ module.exports = {
 
 					    Object.keys(msaMigration).forEach(function(msaId){
 					        var curMigration = 0;
-					        msaCounties[msaId].forEach(function(county){
+					        msaCountyStruct[msaId].forEach(function(county){
 
 					            //console.log(countypopagg[county]);
 
@@ -207,48 +194,35 @@ module.exports = {
 					        })
 					    })
 
-
 						fileCache.addData({type:"aggregate",id:"msaMigration"},msaMigration);
 					    res.json(msaMigration);
-
-
 			    	}
 			    	else{
-			    		//If not there, call function that makes/gets it
-					    msatocounty.forEach(function(countyMap){
+			    		msaCounties(function(msaCountyStruct){
 
-					        msaMigration[Object.keys(countyMap)] = {};
-					        
-					        if(!msaCounties[Object.keys(countyMap)]){
-					            msaCounties[Object.keys(countyMap)] = [];    
-					        }
-					        
-					        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
+						    msatocounty.forEach(function(countyMap){
+						        msaMigration[Object.keys(countyMap)] = {};
+						    })
 
-					    })
+						    Object.keys(msaMigration).forEach(function(msaId){
+						        var curMigration = 0;
+						        msaCountyStruct[msaId].forEach(function(county){
 
-			   			fileCache.addData({type:"aggregate",id:"msaCounties"},msaCounties);
+						            if(countyMigration[county]){
+						                years.forEach(function(year){
+						                    if(!msaMigration[msaId][year]){
+						                        msaMigration[msaId][year] = 0;
+						                    }
 
+						                    msaMigration[msaId][year] += countyMigration[county][year];
+						                })                    
+						            }
+						        })
+						    })
 
-					    Object.keys(msaMigration).forEach(function(msaId){
-					        var curMigration = 0;
-					        msaCounties[msaId].forEach(function(county){
-
-					            //console.log(countypopagg[county]);
-
-					            if(countyMigration[county]){
-					                years.forEach(function(year){
-					                    if(!msaMigration[msaId][year]){
-					                        msaMigration[msaId][year] = 0;
-					                    }
-
-					                    msaMigration[msaId][year] += countyMigration[county][year];
-					                })                    
-					            }
-					        })
-					    })
-						fileCache.addData({type:"aggregate",id:"msaMigration"},msaMigration);
-					    res.json(msaMigration);
+							fileCache.addData({type:"aggregate",id:"msaMigration"},msaMigration);
+						    res.json(msaMigration);
+			    		})
 			    	}
 			    })
     		}
@@ -257,57 +231,30 @@ module.exports = {
     shareImm:function(req,res){
     	//NEEDS TO BE BROKE DOWN INTO SEPARATE FUNCTIONS
     	//FOR CACHING
-    	var years = [2009,2010,2011,2012,2013,2014];
-
-    	var numImmCounties = {};
-    	var msaCounties = {};
-
-    	var msaImmPop = {}
-        Object.keys(aggImmShare).forEach(function(countyFips){
-
-            if(countyFips > 999){
-            
-                numImmCounties[countyFips] = {};
-                years.forEach(function(year){
-                    var numImm =(aggImmShare[countyFips][year])/100 * countypopagg[countyFips][year]
-                    numImmCounties[countyFips][year] = numImm;
-                })
-
-            }
-
-
-        })
-
-
-	    msatocounty.forEach(function(countyMap){
-
-	        msaImmPop[Object.keys(countyMap)] = {};
-	        
-	        if(!msaCounties[Object.keys(countyMap)]){
-	            msaCounties[Object.keys(countyMap)] = [];    
-	        }
-	        
-	        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
-
-	    })
-
-		Object.keys(msaImmPop).forEach(function(msaId){
-	        var curPop = 0;
-	        var curImmPop = 0;
-	        msaCounties[msaId].forEach(function(county){
-		        if(countypopagg[county]){
-	                years.forEach(function(year){
-	                    if(!msaImmPop[msaId][year]){
-	                        msaImmPop[msaId][year] = 0
-	                    }
-
-	                    msaImmPop[msaId][year] += numImmCounties[county][year];
-	                })  	        	
-		        }                
-	        })
-	    })
-
-        res.json(msaImmPop)
+	    fileCache.checkCache({type:"aggregate",id:"shareImm"},function(data){
+	    	if(data){
+        		console.log('cache sucess');
+        		console.time('send cache');
+        		res.json(data);
+        		console.timeEnd('send cache');	    		
+	    	}
+	    	else{
+			    fileCache.checkCache({type:"aggregate",id:"msaCounties"},function(msaCountyStruct){
+					if(msaCountyStruct){
+						buildShareImm(msaCountyStruct,function(msaImmPop){
+				        	res.json(msaImmPop)
+						})
+					}	
+					else{
+						msaCounties(function(msaCountyStruct){
+							buildShareImm(msaCountyStruct,function(msaImmPop){
+					        	res.json(msaImmPop)
+							})
+						})
+					}		    
+			    })	  
+	    	}
+	    })	
     },
     inc5000:function(req,res){
 
@@ -708,6 +655,50 @@ module.exports = {
     	})
     }
 };
+
+function buildShareImm(msaCountyStruct,cb){
+	var years = [2009,2010,2011,2012,2013,2014],
+		numImmCounties = {},
+		msaImmPop = {};
+
+    Object.keys(aggImmShare).forEach(function(countyFips){
+        if(countyFips > 999){
+            numImmCounties[countyFips] = {};
+
+            years.forEach(function(year){
+                var numImm =(aggImmShare[countyFips][year])/100 * countypopagg[countyFips][year]
+                numImmCounties[countyFips][year] = numImm;
+            })
+        }
+    })
+
+
+    msatocounty.forEach(function(countyMap){
+        msaImmPop[Object.keys(countyMap)] = {};
+    })
+
+	Object.keys(msaImmPop).forEach(function(msaId){
+        var curPop = 0;
+        var curImmPop = 0;
+        if(msaCountyStruct[msaId]){
+	        msaCountyStruct[msaId].forEach(function(county){
+		        if(countypopagg[county]){
+	                years.forEach(function(year){
+	                    if(!msaImmPop[msaId][year]){
+	                        msaImmPop[msaId][year] = 0
+	                    }
+
+	                    msaImmPop[msaId][year] += numImmCounties[county][year];
+	                })  	        	
+		        }                
+	        })        	
+        }
+    })
+
+	fileCache.addData({type:"aggregate",id:"shareImm"},msaImmPop);
+	cb(msaImmPop);
+}
+
 
 function combineEqualOpp(lowIncome,highIncome,cb){
 // msaCounties[msaId].forEach(function(county)
@@ -1174,17 +1165,13 @@ function aggregateMsaPop(cb){
     		msaCounties = data;
 
 		    msatocounty.forEach(function(countyMap){
-
 		        msaPop[Object.keys(countyMap)] = {};
-
 		    })
 
 		    Object.keys(msaPop).forEach(function(msaId){
 		        var curPop = 0;
 		        msaCounties[msaId].forEach(function(county){
 
-		            //console.log(countypopagg[county]);
-
 		            if(countypopagg[county]){
 		                years.forEach(function(year){
 		                    if(!msaPop[msaId][year]){
@@ -1197,60 +1184,53 @@ function aggregateMsaPop(cb){
 		        })
 		    })
 
-
 			fileCache.addData({type:"aggregate",id:"msaPop"},msaPop);
 		    cb(msaPop);
-
-
     	}
     	else{
-    		//If not there, call function that makes/gets it
-		    msatocounty.forEach(function(countyMap){
+    		msaCounties(function(data){
+	    		msaCountyStruct = data;
 
-		        msaPop[Object.keys(countyMap)] = {};
-		        
-		        if(!msaCounties[Object.keys(countyMap)]){
-		            msaCounties[Object.keys(countyMap)] = [];    
-		        }
-		        
-		        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
+			    msatocounty.forEach(function(countyMap){
+			        msaPop[Object.keys(countyMap)] = {};
+			    })
 
-		    })
+			    Object.keys(msaPop).forEach(function(msaId){
+			        var curPop = 0;
+			        msaCountyStruct[msaId].forEach(function(county){
 
-   			fileCache.addData({type:"aggregate",id:"msaCounties"},msaCounties);
+			            if(countypopagg[county]){
+			                years.forEach(function(year){
+			                    if(!msaPop[msaId][year]){
+			                        msaPop[msaId][year] = 0;
+			                    }
 
-    		Object.keys(msaPop).forEach(function(msaId){
-		        var curPop = 0;
-		        msaCounties[msaId].forEach(function(county){
-
-		            //console.log(countypopagg[county]);
-
-		            if(countypopagg[county]){
-		                years.forEach(function(year){
-		                    if(!msaPop[msaId][year]){
-		                        msaPop[msaId][year] = 0;
-		                    }
-
-		                    msaPop[msaId][year] += countypopagg[county][year];
-		                })                    
-		            }
-		        })
-		    })
+			                    msaPop[msaId][year] += countypopagg[county][year];
+			                })                    
+			            }
+			        })
+			    })
 
 
-			fileCache.addData({type:"aggregate",id:"msaPop"},msaPop);
-
-		    cb(msaPop);
-
+				fileCache.addData({type:"aggregate",id:"msaPop"},msaPop);
+			    cb(msaPop);
+    		})
     	}
     })
-
 }
 
-
-
-
-
+function msaCounties(cb){
+    msatocounty.forEach(function(countyMap){
+        
+        if(!msaCounties[Object.keys(countyMap)]){
+            msaCounties[Object.keys(countyMap)] = [];    
+        }
+        
+        msaCounties[Object.keys(countyMap)].push(countyMap[Object.keys(countyMap)]);
+    })	
+    fileCache.addData({type:"aggregate",id:"msaCounties"},msaCounties);
+    cb(msaCounties);
+}
 
 function msaData(msaId,cb){
 	if(!msaId){
