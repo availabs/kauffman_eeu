@@ -27,7 +27,7 @@ var LineGraph = React.createClass({
     },
     componentWillUpdate:function(nextProps,nextState){
         var scope = this;
-        scope.renderGraph();
+        //scope.renderGraph();
         nextState.title = graphInfo[nextProps.graph].title
         if(nextProps.graph.slice(-9) == "Composite"){
             nextState.plot = "rank";
@@ -189,7 +189,7 @@ var LineGraph = React.createClass({
             .scale(y)
             .orient("left");
 
-        if(scope.state.dataType != "raw" && scope.props.graph != "newValues"){
+        if(scope.state.dataType != "raw" && scope.props.graph != "newValues" && scope.state.plot != 'rank'){
             yAxis.tickFormat(axisPercFormat);
         }
 
@@ -339,13 +339,15 @@ var LineGraph = React.createClass({
             if(scope.state.plot == "rank"){
                 brush.extent([Math.round(s[1]),Math.round(s[0])])(d3.select(this));
                 s = brush.extent();
-                scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})                      
+                scope.setState({extent:[Math.round(s[0]),Math.round(s[1])]})      
+                //scope.renderGraph();                
             }
             else{
                 brush.extent([s[1],s[0]])(d3.select(this));
                 s = brush.extent();
 
-                scope.setState({extent:[s[1],s[0]]})                            
+                scope.setState({extent:[s[1],s[0]]})
+                //scope.renderGraph();                            
             }              
 
             svg.classed("selecting", !d3.event.target.empty());
@@ -401,6 +403,7 @@ var LineGraph = React.createClass({
              
         console.log("reset",extent)
         scope.setState({extent:extent})
+        //scope.renderGraph();
     },
     toggleRankValue:function(e){
         console.log("toggle rank/val");
@@ -436,10 +439,12 @@ var LineGraph = React.createClass({
         if(active == 'rankButton'){
             var extent = [d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.rank }); }),0]
             scope.setState({plot:'rank',extent:extent})
+            //scope.renderGraph();
         }
         else{
             var extent = [0,d3.max(data, function(c) { return d3.max(c.values, function(v) { return v.y }); })]
             scope.setState({plot:'value',extent:extent})
+            //scope.renderGraph();
         }
     },
     toggleRawRelative:function(e){
@@ -456,16 +461,19 @@ var LineGraph = React.createClass({
         relativeButton2.attr("class","btn btn-danger");
     
         d3.select("#"+e.target.id)[0][0].className = "btn btn-success";
-
         if(e.target.id == 'relativeButton'){
             scope.setState({dataType:'relative'})
+            //scope.renderGraph();
         }
         else if(e.target.id == 'relativeButton2'){
             scope.setState({dataType:'relative2'})
+            //scope.renderGraph();
         }
         else{
             scope.setState({dataType:'raw'})
+            //scope.renderGraph();
         }
+        setTimeout(function(){scope.resetBrush();},10)
     },
     render:function() {
         var scope = this;
@@ -507,7 +515,7 @@ var LineGraph = React.createClass({
                     )     
             }
         }
-
+scope.renderGraph();
         return (
             <div>
                 <h3 style={buttonStyle}>{scope.state.title} </h3>
