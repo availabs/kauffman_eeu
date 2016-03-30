@@ -14,6 +14,7 @@ var React = require("react"),
     // Components
     //DemoOne =   require("./pages/DemoOne.react"),
     Home =  require("./pages/Home.react"),
+    MapPage = require("./pages/mapPage.react"),
     GraphPage = require("./pages/graphPage.react");
 
 
@@ -24,6 +25,7 @@ var routes = (
 	<Route name="app" path="/" handler={App}>
         <Route name="home" path="/" handler={Home} />
         <Route name="graph" path="/graphs" handler={GraphPage} />
+        <Route name="map" path="/map" handler={MapPage} />
 		<DefaultRoute handler={Home} />
 	</Route>
 );
