@@ -48,12 +48,24 @@ var Home = React.createClass({
               .attr("d", path);
 
 
-        svg.insert("path", ".graticule")
-              .datum(topojson.feature(msa,msa["objects"]["fixMsa.geo"]))
+        svg.selectAll("path", ".msa")
+              .data(topojson.feature(msa,msa["objects"]["fixMsa.geo"]).features)
+              .enter().append('path')
               .attr("class","msa")
               .style("fill", "#ff0000")
               .style("stroke","#fff")
-              .attr("d", path);
+              .attr("d", path)
+              .on('click',click);
+
+
+console.log(topojson.feature(msa,msa["objects"]["fixMsa.geo"]))
+
+
+          
+        function click(d){
+            console.log(d);
+        }
+
     },
     render:function() {
         var scope = this;
