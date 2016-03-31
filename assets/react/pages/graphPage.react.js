@@ -115,6 +115,8 @@ var GraphPage = React.createClass({
 		    		<div>
 		    			{graph}
 		    		</div>
+		    		<div>
+		    		</div>
 
 		    	</div>
 		    )

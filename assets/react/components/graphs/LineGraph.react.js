@@ -4,6 +4,7 @@ var React = require("react"),
     msaIdToName = require('../utils/msaIdToName.json'),
     RankTable = require('../graphs/RankTable.react'),
     graphInfo = require('../utils/graphInfo.json'),
+    MapPage = require("../../pages/mapPage.react"),
     abbrToFips = require('../utils/abbrToFips.json');
 
 var LineGraph = React.createClass({
@@ -41,7 +42,7 @@ var LineGraph = React.createClass({
         var selected = "false";
 
         //Get rid of everything already in the svg
-        d3.selectAll("svg").remove();
+        d3.select("#rankGraph svg").remove();
 
         if(Array.isArray(scope.props.data)){
             var data = scope.props.data;
@@ -54,9 +55,9 @@ var LineGraph = React.createClass({
 
         var filteredData = [];
 
-        var margin = {top: 100, right: 40, bottom: 50, left: 55},
+        var margin = {top: 65, right: 40, bottom: 50, left: 55},
             width = window.innerWidth*.98 - margin.left - margin.right,
-            height = window.innerHeight - margin.top - margin.bottom;
+            height = window.innerHeight*.5 - margin.top - margin.bottom;
 
         if(scope.state.plot == "rank"){
 
@@ -520,6 +521,7 @@ scope.renderGraph();
             <div>
                 <h3 style={buttonStyle}>{scope.state.title} </h3>
                 <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}{relativeButton2}</div>
+                <MapPage />
             </div>
         );          
     }

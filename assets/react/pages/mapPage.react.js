@@ -11,8 +11,8 @@ var Home = React.createClass({
         return {};
     },
     componentDidMount:function(){
-    var scope = this;
-    scope.renderGraph();
+        var scope = this;
+        scope.renderGraph();
     },
     renderGraph:function(){
         var scope = this;
@@ -24,7 +24,7 @@ var Home = React.createClass({
 
         var projection = d3.geo.albersUsa()
             .scale(1000)
-            .translate([width / 2, height / 2]);
+            .translate([width / 2, height / 2.5]);
 
 
         var path = d3.geo.path()
@@ -34,9 +34,6 @@ var Home = React.createClass({
         var svg = d3.select("#mapDiv").append("svg")
             .attr("width", width)
             .attr("height", height);
-console.log(msa);
-
-
 
 
         svg.append("path")
@@ -52,24 +49,17 @@ console.log(msa);
 
 
         svg.insert("path", ".graticule")
-              .datum(topojson.feature(msa,msa["objects"]["fixMsa.geo"], function(a, b) { return a !== b; }))
+              .datum(topojson.feature(msa,msa["objects"]["fixMsa.geo"]))
+              .attr("class","msa")
               .style("fill", "#ff0000")
               .style("stroke","#fff")
-              .attr("d", path)
-              .on("click",click);
-
-
-        function click(d){
-            console.log(d);
-        }
+              .attr("d", path);
     },
     render:function() {
         var scope = this;
 
         return (
             <div className="container main">
-                <h1> The Map </h1>
-
                 <div id="mapDiv"></div>
             </div>
                 
