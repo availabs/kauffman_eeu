@@ -5,6 +5,10 @@ var React = require("react"),
     states = require("../components/utils/states.topo.js"),
     msa = require("../components/utils/msa.topo.js");
 
+var backColor = "#DCDCDC",
+    msaColor = "#7EC0EE";
+
+
 var Home = React.createClass({
 
     getInitialState:function(){
@@ -24,7 +28,7 @@ var Home = React.createClass({
 
         var projection = d3.geo.albersUsa()
             .scale(1000)
-            .translate([width / 2, height / 2.5]);
+            .translate([width / 2.5, height / 2.5]);
 
 
         var path = d3.geo.path()
@@ -38,7 +42,7 @@ var Home = React.createClass({
 
         svg.append("path")
           .datum(topojson.feature(states,states["objects"]["states.geo"]))
-          .style("fill","#333")
+          .style("fill",backColor)
           .attr("d", path);
 
         svg.insert("path", ".graticule")
@@ -52,26 +56,55 @@ var Home = React.createClass({
               .data(topojson.feature(msa,msa["objects"]["fixMsa.geo"]).features)
               .enter().append('path')
               .attr("class","msa")
-              .style("fill", "#ff0000")
+              .attr("id",function(d){return "msa"+d.properties.CBSAFP;})
+              .style("fill", msaColor)
               .style("stroke","#fff")
               .attr("d", path)
               .on('click',click);
 
-
-console.log(topojson.feature(msa,msa["objects"]["fixMsa.geo"]))
-
-
           
         function click(d){
+            console.log(d3.select("#msaLegendContent"));
             console.log(d);
+            d3.select("#msaLegendContent")[0][0].textContent = "Name: " + d.properties.NAME;
         }
 
     },
     render:function() {
         var scope = this;
 
+        var legendStyle = {
+          float:'left',
+          width:'18%',
+          height:'300px',
+          boxShadow:'2px 2px' + backColor,
+          paddingLeft:'10px',
+          paddingTop:'2px',
+          paddingRight:'10px',
+          paddingBottom:'2px',
+          marginLeft:'40px',
+          marginRight:'200px',
+          marginTop:'15px',
+          background:backColor,
+          color:"#black"
+        }
+
+        var headerStyle = {
+          textAlign:'center',
+          marginBottom:'0px',
+          borderBottom:'2px solid black'
+        }
+
+        var contentStyle={
+          marginTop:'5px'
+        }
+
         return (
-            <div className="container main">
+            <div>
+                <div id="msaLegend" style={legendStyle}>
+                  <div id="msaLegendHeader" style={headerStyle}><h4>Metropolitan Statistical Area</h4></div>
+                  <div id="msaLegendContent" style={contentStyle}></div>
+                </div>
                 <div id="mapDiv"></div>
             </div>
                 

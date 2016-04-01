@@ -13,7 +13,8 @@ var LineGraph = React.createClass({
             extent:[363,0],
             plot:"rank",
             dataType:"raw",
-            title:""
+            title:"",
+            mapColor:'default'
         }
     },
     getDefaultProps:function(){
@@ -257,6 +258,10 @@ var LineGraph = React.createClass({
                 .on("mouseout", mouseout)
                 .on("click",click);
 
+
+
+
+
         function mouseover(d) {
             d3.select(d.city.line).style("stroke-width",( (height/(heightVal) )+1))
             d3.select(d.city.line).style("stroke","#000000")
@@ -286,6 +291,17 @@ var LineGraph = React.createClass({
 
         function click(d){ 
             console.log("d.city",d.city);
+            d3.select("#msaLegendContent")[0][0].textContent = "Name: " + d.city.name;
+            d3.select("#msaLegendContent")[0][0].textContent += "MSA ID: " + d.city.key;
+
+
+            d3.select("#mapDiv svg")
+                .selectAll(".msa")
+                .style("fill","#7EC0EE")
+
+
+            d3.select("#msa"+d.city.key).style("fill","#000000")
+            console.log(d3.select("#msa"+d.city.key)[0][0]);
         }
 
         function mouseout(d) {                              
@@ -384,6 +400,42 @@ var LineGraph = React.createClass({
           .attr("y", "-5em")
           .attr("dy", "2em")
           .attr("x","-15em")            
+    },
+    toggleColor:function(){
+        var scope = this;
+
+        if(Array.isArray(scope.props.data)){
+            var data = scope.props.data;
+        }
+        else{
+            var data = scope.props.data[scope.state.dataType];
+        }
+
+        if(scope.state.mapColor == "default"){
+            scope.setState({mapColor:"metric"})
+            d3.select("#mapDiv svg")
+                .selectAll(".msa")
+                .style("fill",function(d){
+                    var color = "";
+                    data.forEach(function(city){
+                        if(d.properties.CBSAFP == city.key){
+                            console.log("match");
+                            color = city.color;
+                        }
+                    })
+                    return color;
+                })
+        }
+        else{
+            scope.setState({mapColor:"default"})
+             d3.select("#mapDiv svg")
+                .selectAll(".msa")
+                .style("fill","#7EC0EE")           
+        }
+
+
+
+
     },
     resetBrush:function(){
         var scope = this;
@@ -521,6 +573,7 @@ scope.renderGraph();
             <div>
                 <h3 style={buttonStyle}>{scope.state.title} </h3>
                 <div id="rankGraph"><button  style={buttonStyle}className="btn" onClick={scope.resetBrush}>Reset Brush Filter</button>{valueButton}{rankButton}{rawButton}{relativeButton}{relativeButton2}</div>
+                <button style={buttonStyle} onClick = {scope.toggleColor}>Toggle Color</button>
                 <MapPage />
             </div>
         );          
